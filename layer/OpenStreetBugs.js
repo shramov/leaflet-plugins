@@ -163,9 +163,9 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 			var content = '';
 			content += '<br /><table width="100%">';
 			content += '<input name="osbid" type="hidden"/>';
-			content += '<tr><td>'+L.i18n("Nickname:")+'</td><td><input name="osbnickname" type="text"/></td></tr>';
-			content += '<tr><td>'+L.i18n("Comment:")+'</td><td><input name="osbcomment" type="text"/></td></tr>';
-			content += '<tr><td colspan="2" align="center"><br /><input name="add_comment" type="submit">&nbsp;';
+			content += '<tr><td>'+L.i18n("Nickname:")+'</td><td><input name="osbnickname" type="text" style="width: 100%;"/></td></tr>';
+			content += '<tr><td>'+L.i18n("Comment:")+'</td><td><input name="osbcomment" type="text" style="width: 100%;"/></td></tr>';
+			content += '<tr><td colspan="2" align="center"><input name="add_comment" type="submit">&nbsp;';
 			content += '<input name="mark_fixed" type="button">&nbsp;';
 			content += '<input name="edit" type="button"/></td></tr></table>';
 			form.innerHTML = content;
@@ -295,14 +295,14 @@ L.OpenStreetBugs.setCSS = function() {
 		idx++;
 	};
 
-	addRule(".olPopupFramedCloudOpenStreetBugs dl", 'margin:0; padding:0;');
-	addRule(".olPopupFramedCloudOpenStreetBugs dt", 'margin:0; padding:0; font-weight:bold; float:left; clear:left;');
-	addRule(".olPopupFramedCloudOpenStreetBugs dt:after", 'content: ": ";');
-	addRule("* html .olPopupFramedCloudOpenStreetBugs dt", 'margin-right:1ex;');
-	addRule(".olPopupFramedCloudOpenStreetBugs dd", 'margin:0; padding:0;');
-	addRule(".olPopupFramedCloudOpenStreetBugs ul.buttons", 'list-style-type:none; padding:0; margin:0;');
-	addRule(".olPopupFramedCloudOpenStreetBugs ul.buttons li", 'display:inline; margin:0; padding:0;');
-	addRule(".olPopupFramedCloudOpenStreetBugs h3", 'font-size:1.2em; margin:.2em 0 .7em 0;');
+	addRule(".osb-popup dl", 'margin:0; padding:0;');
+	addRule(".osb-popup dt", 'margin:0; padding:0; font-weight:bold; float:left; clear:left;');
+	addRule(".osb-popup dt:after", 'content: ": ";');
+	addRule("* html .osb-popup dt", 'margin-right:1ex;');
+	addRule(".osb-popup dd", 'margin:0; padding:0;');
+	addRule(".osb-popup ul.buttons", 'list-style-type:none; padding:0; margin:0;');
+	addRule(".osb-popup ul.buttons li", 'display:inline; margin:0; padding:0;');
+	addRule(".osb-popup h3", 'font-size:1.2em; margin:.2em 0 .7em 0;');
 };
 
 function putAJAXMarker(id, lon, lat, text, closed)
