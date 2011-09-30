@@ -163,8 +163,8 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 			var content = '';
 			content += '<br /><table width="100%">';
 			content += '<input name="osbid" type="hidden"/>';
-			content += '<tr><td>'+L.i18n("Nickname:")+'</td><td><input name="osbnickname" type="text" size="44"></td></tr>';
-			content += '<tr><td>'+L.i18n("Comment:")+'</td><td><input name="osbcomment" type="text" size="44"></td></tr>';
+			content += '<tr><td>'+L.i18n("Nickname:")+'</td><td><input name="osbnickname" type="text"/></td></tr>';
+			content += '<tr><td>'+L.i18n("Comment:")+'</td><td><input name="osbcomment" type="text"/></td></tr>';
 			content += '<tr><td colspan="2" align="center"><br /><input name="add_comment" type="submit">&nbsp;';
 			content += '<input name="mark_fixed" type="button">&nbsp;';
 			content += '<input name="edit" type="button"/></td></tr></table>';
@@ -228,8 +228,8 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		content += '<table width="100%">';
 		content += '<input name="osblat" type="hidden"/>';
 		content += '<input name="osblon" type="hidden"/>';
-		content += '<tr><td>'+L.i18n("Nickname:")+'</td><td><input name="osbnickname" type="text" size="44" value=""></td></tr>';
-		content += '<tr><td>'+L.i18n("Comment:")+'</td><td><input name="osbcomment" type="text" size="44"></td></tr>';
+		content += '<tr><td>'+L.i18n("Nickname:")+'</td><td><input name="osbnickname" type="text"/></td></tr>';
+		content += '<tr><td>'+L.i18n("Comment:")+'</td><td><input name="osbcomment" type="text"/></td></tr>';
 		content += '<tr><td colspan="2" align="center"><input name="submit" type="submit"/></td></tr></table>';
 		form.innerHTML = content;
 		form.osbnickname.value = this.options.username;
