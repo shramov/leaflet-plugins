@@ -143,52 +143,64 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		var isclosed = rawbug[2];
 
 		var newContent = L.DomUtil.create('div', 'osb-popup');
+		var h1 = L.DomUtil.create('h1', null, newContent);
+		h1.textContent = isclosed ? L.i18n("Fixed Error") : L.i18n("Unresolved Error");
 
-		newContent.innerHTML = '<h3 style="text-align: center; margin-bottom: 0pt;">'+(isclosed ? L.i18n("Fixed Error") : L.i18n("Unresolved Error"))+'</h3>';
-
-		var dl = L.DomUtil.create('dl', null, newContent);
-		dl.style.margin_top="0px";
+		var divinfo = L.DomUtil.create('div', 'osb-info', newContent);
 		for(var i=0; i<rawbug[1].length; i++)
 		{
 			var cls = i == 0 ? "osb-description" : "osb-comment";
-			var dt = L.DomUtil.create('dt', cls, dl);
-			dt.textContent = i == 0 ? L.i18n("Description") : L.i18n("Comment");
-			var dd = L.DomUtil.create('dd', cls, dl);
-			dd.textContent = rawbug[1][i];
+			var p = L.DomUtil.create('p', cls, divinfo);
+			var b = L.DomUtil.create('b', cls, p);
+			b.textContent = i == 0 ? L.i18n("Description") : L.i18n("Comment");
+			b.textContent += ': ';
+			p.appendChild(document.createTextNode(rawbug[1][i]))
 		}
 
-		var form = L.DomUtil.create("form", null, newContent);
+		function create_link(ul, text) {
+			var a = L.DomUtil.create('a', null,
+					L.DomUtil.create('li', null, ul));
+			a.href = '#';
+			a.textContent = L.i18n(text);
+			return a;
+		};
+
+		var ul = L.DomUtil.create('ul', null, newContent);
 		var _this = this;
-		if (!isclosed && !this.options.readonly) {
-			var content = '';
-			content += '<br /><table width="100%">';
-			content += '<input name="osbid" type="hidden"/>';
-			content += '<tr><td>'+L.i18n("Nickname:")+'</td><td><input name="osbnickname" type="text" style="width: 100%;"/></td></tr>';
-			content += '<tr><td>'+L.i18n("Comment:")+'</td><td><input name="osbcomment" type="text" style="width: 100%;"/></td></tr>';
-			content += '<tr><td colspan="2" align="center"><input name="add_comment" type="submit">&nbsp;';
-			content += '<input name="mark_fixed" type="button">&nbsp;';
-			content += '<input name="edit" type="button"/></td></tr></table>';
-			form.innerHTML = content;
+		var bug = this.bugs[id];
+
+		function showComment(title, add_comment) {
+			h1.textContent_old = h1.textContent;
+			h1.textContent = L.i18n(title);
+			var form = _this.createCommentForm();
 			form.osbid.value = id;
-			form.osbnickname.value = this.options.username;
-			form.add_comment.value = L.i18n("Add comment");
-			form.mark_fixed.value = L.i18n("Mark as fixed");
-			form.mark_fixed.onclick = function(e) {
+			form.cancel.onclick = function (e) {
+				newContent.removeChild(form);
+				newContent.appendChild(ul);
+			}
+			form.ok.onclick = function(e) {
 				bug.closePopup();
-				_this.closeBug(this);
+				if (!add_comment)
+					_this.closeBug(form);
+				else
+					_this.submitComment(form);
+				return false;
 			};
-		} else {
-			form.innerHTML += '<div><input name="edit" type="button"/></div>';
-		}
-		form.edit.onclick = function() { _this.remoteEdit(rawbug[0]); }
-		form.edit.value = L.i18n("in JOSM");
-		form.onsubmit = function(e) {
-			bug.closePopup();
-			_this.submitComment(form);
+			newContent.appendChild(form);
+			newContent.removeChild(ul);
 			return false;
 		};
 
-		var bug = this.bugs[id];
+		if (!isclosed && !this.options.readonly) {
+			var a;
+			a = create_link(ul, "Add comment");
+			a.onclick = function(e) { return showComment("Add comment", true); }
+
+			a = create_link(ul, "Mark as Fixed");
+			a.onclick = function(e) { return showComment("Close bug", false); }
+		}
+		var a = create_link(ul, "Edit in JOSM");
+		a.onclick = function() { _this.remoteEdit(rawbug[0]); };
 
 		bug._popup_content = newContent;
 		bug.bindPopup(newContent);
@@ -197,8 +209,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 	},
 
 	submitComment: function(form) {
-		var nickname = form.osbnickname.value;
-		if (nickname=="") {nickname = this.options.username;}
+		var nickname = form.osbnickname.value || this.options.username;
 		this.apiRequest("editPOIexec"
 			+ "?id="+encodeURIComponent(form.osbid.value)
 			+ "&text="+encodeURIComponent(form.osbcomment.value + " [" + nickname + "]")
@@ -208,12 +219,30 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		this.options.username=nickname;
 	},
 
-	closeBug: function(data) {
-		this.submitComment(data.form)
+	closeBug: function(form) {
+		var id = form.osbid.value;
+		if (form.osbcomment.value)
+			this.submitComment(form);
 		this.apiRequest("closePOIexec"
-			+ "?id="+encodeURIComponent(data.form.osbid.value)
+			+ "?id="+encodeURIComponent(id)
 			+ "&format=js", true
 		);
+	},
+
+	createCommentForm: function(elt) {
+		var form = L.DomUtil.create("form", 'osb-add-comment', elt);
+		var content = '';
+		content += '<input name="osbid" type="hidden"/>';
+		content += '<input name="osblat" type="hidden"/>';
+		content += '<input name="osblon" type="hidden"/>';
+		content += '<div><span class="osb-inputlabel">'+L.i18n('Comment')+':</span><input type="text" name="osbcomment"></div>';
+		content += '<div><span class="osb-inputlabel">'+L.i18n('Nickname')+':</span><input type="text" name="osbnickname"></div>';
+		content += '<div class="osb-formfooter"><input type="submit" name="ok"/><input type="button" name="cancel"/></div>';
+		form.innerHTML = content;
+		form.ok.value = L.i18n('OK');
+		form.cancel.value = L.i18n('Cancel');
+		form.osbnickname.value = this.options.username;
+		return form;
 	},
 
 	addBug: function(e) {
@@ -223,24 +252,16 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 
 		var popup = new L.Popup();
 		var _this = this;
-		var form = L.DomUtil.create('form', null, newContent);
-		var content = '';
-		content += '<table width="100%">';
-		content += '<input name="osblat" type="hidden"/>';
-		content += '<input name="osblon" type="hidden"/>';
-		content += '<tr><td>'+L.i18n("Nickname:")+'</td><td><input name="osbnickname" type="text"/></td></tr>';
-		content += '<tr><td>'+L.i18n("Comment:")+'</td><td><input name="osbcomment" type="text"/></td></tr>';
-		content += '<tr><td colspan="2" align="center"><input name="submit" type="submit"/></td></tr></table>';
-		form.innerHTML = content;
-		form.osbnickname.value = this.options.username;
+		var form = this.createCommentForm(newContent);
 		form.osblat.value = e.latlng.lat;
 		form.osblon.value = e.latlng.lng;
-		form.submit.value = L.i18n("Add comment");
+		form.ok.value = L.i18n("Add comment");
 		form.onsubmit = function(e) {
 			_this._map.closePopup(popup);
 			_this.createBug(form);
 			return false;
 		};
+		form.cancel.onclick = function(e) { _this._map.closePopup(popup); }
 
 		popup.setLatLng(e.latlng);
 		popup.setContent(newContent);
@@ -250,8 +271,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 	},
 
 	createBug: function(form) {
-		var nickname = form.osbnickname.value;
-		if (nickname=="") {nickname = this.options.username;}
+		var nickname = form.osbnickname.value || this.options.username;
 		this.apiRequest("addPOIexec"
 			+ "?lat="+encodeURIComponent(form.osblat.value)
 			+ "&lon="+encodeURIComponent(form.osblon.value)
