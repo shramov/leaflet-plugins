@@ -288,9 +288,10 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		var p = [ 'left='  + (x.lng - xdelta), 'bottom=' + (x.lat - ydelta)
 			, 'right=' + (x.lng + xdelta), 'top='    + (x.lat + ydelta)];
 		var url = 'http://localhost:8111/load_and_zoom?' + p.join('&');
-		var frame = L.DomUtil.create('iframe', null, document.body);
-		frame.style.width = frame.style.height = "0px";
+		var frame = L.DomUtil.create('iframe', null);
+		frame.style.display = 'none';
 		frame.src = url;
+		document.body.appendChild(frame);
 		frame.onload = function(e) { document.body.removeChild(frame); };
 		return false;
 	}
