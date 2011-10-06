@@ -6,7 +6,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		username : "NoName",
 		cookieLifetime : 1000,
 		cookiePath : null,
-		permalinkURL : "http://www.openstreetmap.org/",
+		permalinkZoom : 14,
 		opacity : 0.7,
 		showOpen: true,
 		showClosed: true,
@@ -128,6 +128,9 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		this.bugs[id] = feature;
 		this.setPopupContent(id);
 
+		if (this.options.bugid && (parseInt(this.options.bugid) == id))
+			feature.openPopup();
+
 		//this.events.triggerEvent("markerAdded");
 	},
 
@@ -206,8 +209,17 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 			a = create_link(ul, "Mark as Fixed");
 			a.onclick = function(e) { return showComment("Close bug", false); }
 		}
-		var a = create_link(ul, "Edit in JOSM");
+		var a = create_link(ul, "JOSM");
 		a.onclick = function() { _this.remoteEdit(rawbug[0]); };
+
+		var a = create_link(ul, "Link");
+		a.href = location.protocol + '//' + location.host + location.pathname +
+				L.Util.getParamString({lat:rawbug[0].lat
+						      ,lon:rawbug[0].lng
+						      ,zoom:this.options.permalinkZoom
+						      ,bugid:id
+						      })
+
 
 		bug._popup_content = newContent;
 		bug.bindPopup(newContent);
