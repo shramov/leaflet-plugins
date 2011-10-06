@@ -8,6 +8,8 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		cookiePath : null,
 		permalinkURL : "http://www.openstreetmap.org/",
 		opacity : 0.7,
+		showOpen: true,
+		showClosed: true,
 		iconOpen: "http://openstreetbugs.schokokeks.org/client/open_bug_marker.png",
 		iconClosed:"http://openstreetbugs.schokokeks.org/client/closed_bug_marker.png",
 		editArea: 0.01,
@@ -114,9 +116,14 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 				return;
 		}
 
+		var closed = bug[2];
+
+		if (closed && !this.options.showClosed) return;
+		if (!closed && !this.options.showOpen) return;
+
 		var icon_url = bug[2] ? this.options.iconClosed : this.options.iconOpen;
 		var feature = new L.Marker(bug[0], {icon:new this.osbIcon(icon_url)});
-		feature.osb = {id: id, closed: bug[2]};
+		feature.osb = {id: id, closed: closed};
 		this.addLayer(feature);
 		this.bugs[id] = feature;
 		this.setPopupContent(id);
