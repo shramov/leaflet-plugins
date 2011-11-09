@@ -7,6 +7,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		cookieLifetime : 1000,
 		cookiePath : null,
 		permalinkZoom : 14,
+		permalinkUrl: null,
 		opacity : 0.7,
 		showOpen: true,
 		showClosed: true,
@@ -222,12 +223,12 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		a.onclick = function() { _this.remoteEdit(rawbug[0]); };
 
 		var a = create_link(ul, "Link");
-		a.href = location.protocol + '//' + location.host + location.pathname +
-				L.Util.getParamString({lat:rawbug[0].lat
-						      ,lon:rawbug[0].lng
-						      ,zoom:this.options.permalinkZoom
-						      ,bugid:id
-						      })
+		var vars = {lat:rawbug[0].lat, lon:rawbug[0].lng, zoom:this.options.permalinkZoom, bugid:id}
+		if (this.options.permalinkUrl)
+			a.href = L.Util.template(this.options.permalinkUrl, vars)
+		else
+			a.href = location.protocol + '//' + location.host + location.pathname +
+				L.Util.getParamString(vars)
 
 
 		bug._popup_content = newContent;
