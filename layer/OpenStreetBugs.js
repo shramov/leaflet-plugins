@@ -193,6 +193,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 			var form = _this.createCommentForm();
 			form.osbid.value = id;
 			form.cancel.onclick = function (e) {
+				h1.textContent = h1.textContent_old;
 				newContent.removeChild(form);
 				newContent.appendChild(ul);
 			}
@@ -236,6 +237,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 	},
 
 	submitComment: function(form) {
+		if (!form.osbcomment.value) return;
 		var nickname = form.osbnickname.value || this.options.username;
 		this.apiRequest("editPOIexec"
 			+ "?id="+encodeURIComponent(form.osbid.value)
@@ -248,8 +250,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 
 	closeBug: function(form) {
 		var id = form.osbid.value;
-		if (form.osbcomment.value)
-			this.submitComment(form);
+		this.submitComment(form);
 		this.apiRequest("closePOIexec"
 			+ "?id="+encodeURIComponent(id)
 			+ "&format=js", true
@@ -298,6 +299,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 	},
 
 	createBug: function(form) {
+		if (!form.osbcomment.value) return;
 		var nickname = form.osbnickname.value || this.options.username;
 		this.apiRequest("addPOIexec"
 			+ "?lat="+encodeURIComponent(form.osblat.value)
