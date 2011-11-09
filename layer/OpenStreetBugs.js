@@ -372,8 +372,6 @@ function putAJAXMarker(id, lon, lat, text, closed)
 		putAJAXMarker.layers[i].createMarker(id, force);
 }
 
-L.i18n = function(s) { return s; }
-
 function osbResponse(error)
 {
 	if(error)
@@ -405,4 +403,21 @@ L.Marker.include({
 		this.on("mouseout", onout, this);
 		this.on("click", onclick, this);
 	},
+});
+
+L.i18n = function(s) { return (L.i18n.lang[L.i18n.current] || {})[s] || s; }
+L.i18n.current = 'en';
+L.i18n.lang = {};
+L.i18n.extend = function(lang, args) {
+	L.i18n.lang[lang] = L.Util.extend(L.i18n.lang[lang] || {}, args)
+};
+
+L.i18n.extend('ru', {
+	"Fixed Error":"Исправленная ошибка",
+	"Unresolved Error":"Ошибка",
+	"Description":"Описание",
+	"Comment":"Коментарий",
+	"Add comment":"Дополнить",
+	"Mark as Fixed":"Исправлено",
+	"Link":"Ссылка",
 });
