@@ -12,7 +12,9 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		showClosed: true,
 		iconOpen: "http://openstreetbugs.schokokeks.org/client/open_bug_marker.png",
 		iconClosed:"http://openstreetbugs.schokokeks.org/client/closed_bug_marker.png",
+		iconActive: undefined,
 		editArea: 0.01,
+		popupOptions: {},
 	},
 
 	initialize : function(options)
@@ -121,7 +123,13 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		if (closed && !this.options.showClosed) return;
 		if (!closed && !this.options.showOpen) return;
 
-		var icon_url = bug[2] ? this.options.iconClosed : this.options.iconOpen;
+		var icon_url = null;
+		if (bug[2])
+			icon_url = this.options.iconClosed;
+		else if (bug[1].length == 1)
+			icon_url = this.options.iconOpen;
+		else
+			icon_url = this.options.iconActive || this.options.iconOpen;
 		var feature = new L.Marker(bug[0], {icon:new this.osbIcon(icon_url)});
 		feature.osb = {id: id, closed: closed};
 		this.addLayer(feature);
@@ -222,7 +230,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 
 
 		bug._popup_content = newContent;
-		bug.bindPopup(newContent);
+		bug.bindPopup(newContent, this.options.popupOptions);
 		bug._popup.options.maxWidth=400;
 		bug.on('mouseover', bug.openTempPopup, bug);
 	},
