@@ -390,11 +390,19 @@ putAJAXMarker.bugs = { };
 L.Marker.include({
 	openTempPopup: function() {
 		this.openPopup();
-		function onout() {
+		this.off('click', this.openPopup, this);
+
+		function onclick() {
 			this.off('mouseout', onout, this);
+			this.off('click', onclick, this);
+			this.on('click', this.openPopup, this)
+		}
+
+		function onout() {
+			onclick.call(this);
 			this.closePopup();
 		};
 		this.on("mouseout", onout, this);
-		this.on("click", function() { this.off('mouseout', onout, this); }, this);
+		this.on("click", onclick, this);
 	},
 });
