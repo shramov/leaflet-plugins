@@ -15,12 +15,15 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		iconClosed:"http://openstreetbugs.schokokeks.org/client/closed_bug_marker.png",
 		iconActive: undefined,
 		editArea: 0.01,
-		popupOptions: {},
+		popupOptions: {autoPan: false},
 	},
 
 	initialize : function(options)
 	{
-		L.Util.setOptions(this, options);
+		var tmp = L.Util.extend({}, this.options.popupOptions, (options || {}).popupOptions)
+		L.Util.setOptions(this, options)
+		this.options.popupOptions = tmp;
+
 		putAJAXMarker.layers.push(this);
 
 		this.bugs = {};
