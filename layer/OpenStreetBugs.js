@@ -62,7 +62,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 	set_cookie : function(name, value)
 	{
 		var expires = (new Date((new Date()).getTime() + 604800000)).toGMTString(); // one week from now
-		document.cookie = name+"="+escape(value)+";expires="+expires+";";
+		document.cookie = name+"="+escape(value)+";";
 	},
 
 	get_cookie : function(name)
