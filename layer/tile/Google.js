@@ -1,5 +1,5 @@
 /*
- * L.TileLayer is used for standard xyz-numbered tile layers.
+ * Google layer using Google Maps API
  */
 
 L.Google = L.Class.extend({
@@ -21,7 +21,7 @@ L.Google = L.Class.extend({
 	initialize: function(type, options) {
 		L.Util.setOptions(this, options);
 
-		this._type = google.maps.MapTypeId[type || 'SATELLITE'];
+		this._type = window.google.maps.MapTypeId[type || 'SATELLITE'];
 	},
 
 	onAdd: function(map, insertAtTheBottom) {
@@ -65,7 +65,7 @@ L.Google = L.Class.extend({
 	},
 
 	_initContainer: function() {
-		var tilePane = this._map._container
+		var tilePane = this._map._container,
 			first = tilePane.firstChild;
 
 		if (!this._container) {
@@ -84,8 +84,8 @@ L.Google = L.Class.extend({
 	},
 
 	_initMapObject: function() {
-		this._google_center = new google.maps.LatLng(0, 0);
-		var map = new google.maps.Map(this._container, {
+		this._google_center = new window.google.maps.LatLng(0, 0);
+		var map = new window.google.maps.Map(this._container, {
 		    center: this._google_center,
 		    zoom: 0,
 		    mapTypeId: this._type,
@@ -98,7 +98,7 @@ L.Google = L.Class.extend({
 		});
 
 		var _this = this;
-		this._reposition = google.maps.event.addListenerOnce(map, "center_changed", 
+		this._reposition = window.google.maps.event.addListenerOnce(map, "center_changed", 
 			function() { _this.onReposition(); });
 	
 		map.backgroundColor = '#ff0000';
@@ -119,12 +119,12 @@ L.Google = L.Class.extend({
 		var bounds = this._map.getBounds();
 		var ne = bounds.getNorthEast();
 		var sw = bounds.getSouthWest();
-		var google_bounds = new google.maps.LatLngBounds(
-			new google.maps.LatLng(sw.lat, sw.lng),
-			new google.maps.LatLng(ne.lat, ne.lng)
+		var google_bounds = new window.google.maps.LatLngBounds(
+			new window.google.maps.LatLng(sw.lat, sw.lng),
+			new window.google.maps.LatLng(ne.lat, ne.lng)
 		);
 		var center = this._map.getCenter();
-		var _center = new google.maps.LatLng(center.lat, center.lng);
+		var _center = new window.google.maps.LatLng(center.lat, center.lng);
 
 		this._google.setCenter(_center);
 		this._google.setZoom(this._map.getZoom());
@@ -138,10 +138,10 @@ L.Google = L.Class.extend({
 			return;
 		this._container.style.width = size.x;
 		this._container.style.height = size.y;
-		google.maps.event.trigger(this._google, "resize");
+		this.onReposition();
 	},
 
 	onReposition: function() {
-		//google.maps.event.trigger(this._google, "resize");
+		window.google.maps.event.trigger(this._google, "resize");
 	}
 });
