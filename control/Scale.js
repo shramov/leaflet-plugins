@@ -1,6 +1,6 @@
 L.Control.Scale = L.Class.extend({
 	options: {
-		position: L.Control.Position.BOTTOM_LEFT,
+		position: "bottomleft",
 		useCanvas: null,
 		width: 100,
 	},
@@ -31,6 +31,7 @@ L.Control.Scale = L.Class.extend({
 		}
 		map.on('moveend', this._update, this);
 		this._update();
+		return this._container;
 	},
 
 	onRemove: function(map) {
