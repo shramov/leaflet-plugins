@@ -78,20 +78,35 @@ L.Yandex = L.Class.extend({
 
 	_initMapObject: function() {
 		if (this._yandex) return;
-		var map = new ymaps.Map(this._container, {center: [0,0], zoom: 0}); //, {ignoreResize: false, propagateEvents: true});
 
-		if (this.options.traffic) {
-			ymaps.load("traffic", function() {
-				var traffic = new ymaps.control.TrafficControl({shown: true});
-				map.controls.add(traffic);
-			});
+		// Check that ymaps.Map is ready
+		if (ymaps.Map === undefined) {
+			console.debug("L.Yandex: Waiting on ymaps.ready()");
+			return ymaps.ready(this._initMapObject, this);
 		}
 
-		if (this._type == "yandex#null")
+		// If traffic layer is requested check if control.TrafficControl is ready
+		if (this.options.traffic)
+			if (ymaps.control === undefined ||
+			    ymaps.control.TrafficControl === undefined) {
+				console.debug("L.Yandex: loading traffic and controls");
+				return ymaps.load(["package.traffic", "package.controls"],
+					this._initMapObject, this);
+			}
+
+		var map = new ymaps.Map(this._container, {center: [0,0], zoom: 0});
+
+		if (this.options.traffic)
+			map.controls.add(new ymaps.control.TrafficControl({shown: true}));
+
+		if (this._type == "yandex#null") {
 			this._type = new ymaps.MapType("null", []);
+			map.container.getElement().style.background = "transparent";
+		}
 		map.setType(this._type)
 
 		this._yandex = map;
+		this._update(true);
 	},
 
 	_resetCallback: function(e) {
@@ -103,6 +118,7 @@ L.Yandex = L.Class.extend({
 	},
 
 	_update: function(force) {
+		if (!this._yandex) return;
 		this._resize(force);
 
 		var center = this._map.getCenter();
