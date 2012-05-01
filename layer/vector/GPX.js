@@ -39,15 +39,17 @@ L.GPX = L.FeatureGroup.extend({
 
 L.Util.extend(L.GPX, {
 	parseGPX: function(xml, options) {
-		var i, el, layers = [];
-		var named = false;
+		var j, i, el, layers = [];
+		var named = false, tags = [['rte','rtept'], ['trkseg','trkpt']];
 
-		el = xml.getElementsByTagName('trkseg');
-		for (i = 0; i < el.length; i++) {
-			var l = this.parse_trkseg(el[i], xml, options);
-			if (!l) continue;
-			if (this.parse_name(el[i], l)) named = true;
-			layers.push(l);
+		for (j = 0; j < tags.length; j++) {
+			el = xml.getElementsByTagName(tags[j][0]);
+			for (i = 0; i < el.length; i++) {
+				var l = this.parse_trkseg(el[i], xml, options, tags[j][1]);
+				if (!l) continue;
+				if (this.parse_name(el[i], l)) named = true;
+				layers.push(l);
+			}
 		}
 
 		el = xml.getElementsByTagName('wpt');
@@ -81,8 +83,8 @@ L.Util.extend(L.GPX, {
 		return txt;
 	},
 
-	parse_trkseg: function(line, xml, options) {
-		var el = line.getElementsByTagName('trkpt');
+	parse_trkseg: function(line, xml, options, tag) {
+		var el = line.getElementsByTagName(tag);
 		if (!el.length) return;
 		var coords = [];
 		for (var i = 0; i < el.length; i++)
