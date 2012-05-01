@@ -109,5 +109,16 @@ L.BingLayer = L.TileLayer.extend({
 
 		return (sw2.lat <= ne.lat) && (sw2.lng <= ne.lng) &&
 				(sw.lat <= ne2.lat) && (sw.lng <= ne2.lng);
+	},
+
+	onRemove: function(map) {
+		for (var i = 0; i < this._providers.length; i++) {
+			var p = this._providers[i];
+			if (p.active) {
+				this._map.attributionControl.removeAttribution(p.attrib);
+				p.active = false;
+			}
+		}
+        	L.TileLayer.prototype.onRemove.apply(this, [map]);
 	}
 });
