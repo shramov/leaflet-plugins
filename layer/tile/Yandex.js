@@ -63,11 +63,16 @@ L.Yandex = L.Class.extend({
 
 		if (!this._container) {
 			this._container = L.DomUtil.create('div', 'leaflet-yandex-layer leaflet-top leaflet-left');
-			this._container.id = "_YMapContainer";
+			this._container.id = "_YMapContainer_" + L.Util.stamp(this);
 		}
 
-		if (this.options.overlay)
+		if (this.options.overlay) {
+			first = this._map._container.getElementsByClassName('leaflet-map-pane')[0];
 			first = first.nextSibling;
+			// XXX: Bug with layer order
+			if (L.Browser.opera)
+				this._container.className += " leaflet-objects-pane";
+		}
 		tilePane.insertBefore(this._container, first);
 
 		this.setOpacity(this.options.opacity);
