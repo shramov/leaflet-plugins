@@ -1,4 +1,4 @@
-L.Control.Scale = L.Class.extend({
+L.Control.Scale = L.Control.extend({
 	options: {
 		position: "bottomleft",
 		useCanvas: null,
