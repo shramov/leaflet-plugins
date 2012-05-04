@@ -81,8 +81,8 @@ L.Yandex = L.Class.extend({
 
 		// Check that ymaps.Map is ready
 		if (ymaps.Map === undefined) {
-			console.debug("L.Yandex: Waiting on ymaps.ready()");
-			return ymaps.ready(this._initMapObject, this);
+			console.debug("L.Yandex: Waiting on ymaps.load('package.map')");
+			return ymaps.load(["package.map"], this._initMapObject, this);
 		}
 
 		// If traffic layer is requested check if control.TrafficControl is ready
