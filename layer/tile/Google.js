@@ -21,7 +21,10 @@ L.Google = L.Class.extend({
 	initialize: function(type, options) {
 		L.Util.setOptions(this, options);
 
-		this._type = window.google.maps.MapTypeId[type || 'SATELLITE'];
+		this._ready = window.google.maps.Map != undefined;
+		if (!this._ready) L.Google.asyncWait.push(this);
+
+		this._type = type || 'SATELLITE';
 	},
 
 	onAdd: function(map, insertAtTheBottom) {
@@ -84,11 +87,12 @@ L.Google = L.Class.extend({
 	},
 
 	_initMapObject: function() {
+		if (!this._ready) return;
 		this._google_center = new window.google.maps.LatLng(0, 0);
 		var map = new window.google.maps.Map(this._container, {
 		    center: this._google_center,
 		    zoom: 0,
-		    mapTypeId: this._type,
+		    mapTypeId: window.google.maps.MapTypeId[this._type],
 		    disableDefaultUI: true,
 		    keyboardShortcuts: false,
 		    draggable: false,
@@ -114,6 +118,7 @@ L.Google = L.Class.extend({
 	},
 
 	_update: function() {
+		if (!this._google) return;
 		this._resize();
 
 		var bounds = this._map.getBounds();
@@ -142,6 +147,21 @@ L.Google = L.Class.extend({
 	},
 
 	onReposition: function() {
+		if (!this._google) return;
 		window.google.maps.event.trigger(this._google, "resize");
 	}
 });
+
+L.Google.asyncWait = [];
+L.Google.asyncInitialize = function() {
+	var i;
+	for (i = 0; i < L.Google.asyncWait.length; i++) {
+		var o = L.Google.asyncWait[i];
+		o._ready = true;
+		if (o._container) {
+			o._initMapObject();
+			o._update();
+		}
+	}
+	L.Google.asyncWait = [];
+}
