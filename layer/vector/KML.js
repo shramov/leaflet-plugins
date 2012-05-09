@@ -7,19 +7,36 @@ L.KML = L.FeatureGroup.extend({
 		this._layers = {};
 		
 		if (kml) {
-			this.addKML(kml);
+			this.addKML(kml, options, options.async);
 		}
 	},
 	
-	addKML: function(kml) {
+	loadXML: function(url, cb, options, async) {
+		if (async == undefined) async = this.options.async;
+		if (options == undefined) options = this.options;
+
 		var req = new window.XMLHttpRequest();
-		req.open('GET', kml, false);
+		req.open('GET', url, async);
 		req.overrideMimeType('text/xml');
+		req.onreadystatechange = function() {
+			if (req.readyState != 4) return;
+			if(req.status == 200) cb(req.responseXML, options);
+		};
 		req.send(null);
-		if (req.status != 200) return;
-		var layers = L.KML.parseKML(req.responseXML);
+	},
+
+	addKML: function(url, options, async) {
+		var _this = this;
+		var cb = function(gpx, options) { _this._addKML(gpx, options) };
+		this.loadXML(url, cb, options, async);
+	},
+
+	_addKML: function(xml, options) {
+		var layers = L.KML.parseKML(xml);
+		if (!layers || !layers.length) return;
 		for (var i = 0; i < layers.length; i++)
 			this.addLayer(layers[i]);
+		this.fire("loaded");
 	}
 });
 
