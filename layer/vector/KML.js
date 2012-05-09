@@ -88,8 +88,7 @@ L.Util.extend(L.KML, {
 			el = e.getElementsByTagName("IconStyle");
 			if (el && el[0]) ioptions = _parse(el[0]);
 			if (ioptions.href) {
-				var Icon = L.Icon.extend({iconUrl:ioptions.href,shadowUrl:null});
-				options.icon = new Icon();
+				options.icon = new L.Icon({iconUrl:ioptions.href});
 			}
 			style['#' + e.getAttribute('id')] = options;
 		}
