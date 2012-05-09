@@ -33,7 +33,9 @@ L.GPX = L.FeatureGroup.extend({
 
 	_addGPX: function(gpx, options) {
 		var layers = L.GPX.parseGPX(gpx, options);
-		if (layers) this.addLayer(layers);
+		if (!layers) return;
+		this.addLayer(layers);
+		this.fire("loaded");
 	}
 });
 
