@@ -28,7 +28,7 @@ Also there are some useful control plugins (`control/`):
 
 http://psha.org.ru/cgit/psha/leaflet-plugins.git
 
-или
+or
 
 http://github.com/shramov/leaflet-plugins.git
 
