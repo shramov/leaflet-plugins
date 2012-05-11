@@ -12,7 +12,7 @@ L.Control.Scale = L.Control.extend({
 	onAdd: function(map) {
 		this._map = map;
 
-		this._container = L.DomUtil.create('div', 'leaflet-control-attribution');
+		this._container = L.DomUtil.create('div', 'leaflet-control-attribution leaflet-control-scale');
 		this._label = L.DomUtil.create('div', null, this._container);
 		this._label.style.textAlign = 'right';
 
@@ -29,7 +29,7 @@ L.Control.Scale = L.Control.extend({
 			//this._canvas.style.width = 100;
 			//this._canvas.style.height = 5;
 		}
-		map.on('moveend', this._update, this);
+		map.on('zoomend', this._update, this);
 		this._update();
 		return this._container;
 	},
@@ -37,7 +37,7 @@ L.Control.Scale = L.Control.extend({
 	onRemove: function(map) {
 		map._container.removeChild(this._label);
 		map._container.removeChild(this._canvas);
-		map.off('moveend', this._reset);
+		map.off('zoomend', this._reset);
 	},
 
 	getPosition: function() {
