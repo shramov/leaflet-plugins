@@ -42,6 +42,8 @@ L.Google = L.Class.extend({
 		map.on('move', this._update, this);
 		//map.on('moveend', this._update, this);
 
+		map._controlCorners['bottomright'].style.marginBottom = "1em";
+
 		this._reset();
 		this._update();
 	},
@@ -53,6 +55,7 @@ L.Google = L.Class.extend({
 		this._map.off('viewreset', this._resetCallback, this);
 
 		this._map.off('move', this._update, this);
+		map._controlCorners['bottomright'].style.marginBottom = "0em";
 		//this._map.off('moveend', this._update, this);
 	},
 
