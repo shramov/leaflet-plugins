@@ -34,6 +34,8 @@ L.Yandex = L.Class.extend({
 		this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
 		map.on('move', this._update, this);
 
+		map._controlCorners['bottomright'].style.marginBottom = "3em";
+
 		this._reset();
 		this._update(true);
 	},
@@ -44,6 +46,8 @@ L.Yandex = L.Class.extend({
 		this._map.off('viewreset', this._resetCallback, this);
 
 		this._map.off('move', this._update, this);
+
+		map._controlCorners['bottomright'].style.marginBottom = "0em";
 	},
 
 	getAttribution: function() {
