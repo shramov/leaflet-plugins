@@ -3,7 +3,7 @@ L.Control.Permalink = L.Control.extend({
 		position: "bottomleft",
 		useAnchor: true,
 		useMarker: true,
-		markerOptions: {},
+		markerOptions: {}
 	},
 
 	initialize: function(layers, options) {
@@ -180,7 +180,7 @@ L.Control.Layers.include({
 			if (!obj.overlay && this._map.hasLayer(obj.layer))
 				return obj;
 		}
-	},
+	}
 });
 
 L.UrlUtil = {
