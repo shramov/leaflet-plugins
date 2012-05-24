@@ -17,7 +17,9 @@ L.KML = L.FeatureGroup.extend({
 
 		var req = new window.XMLHttpRequest();
 		req.open('GET', url, async);
-		req.overrideMimeType('text/xml');
+		try {
+			req.overrideMimeType('text/xml'); // unsupported by IE
+		} catch(e) {}
 		req.onreadystatechange = function() {
 			if (req.readyState != 4) return;
 			if(req.status == 200) cb(req.responseXML, options);
