@@ -182,17 +182,27 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 
 		var newContent = L.DomUtil.create('div', 'osb-popup');
 		var h1 = L.DomUtil.create('h1', null, newContent);
-		h1.textContent = isclosed ? L.i18n("Fixed Error") : L.i18n("Unresolved Error");
+		if (rawbug[2]) 
+			h1.textContent = L.i18n("Fixed Error");
+		else if (rawbug[1].length == 1)
+			h1.textContent = L.i18n("Unresolved Error");
+		else
+			h1.textContent = L.i18n("Active Error");
 
 		var divinfo = L.DomUtil.create('div', 'osb-info', newContent);
+		var table = L.DomUtil.create('table', 'osb-table', divinfo);
 		for(var i=0; i<rawbug[1].length; i++)
 		{
-			var cls = i == 0 ? "osb-description" : "osb-comment";
-			var p = L.DomUtil.create('p', cls, divinfo);
-			var b = L.DomUtil.create('b', cls, p);
-			b.textContent = i == 0 ? L.i18n("Description") : L.i18n("Comment");
-			b.textContent += ': ';
-			p.appendChild(document.createTextNode(rawbug[1][i]))
+			var tr = L.DomUtil.create('tr', "osb-tr-info", table);
+			tr.setAttribute("valign","top")
+			var td = L.DomUtil.create('td', "osb-td-nickname", tr);
+			td.textContent = rawbug[5][i] + ':';
+			var td = L.DomUtil.create('td', "osb-td-datetime", tr);
+			td.textContent = rawbug[6][i];
+			var td = L.DomUtil.create('td', "osb-td-comment", L.DomUtil.create('tr', "osb-tr-comment", table));
+			td.setAttribute("colspan","2");
+			td.setAttribute("charoff","2");
+			td.textContent = rawbug[4][i];
 		}
 
 		function create_link(ul, text) {
@@ -378,14 +388,36 @@ L.OpenStreetBugs.setCSS = function() {
 function putAJAXMarker(id, lon, lat, text, closed)
 {
 	var comments = text.split(/<hr \/>/);
-	for(var i=0; i<comments.length; i++)
+	var comments_only = []
+	var nickname = [];
+	var datetime = [];
+	var info = null;
+	var isplit = 0;
+	for(var i=0; i<comments.length; i++) {
+		info = null;
+		isplit = 0;
 		comments[i] = comments[i].replace(/&quot;/g, "\"").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
-	var old = putAJAXMarker.bugs[id]
+		isplit = comments[i].lastIndexOf("[");
+		if (isplit > 0) {
+		  comments_only[i] = comments[i].substr(0,isplit-1);
+		  info = comments[i].substr(isplit+1);
+		  nickname[i] = info.substr(0,info.lastIndexOf(","));
+		  datetime[i] = info.substr(info.lastIndexOf(",")+2);
+		  datetime[i] = datetime[i].substr(0,datetime[i].lastIndexOf("]"));
+		}
+		else {
+		  comments_only[i] = comments[i];
+		}
+	}
+	var old = putAJAXMarker.bugs[id];
 	putAJAXMarker.bugs[id] = [
 		new L.LatLng(lat, lon),
 		comments,
 		closed,
-		text
+		text,
+		comments_only,
+		nickname,
+		datetime
 	];
 	var force = (old && old[3]) != text;
 	for(var i=0; i<putAJAXMarker.layers.length; i++)
