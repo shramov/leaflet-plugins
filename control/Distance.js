@@ -1,6 +1,7 @@
 L.Control.Distance = L.Control.extend({
 	options: {
-		position: 'topleft'
+		position: 'topleft',
+		popups: true
 	},
 
 	initialize: function (options) {
@@ -73,8 +74,6 @@ L.Control.Distance = L.Control.extend({
 	},
 
 	_add_point: function (e) {
-		console.info("Add point");
-		console.info(e);
 		var len = this._line.getLatLngs().length;
 		this._line.addLatLng(e.latlng);
 		this._map.removeLayer(this._line);
@@ -101,15 +100,16 @@ L.Control.Distance = L.Control.extend({
 
 	_distance_calc: function(e) {
 		var ll = this._line.getLatLngs();
-		if (ll.length < 2) return 0;
 		var d = 0, p = null;
 		for (var i = 0; i < ll.length; i++) {
 			if (i)
 				d += p.distanceTo(ll[i]);
-			var m = this._line.editing._markers[i];
-			m.bindPopup(this._d2txt(d));
-			m.on('mouseover', m.openPopup, m);
-			m.on('mouseout', m.closePopup, m);
+			if (this.options.popups) {
+				var m = this._line.editing._markers[i];
+				m.bindPopup(this._d2txt(d));
+				m.on('mouseover', m.openPopup, m);
+				m.on('mouseout', m.closePopup, m);
+			}
 			p = ll[i];
 		}
 		return d;
