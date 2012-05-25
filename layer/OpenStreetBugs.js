@@ -426,18 +426,23 @@ L.Marker.include({
 });
 
 L.i18n = function(s) { return (L.i18n.lang[L.i18n.current] || {})[s] || s; }
-L.i18n.current = 'en';
+L.i18n.current = 'ru';
 L.i18n.lang = {};
 L.i18n.extend = function(lang, args) {
 	L.i18n.lang[lang] = L.Util.extend(L.i18n.lang[lang] || {}, args)
 };
 
 L.i18n.extend('ru', {
-	"Fixed Error":"Исправленная ошибка",
-	"Unresolved Error":"Ошибка",
+	"Fixed Error":"Ошибка исправлена",
+	"Unresolved Error":"Неисправленная ошибка",
+	"Active Error":"Ошибка уточняется",
 	"Description":"Описание",
-	"Comment":"Коментарий",
+	"Comment":"Описание",
 	"Add comment":"Дополнить",
 	"Mark as Fixed":"Исправлено",
 	"Link":"Ссылка",
+	"Cancel":"Отмена",
+	"New bug":"Я нашел ошибку",
+	"Find your bug?":"Нашли ошибку?",
+	"Contact details and someone will fix it.":"Напишите подробнее и кто-нибудь её исправит.",
 });
