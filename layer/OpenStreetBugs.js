@@ -147,11 +147,13 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 	},
 
 	osbIcon :  L.Icon.extend({
+		options: {
 			iconUrl: 'http://openstreetbugs.schokokeks.org/client/open_bug_marker.png',
 			iconSize: new L.Point(22, 22),
 			shadowSize: new L.Point(0, 0),
 			iconAnchor: new L.Point(11, 11),
 			popupAnchor: new L.Point(0, -11)
+		}
 	}),
 
 	setPopupContent: function(id) {
