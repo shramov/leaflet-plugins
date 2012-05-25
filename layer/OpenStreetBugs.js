@@ -134,7 +134,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 			icon_url = this.options.iconOpen;
 		else
 			icon_url = this.options.iconActive || this.options.iconOpen;
-		var feature = new L.Marker(bug[0], {icon:new this.osbIcon(icon_url)});
+		var feature = new L.Marker(bug[0], {icon:new this.osbIcon({iconUrl: icon_url})});
 		feature.osb = {id: id, closed: closed};
 		this.addLayer(feature);
 		this.bugs[id] = feature;
