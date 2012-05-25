@@ -294,8 +294,8 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		content += '<input name="osbid" type="hidden"/>';
 		content += '<input name="osblat" type="hidden"/>';
 		content += '<input name="osblon" type="hidden"/>';
-		content += '<div><span class="osb-inputlabel">'+L.i18n('Comment')+':</span><input type="text" name="osbcomment"></div>';
 		content += '<div><span class="osb-inputlabel">'+L.i18n('Nickname')+':</span><input type="text" name="osbnickname"></div>';
+		content += '<div><span class="osb-inputlabel">'+L.i18n('Comment')+':</span><input type="text" name="osbcomment"></div>';
 		content += '<div class="osb-formfooter"><input type="submit" name="ok"/><input type="button" name="cancel"/></div>';
 		form.innerHTML = content;
 		form.ok.value = L.i18n('OK');
@@ -307,7 +307,8 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 	addBug: function(e) {
 		var newContent = L.DomUtil.create('div', 'osb-popup');
 
-		newContent.innerHTML += '<h3 style="text-align: center; margin-bottom: 0pt;">'+L.i18n("New bug")+'</h3>';
+		newContent.innerHTML += '<h1>'+L.i18n("New bug")+'</h1>';
+		newContent.innerHTML += '<div class="osbCreateInfo">'+L.i18n("Find your bug?")+'<br />'+L.i18n("Contact details and someone will fix it.")+'</div>';
 
 		var popup = new L.Popup();
 		var _this = this;
@@ -324,7 +325,9 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 
 		popup.setLatLng(e.latlng);
 		popup.setContent(newContent);
-		popup.options.maxWidth=400;
+		popup.options.maxWidth=410;
+		popup.options.minWidth=410;
+		popup.options.className += ' osb osbCreate'
 
 		this._map.openPopup(popup);
 	},
