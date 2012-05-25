@@ -128,17 +128,31 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		if (!closed && !this.options.showOpen) return;
 
 		var icon_url = null;
-		if (bug[2])
+		var class_popup = ' osb';
+		if (bug[2]) {
 			icon_url = this.options.iconClosed;
-		else if (bug[1].length == 1)
+			class_popup += ' osbClosed';
+		}
+		else if (bug[1].length == 1) {
 			icon_url = this.options.iconOpen;
-		else
-			icon_url = this.options.iconActive || this.options.iconOpen;
+			class_popup += ' osbOpen';
+		}
+		else {
+		  if (this.options.iconActive) {
+		    icon_url = this.options.iconActive;
+		    class_popup += ' osbActive';
+		  }
+		  else {
+		    icon_url = this.options.iconOpen;
+		    class_popup += ' osbOpen';
+		  }
+		}
 		var feature = new L.Marker(bug[0], {icon:new this.osbIcon({iconUrl: icon_url})});
 		feature.osb = {id: id, closed: closed};
 		this.addLayer(feature);
 		this.bugs[id] = feature;
 		this.setPopupContent(id);
+		feature._popup.options.className += class_popup;
 
 		if (this.options.bugid && (parseInt(this.options.bugid) == id))
 			feature.openPopup();
