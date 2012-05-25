@@ -262,7 +262,8 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 
 		bug._popup_content = newContent;
 		bug.bindPopup(newContent, this.options.popupOptions);
-		bug._popup.options.maxWidth=400;
+		bug._popup.options.maxWidth=410;
+		bug._popup.options.minWidth=410;
 		bug.on('mouseover', bug.openTempPopup, bug);
 	},
 
