@@ -25,18 +25,22 @@
 }
 
 .leaflet-control-distance div {
+	font: 11px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
 	color: #333;
 	height: 16px;
 	margin-top: 5px;
+	white-space: nowrap;
 }
 
 .leaflet-control-distance-edit {
-	background-image: url('ruler.png') /* http://p.yusukekamiyamane.com/ */
+	/* http://openclipart.org/detail/114727/ftview-ruler-by-anonymous */
+	background-image: url('measure.png');
 }
 
 .leaflet-control-distance-delete {
 	margin-left: 5px;
-	background-image: url('cross.png') /* http://www.famfamfam.com/ */
+	/* Based on http://openclipart.org/detail/34729/architetto----tasto-8-by-anonymous */
+	background-image: url('cross.png');
 }
 
 a.leaflet-control-distance-active {
