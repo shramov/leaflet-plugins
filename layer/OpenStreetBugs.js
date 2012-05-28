@@ -18,6 +18,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		popupOptions: {autoPan: false},
 		fnOnAdd: undefined,
 		fnOnRemove: undefined,
+		OneClick: false
 	},
 
 	initialize : function(options)
@@ -45,8 +46,13 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		this._iterateLayers(map.addLayer, map);
 		this.loadBugs();
 		if (!this.options.readonly) {
-			map.doubleClickZoom.disable();
-			map.on('dblclick', this.addBug, this);
+		  if (this.options.OneClick) {
+			  map.on('click', this.addBug, this);
+		  }
+		  else {
+			  map.doubleClickZoom.disable();
+			  map.on('dblclick', this.addBug, this);
+			}
 		}
 		if (this.options.fnOnAdd) this.options.fnOnAdd();
 	},
@@ -57,8 +63,13 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		this._iterateLayers(map.removeLayer, map);
 		delete this._map;
 		if (!this.options.readonly) {
-			map.doubleClickZoom.enable();
-			map.off('dblclick', this.addBug, this);
+		  if (this.options.OneClick) {
+		    map.off('click', this.addBug, this);
+		  }
+		  else {
+			  map.doubleClickZoom.enable();
+			  map.off('dblclick', this.addBug, this);
+			}
 		}
 		if (this.options.fnOnRemove) this.options.fnOnRemove();
 	},
