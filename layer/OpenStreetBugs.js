@@ -16,6 +16,8 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		iconActive: undefined,
 		editArea: 0.01,
 		popupOptions: {autoPan: false},
+		fnOnAdd: undefined,
+		fnOnRemove: undefined,
 	},
 
 	initialize : function(options)
@@ -46,6 +48,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 			map.doubleClickZoom.disable();
 			map.on('dblclick', this.addBug, this);
 		}
+		if (this.options.fnOnAdd) this.options.fnOnAdd();
 	},
 
 	onRemove : function(map)
@@ -57,6 +60,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 			map.doubleClickZoom.enable();
 			map.off('dblclick', this.addBug, this);
 		}
+		if (this.options.fnOnRemove) this.options.fnOnRemove();
 	},
 
 	set_cookie : function(name, value)
