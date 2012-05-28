@@ -128,17 +128,31 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		if (!closed && !this.options.showOpen) return;
 
 		var icon_url = null;
-		if (bug[2])
+		var class_popup = ' osb';
+		if (bug[2]) {
 			icon_url = this.options.iconClosed;
-		else if (bug[1].length == 1)
+			class_popup += ' osbClosed';
+		}
+		else if (bug[1].length == 1) {
 			icon_url = this.options.iconOpen;
-		else
-			icon_url = this.options.iconActive || this.options.iconOpen;
+			class_popup += ' osbOpen';
+		}
+		else {
+		  if (this.options.iconActive) {
+		    icon_url = this.options.iconActive;
+		    class_popup += ' osbActive';
+		  }
+		  else {
+		    icon_url = this.options.iconOpen;
+		    class_popup += ' osbOpen';
+		  }
+		}
 		var feature = new L.Marker(bug[0], {icon:new this.osbIcon({iconUrl: icon_url})});
 		feature.osb = {id: id, closed: closed};
 		this.addLayer(feature);
 		this.bugs[id] = feature;
 		this.setPopupContent(id);
+		feature._popup.options.className += class_popup;
 
 		if (this.options.bugid && (parseInt(this.options.bugid) == id))
 			feature.openPopup();
@@ -168,17 +182,27 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 
 		var newContent = L.DomUtil.create('div', 'osb-popup');
 		var h1 = L.DomUtil.create('h1', null, newContent);
-		h1.textContent = isclosed ? L.i18n("Fixed Error") : L.i18n("Unresolved Error");
+		if (rawbug[2]) 
+			h1.textContent = L.i18n("Fixed Error");
+		else if (rawbug[1].length == 1)
+			h1.textContent = L.i18n("Unresolved Error");
+		else
+			h1.textContent = L.i18n("Active Error");
 
 		var divinfo = L.DomUtil.create('div', 'osb-info', newContent);
+		var table = L.DomUtil.create('table', 'osb-table', divinfo);
 		for(var i=0; i<rawbug[1].length; i++)
 		{
-			var cls = i == 0 ? "osb-description" : "osb-comment";
-			var p = L.DomUtil.create('p', cls, divinfo);
-			var b = L.DomUtil.create('b', cls, p);
-			b.textContent = i == 0 ? L.i18n("Description") : L.i18n("Comment");
-			b.textContent += ': ';
-			p.appendChild(document.createTextNode(rawbug[1][i]))
+			var tr = L.DomUtil.create('tr', "osb-tr-info", table);
+			tr.setAttribute("valign","top")
+			var td = L.DomUtil.create('td', "osb-td-nickname", tr);
+			td.textContent = rawbug[5][i] + ':';
+			var td = L.DomUtil.create('td', "osb-td-datetime", tr);
+			td.textContent = rawbug[6][i];
+			var td = L.DomUtil.create('td', "osb-td-comment", L.DomUtil.create('tr', "osb-tr-comment", table));
+			td.setAttribute("colspan","2");
+			td.setAttribute("charoff","2");
+			td.textContent = rawbug[4][i];
 		}
 
 		function create_link(ul, text) {
@@ -238,7 +262,8 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 
 		bug._popup_content = newContent;
 		bug.bindPopup(newContent, this.options.popupOptions);
-		bug._popup.options.maxWidth=400;
+		bug._popup.options.maxWidth=410;
+		bug._popup.options.minWidth=410;
 		bug.on('mouseover', bug.openTempPopup, bug);
 	},
 
@@ -269,8 +294,8 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		content += '<input name="osbid" type="hidden"/>';
 		content += '<input name="osblat" type="hidden"/>';
 		content += '<input name="osblon" type="hidden"/>';
-		content += '<div><span class="osb-inputlabel">'+L.i18n('Comment')+':</span><input type="text" name="osbcomment"></div>';
 		content += '<div><span class="osb-inputlabel">'+L.i18n('Nickname')+':</span><input type="text" name="osbnickname"></div>';
+		content += '<div><span class="osb-inputlabel">'+L.i18n('Comment')+':</span><input type="text" name="osbcomment"></div>';
 		content += '<div class="osb-formfooter"><input type="submit" name="ok"/><input type="button" name="cancel"/></div>';
 		form.innerHTML = content;
 		form.ok.value = L.i18n('OK');
@@ -282,7 +307,8 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 	addBug: function(e) {
 		var newContent = L.DomUtil.create('div', 'osb-popup');
 
-		newContent.innerHTML += '<h3 style="text-align: center; margin-bottom: 0pt;">'+L.i18n("New bug")+'</h3>';
+		newContent.innerHTML += '<h1>'+L.i18n("New bug")+'</h1>';
+		newContent.innerHTML += '<div class="osbCreateInfo">'+L.i18n("Find your bug?")+'<br />'+L.i18n("Contact details and someone will fix it.")+'</div>';
 
 		var popup = new L.Popup();
 		var _this = this;
@@ -299,7 +325,9 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 
 		popup.setLatLng(e.latlng);
 		popup.setContent(newContent);
-		popup.options.maxWidth=400;
+		popup.options.maxWidth=410;
+		popup.options.minWidth=410;
+		popup.options.className += ' osb osbCreate'
 
 		this._map.openPopup(popup);
 	},
@@ -364,14 +392,36 @@ L.OpenStreetBugs.setCSS = function() {
 function putAJAXMarker(id, lon, lat, text, closed)
 {
 	var comments = text.split(/<hr \/>/);
-	for(var i=0; i<comments.length; i++)
+	var comments_only = []
+	var nickname = [];
+	var datetime = [];
+	var info = null;
+	var isplit = 0;
+	for(var i=0; i<comments.length; i++) {
+		info = null;
+		isplit = 0;
 		comments[i] = comments[i].replace(/&quot;/g, "\"").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
-	var old = putAJAXMarker.bugs[id]
+		isplit = comments[i].lastIndexOf("[");
+		if (isplit > 0) {
+		  comments_only[i] = comments[i].substr(0,isplit-1);
+		  info = comments[i].substr(isplit+1);
+		  nickname[i] = info.substr(0,info.lastIndexOf(","));
+		  datetime[i] = info.substr(info.lastIndexOf(",")+2);
+		  datetime[i] = datetime[i].substr(0,datetime[i].lastIndexOf("]"));
+		}
+		else {
+		  comments_only[i] = comments[i];
+		}
+	}
+	var old = putAJAXMarker.bugs[id];
 	putAJAXMarker.bugs[id] = [
 		new L.LatLng(lat, lon),
 		comments,
 		closed,
-		text
+		text,
+		comments_only,
+		nickname,
+		datetime
 	];
 	var force = (old && old[3]) != text;
 	for(var i=0; i<putAJAXMarker.layers.length; i++)
@@ -412,18 +462,23 @@ L.Marker.include({
 });
 
 L.i18n = function(s) { return (L.i18n.lang[L.i18n.current] || {})[s] || s; }
-L.i18n.current = 'en';
+L.i18n.current = 'ru';
 L.i18n.lang = {};
 L.i18n.extend = function(lang, args) {
 	L.i18n.lang[lang] = L.Util.extend(L.i18n.lang[lang] || {}, args)
 };
 
 L.i18n.extend('ru', {
-	"Fixed Error":"Исправленная ошибка",
-	"Unresolved Error":"Ошибка",
+	"Fixed Error":"Ошибка исправлена",
+	"Unresolved Error":"Неисправленная ошибка",
+	"Active Error":"Ошибка уточняется",
 	"Description":"Описание",
-	"Comment":"Коментарий",
+	"Comment":"Описание",
 	"Add comment":"Дополнить",
 	"Mark as Fixed":"Исправлено",
 	"Link":"Ссылка",
+	"Cancel":"Отмена",
+	"New bug":"Я нашел ошибку",
+	"Find your bug?":"Нашли ошибку?",
+	"Contact details and someone will fix it.":"Напишите подробнее и кто-нибудь её исправит.",
 });
