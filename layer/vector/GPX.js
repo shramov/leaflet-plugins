@@ -34,14 +34,12 @@ L.GPX = L.FeatureGroup.extend({
 	},
 
 	_addGPX: function(gpx, options) {
-		var layers = L.GPX.parseGPX(gpx, options);
+		var layers = this.parseGPX(gpx, options);
 		if (!layers) return;
 		this.addLayer(layers);
 		this.fire("loaded");
-	}
-});
+	},
 
-L.Util.extend(L.GPX, {
 	parseGPX: function(xml, options) {
 		var j, i, el, layers = [];
 		var named = false, tags = [['rte','rtept'], ['trkseg','trkpt']];
@@ -50,9 +48,10 @@ L.Util.extend(L.GPX, {
 			el = xml.getElementsByTagName(tags[j][0]);
 			for (i = 0; i < el.length; i++) {
 				var l = this.parse_trkseg(el[i], xml, options, tags[j][1]);
-				if (!l) continue;
-				if (this.parse_name(el[i], l)) named = true;
-				layers.push(l);
+				for (var k = 0; k < l.length; k++) {
+					if (this.parse_name(el[i], l[k])) named = true;
+					layers.push(l[k]);
+				}
 			}
 		}
 
@@ -68,7 +67,7 @@ L.Util.extend(L.GPX, {
 		var layer = layers[0];
 		if (layers.length > 1) 
 			layer = new L.FeatureGroup(layers);
-		if (!named) this.parse_name(xml, layer);
+		//if (!named) this.parse_name(xml, layer);
 		return layer;
 	},
 
@@ -83,22 +82,35 @@ L.Util.extend(L.GPX, {
 		}
 		if (!name) return;
 		var txt = "<h2>" + name + "</h2>" + descr;
-		if (layer) layer.bindPopup(txt);
+		if (layer && layer._popup === undefined) layer.bindPopup(txt);
 		return txt;
 	},
 
 	parse_trkseg: function(line, xml, options, tag) {
 		var el = line.getElementsByTagName(tag);
-		if (!el.length) return;
+		if (!el.length) return [];
 		var coords = [];
-		for (var i = 0; i < el.length; i++)
-			coords.push(new L.LatLng(el[i].getAttribute('lat'),
-						el[i].getAttribute('lon')));
-		return new L.Polyline(coords, options);
+		for (var i = 0; i < el.length; i++) {
+			var ll = new L.LatLng(el[i].getAttribute('lat'),
+						el[i].getAttribute('lon'));
+			ll.meta = {};
+			for (var j in el[i].childNodes) {
+				var e = el[i].childNodes[j];
+				if (!e.tagName) continue;
+				ll.meta[e.tagName] = e.textContent;
+			}
+			coords.push(ll);
+		}
+		var l = [new L.Polyline(coords, options)];
+		this.fire('addline', {line:l})
+		console.info(l);
+		return l;
 	},
 
 	parse_wpt: function(e, xml, options) {
-		return new L.Marker(new L.LatLng(e.getAttribute('lat'),
+		var m = new L.Marker(new L.LatLng(e.getAttribute('lat'),
 						e.getAttribute('lon')), options);
+		this.fire('addpoint', {point:m});
+		return m;
 	}
 });
