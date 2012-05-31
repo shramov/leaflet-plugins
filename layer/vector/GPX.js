@@ -103,7 +103,6 @@ L.GPX = L.FeatureGroup.extend({
 		}
 		var l = [new L.Polyline(coords, options)];
 		this.fire('addline', {line:l})
-		console.info(l);
 		return l;
 	},
 
