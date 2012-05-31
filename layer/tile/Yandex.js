@@ -61,6 +61,11 @@ L.Yandex = L.Class.extend({
 		}
 	},
 
+	setElementSize: function(e, size) {
+		e.style.width = size.x + "px";
+		e.style.height = size.y + "px";
+	},
+
 	_initContainer: function() {
 		var tilePane = this._map._container
 			first = tilePane.firstChild;
@@ -80,9 +85,7 @@ L.Yandex = L.Class.extend({
 		tilePane.insertBefore(this._container, first);
 
 		this.setOpacity(this.options.opacity);
-		var size = this._map.getSize();
-		this._container.style.width = size.x;
-		this._container.style.height = size.y;
+		this.setElementSize(this._container, this._map.getSize());
 	},
 
 	_initMapObject: function() {
@@ -144,8 +147,7 @@ L.Yandex = L.Class.extend({
 		if (style.width == size.x + "px" &&
 		    style.height == size.y + "px")
 			if (force != true) return;
-		style.width = size.x;
-		style.height = size.y;
+		this.setElementSize(this._container, size);
 		var b = this._map.getBounds(), sw = b.getSouthWest(), ne = b.getNorthEast();
 		this._yandex.container.fitToViewport();
 	}
