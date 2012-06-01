@@ -1,6 +1,7 @@
 /*
  * L.TileLayer is used for standard xyz-numbered tile layers.
  */
+(function (ymaps, L) {
 
 L.Yandex = L.Class.extend({
 	includes: L.Mixin.Events,
@@ -10,10 +11,10 @@ L.Yandex = L.Class.extend({
 		maxZoom: 18,
 		attribution: '',
 		opacity: 1,
-		traffic: false,
+		traffic: false
 	},
 
-	// Possible types: SATELLITE, ROADMAP, HYBRID
+	// Possible types: map, satellite, hybrid, publicMap, publicMapHybrid
 	initialize: function(type, options) {
 		L.Util.setOptions(this, options);
 
@@ -67,7 +68,7 @@ L.Yandex = L.Class.extend({
 	},
 
 	_initContainer: function() {
-		var tilePane = this._map._container
+		var tilePane = this._map._container,
 			first = tilePane.firstChild;
 
 		if (!this._container) {
@@ -106,7 +107,7 @@ L.Yandex = L.Class.extend({
 					this._initMapObject, this);
 			}
 
-		var map = new ymaps.Map(this._container, {center: [0,0], zoom: 0});
+		var map = new ymaps.Map(this._container, {center: [0,0], zoom: 0, behaviors: []});
 
 		if (this.options.traffic)
 			map.controls.add(new ymaps.control.TrafficControl({shown: true}));
@@ -152,3 +153,4 @@ L.Yandex = L.Class.extend({
 		this._yandex.container.fitToViewport();
 	}
 });
+})(ymaps, L)
