@@ -1,6 +1,7 @@
 /*
  * Google layer using Google Maps API
  */
+(function (google, L) {
 
 L.Google = L.Class.extend({
 	includes: L.Mixin.Events,
@@ -14,14 +15,14 @@ L.Google = L.Class.extend({
 		attribution: '',
 		opacity: 1,
 		continuousWorld: false,
-		noWrap: false,
+		noWrap: false
 	},
 
-	// Possible types: SATELLITE, ROADMAP, HYBRID
+	// Possible types: SATELLITE, ROADMAP, HYBRID, TERRAIN
 	initialize: function(type, options) {
 		L.Util.setOptions(this, options);
 
-		this._ready = window.google.maps.Map != undefined;
+		this._ready = google.maps.Map != undefined;
 		if (!this._ready) L.Google.asyncWait.push(this);
 
 		this._type = type || 'SATELLITE';
@@ -94,11 +95,11 @@ L.Google = L.Class.extend({
 
 	_initMapObject: function() {
 		if (!this._ready) return;
-		this._google_center = new window.google.maps.LatLng(0, 0);
-		var map = new window.google.maps.Map(this._container, {
+		this._google_center = new google.maps.LatLng(0, 0);
+		var map = new google.maps.Map(this._container, {
 		    center: this._google_center,
 		    zoom: 0,
-		    mapTypeId: window.google.maps.MapTypeId[this._type],
+		    mapTypeId: google.maps.MapTypeId[this._type],
 		    disableDefaultUI: true,
 		    keyboardShortcuts: false,
 		    draggable: false,
@@ -108,9 +109,9 @@ L.Google = L.Class.extend({
 		});
 
 		var _this = this;
-		this._reposition = window.google.maps.event.addListenerOnce(map, "center_changed", 
+		this._reposition = google.maps.event.addListenerOnce(map, "center_changed",
 			function() { _this.onReposition(); });
-	
+
 		map.backgroundColor = '#ff0000';
 		this._google = map;
 	},
@@ -130,12 +131,12 @@ L.Google = L.Class.extend({
 		var bounds = this._map.getBounds();
 		var ne = bounds.getNorthEast();
 		var sw = bounds.getSouthWest();
-		var google_bounds = new window.google.maps.LatLngBounds(
-			new window.google.maps.LatLng(sw.lat, sw.lng),
-			new window.google.maps.LatLng(ne.lat, ne.lng)
+		var google_bounds = new google.maps.LatLngBounds(
+			new google.maps.LatLng(sw.lat, sw.lng),
+			new google.maps.LatLng(ne.lat, ne.lng)
 		);
 		var center = this._map.getCenter();
-		var _center = new window.google.maps.LatLng(center.lat, center.lng);
+		var _center = new google.maps.LatLng(center.lat, center.lng);
 
 		this._google.setCenter(_center);
 		this._google.setZoom(this._map.getZoom());
@@ -153,7 +154,7 @@ L.Google = L.Class.extend({
 
 	onReposition: function() {
 		if (!this._google) return;
-		window.google.maps.event.trigger(this._google, "resize");
+		google.maps.event.trigger(this._google, "resize");
 	}
 });
 
@@ -170,3 +171,4 @@ L.Google.asyncInitialize = function() {
 	}
 	L.Google.asyncWait = [];
 }
+})(window.google, L)
