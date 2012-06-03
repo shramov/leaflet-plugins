@@ -16,8 +16,6 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		iconActive: undefined,
 		editArea: 0.01,
 		popupOptions: {autoPan: false},
-		fnOnAdd: undefined,
-		fnOnRemove: undefined,
 		dblClick: true
 	},
 
@@ -54,7 +52,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 			  map.on('click', this.addBug, this);
 			}
 		}
-		if (this.options.fnOnAdd) this.options.fnOnAdd();
+		this.fire('add');
 	},
 
 	onRemove : function(map)
@@ -71,7 +69,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		    map.off('click', this.addBug, this);
 			}
 		}
-		if (this.options.fnOnRemove) this.options.fnOnRemove();
+		this.fire('remove');
 	},
 
 	set_cookie : function(name, value)
