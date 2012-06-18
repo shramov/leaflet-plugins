@@ -203,6 +203,17 @@ L.UrlUtil = {
 		if (idx < 0)
 			return '';
 		return href.slice(idx+1);
+	},
+
+	hash: function() { return window.location.hash.slice(1) },
+
+	updateParamString: function (q, obj) {
+		var p = L.UrlUtil.queryParse(q);
+		for (var i in obj) {
+			if (obj.hasOwnProperty(i))
+				p[i] = obj[i];
+		}
+		return L.Util.getParamString(p).slice(1);
 	}
 };
 
