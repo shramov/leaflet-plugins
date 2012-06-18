@@ -1,6 +1,7 @@
 /*
  * L.TileLayer is used for standard xyz-numbered tile layers.
  */
+(function (ymaps, L) {
 
 L.Yandex = L.Class.extend({
 	includes: L.Mixin.Events,
@@ -10,10 +11,10 @@ L.Yandex = L.Class.extend({
 		maxZoom: 18,
 		attribution: '',
 		opacity: 1,
-		traffic: false,
+		traffic: false
 	},
 
-	// Possible types: SATELLITE, ROADMAP, HYBRID
+	// Possible types: map, satellite, hybrid, publicMap, publicMapHybrid
 	initialize: function(type, options) {
 		L.Util.setOptions(this, options);
 
@@ -61,8 +62,13 @@ L.Yandex = L.Class.extend({
 		}
 	},
 
+	setElementSize: function(e, size) {
+		e.style.width = size.x + "px";
+		e.style.height = size.y + "px";
+	},
+
 	_initContainer: function() {
-		var tilePane = this._map._container
+		var tilePane = this._map._container,
 			first = tilePane.firstChild;
 
 		if (!this._container) {
@@ -80,9 +86,7 @@ L.Yandex = L.Class.extend({
 		tilePane.insertBefore(this._container, first);
 
 		this.setOpacity(this.options.opacity);
-		var size = this._map.getSize();
-		this._container.style.width = size.x;
-		this._container.style.height = size.y;
+		this.setElementSize(this._container, this._map.getSize());
 	},
 
 	_initMapObject: function() {
@@ -103,7 +107,7 @@ L.Yandex = L.Class.extend({
 					this._initMapObject, this);
 			}
 
-		var map = new ymaps.Map(this._container, {center: [0,0], zoom: 0});
+		var map = new ymaps.Map(this._container, {center: [0,0], zoom: 0, behaviors: []});
 
 		if (this.options.traffic)
 			map.controls.add(new ymaps.control.TrafficControl({shown: true}));
@@ -144,9 +148,9 @@ L.Yandex = L.Class.extend({
 		if (style.width == size.x + "px" &&
 		    style.height == size.y + "px")
 			if (force != true) return;
-		style.width = size.x;
-		style.height = size.y;
+		this.setElementSize(this._container, size);
 		var b = this._map.getBounds(), sw = b.getSouthWest(), ne = b.getNorthEast();
 		this._yandex.container.fitToViewport();
 	}
 });
+})(ymaps, L)

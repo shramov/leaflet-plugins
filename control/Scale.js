@@ -2,7 +2,7 @@ L.Control.Scale = L.Control.extend({
 	options: {
 		position: "bottomleft",
 		useCanvas: null,
-		width: 100,
+		width: 100
 	},
 
 	initialize: function(options) {
