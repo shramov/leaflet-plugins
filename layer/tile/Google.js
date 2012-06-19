@@ -1,6 +1,14 @@
 /*
- * Google layer using Google Maps API
+ * Google layer using Google Maps API v3
  */
+(function (W, L) {
+
+var maps,
+	debug = function() {
+		if (W.console && W.console.debug) {
+			W.console.log.apply(W.console, arguments)
+		}
+	};
 
 L.Google = L.Class.extend({
 	includes: L.Mixin.Events,
@@ -9,20 +17,25 @@ L.Google = L.Class.extend({
 		minZoom: 0,
 		maxZoom: 18,
 		tileSize: 256,
-		subdomains: 'abc',
 		errorTileUrl: '',
 		attribution: '',
 		opacity: 1,
 		continuousWorld: false,
-		noWrap: false,
+		noWrap: false
 	},
 
-	// Possible types: SATELLITE, ROADMAP, HYBRID
+	statics: {
+		url: 'http://maps.google.com/maps/api/js?v=3.2&sensor=false&callback=L.Google.initialize',
+		initialize: function() {
+			// fake method
+		}
+	},
+
+	_google: null,
+
+	// Possible types: SATELLITE, ROADMAP, HYBRID, TERRAIN
 	initialize: function(type, options) {
 		L.Util.setOptions(this, options);
-
-		this._ready = window.google.maps.Map != undefined;
-		if (!this._ready) L.Google.asyncWait.push(this);
 
 		this._type = type || 'SATELLITE';
 	},
@@ -43,9 +56,6 @@ L.Google = L.Class.extend({
 		//map.on('moveend', this._update, this);
 
 		map._controlCorners['bottomright'].style.marginBottom = "1em";
-
-		this._reset();
-		this._update();
 	},
 
 	onRemove: function(map) {
@@ -93,12 +103,58 @@ L.Google = L.Class.extend({
 	},
 
 	_initMapObject: function() {
-		if (!this._ready) return;
-		this._google_center = new window.google.maps.LatLng(0, 0);
-		var map = new window.google.maps.Map(this._container, {
-		    center: this._google_center,
+		if (this._google) {
+			return;
+		}
+
+		if (typeof W.google == 'undefined') {
+			debug("L.Google: dynamically load script");
+
+			var script = document.createElement('script'),
+				head = document.head || document.getElementsByTagName('head')[0] || document.documentElement,
+				callback = L.Util.bind(this._initMapObject, this);
+
+			script.type = 'text/javascript';
+			script.async = 'async';
+			script.src = L.Google.url;
+
+			script.onload = script.onreadystatechange = function(_, isAbort) {
+				if (isAbort || !script.readyState || /loaded|complete/.test(script.readyState)) {
+					// Handle memory leak in IE
+					script.onload = script.onreadystatechange = null;
+
+					// Remove the script
+					if (head && script.parentNode ) {
+						head.removeChild(script);
+					}
+
+					// Dereference the script
+					script = undefined;
+
+					// Callback if not abort
+					if (!isAbort) {
+						callback();
+					}
+				}
+			};
+
+			head.insertBefore( script, head.firstChild );
+
+			return;
+		}
+
+		maps = W.google.maps;
+
+		if (maps.Map === undefined) {
+			W.setTimeout(L.Util.bind(this._initMapObject, this), 100);
+
+			return;
+		}
+
+		var map = new maps.Map(this._container, {
+		    center: new maps.LatLng(0, 0),
 		    zoom: 0,
-		    mapTypeId: window.google.maps.MapTypeId[this._type],
+		    mapTypeId: maps.MapTypeId[this._type],
 		    disableDefaultUI: true,
 		    keyboardShortcuts: false,
 		    draggable: false,
@@ -107,12 +163,13 @@ L.Google = L.Class.extend({
 		    streetViewControl: false
 		});
 
-		var _this = this;
-		this._reposition = window.google.maps.event.addListenerOnce(map, "center_changed", 
-			function() { _this.onReposition(); });
-	
+		this._reposition = maps.event.addListenerOnce(map, "center_changed", L.Util.bind(this.onReposition, this));
+
 		map.backgroundColor = '#ff0000';
 		this._google = map;
+
+		this._reset();
+		this._update();
 	},
 
 	_resetCallback: function(e) {
@@ -124,18 +181,20 @@ L.Google = L.Class.extend({
 	},
 
 	_update: function() {
-		if (!this._google) return;
+		if (!this._google) {
+			return;
+		}
 		this._resize();
 
 		var bounds = this._map.getBounds();
 		var ne = bounds.getNorthEast();
 		var sw = bounds.getSouthWest();
-		var google_bounds = new window.google.maps.LatLngBounds(
-			new window.google.maps.LatLng(sw.lat, sw.lng),
-			new window.google.maps.LatLng(ne.lat, ne.lng)
+		var google_bounds = new maps.LatLngBounds(
+			new maps.LatLng(sw.lat, sw.lng),
+			new maps.LatLng(ne.lat, ne.lng)
 		);
 		var center = this._map.getCenter();
-		var _center = new window.google.maps.LatLng(center.lat, center.lng);
+		var _center = new maps.LatLng(center.lat, center.lng);
 
 		this._google.setCenter(_center);
 		this._google.setZoom(this._map.getZoom());
@@ -144,29 +203,20 @@ L.Google = L.Class.extend({
 
 	_resize: function() {
 		var size = this._map.getSize();
-		if (this._container.style.width == size.x &&
-		    this._container.style.height == size.y)
+		if (this._container.style.width == size.x && this._container.style.height == size.y) {
 			return;
+		}
+
 		this.setElementSize(this._container, size);
 		this.onReposition();
 	},
 
 	onReposition: function() {
-		if (!this._google) return;
-		window.google.maps.event.trigger(this._google, "resize");
+		if (!this._google) {
+			return;
+		}
+		maps.event.trigger(this._google, "resize");
 	}
 });
 
-L.Google.asyncWait = [];
-L.Google.asyncInitialize = function() {
-	var i;
-	for (i = 0; i < L.Google.asyncWait.length; i++) {
-		var o = L.Google.asyncWait[i];
-		o._ready = true;
-		if (o._container) {
-			o._initMapObject();
-			o._update();
-		}
-	}
-	L.Google.asyncWait = [];
-}
+})(window, L);
