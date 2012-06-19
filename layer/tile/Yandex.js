@@ -1,6 +1,14 @@
 /*
- * L.TileLayer is used for standard xyz-numbered tile layers.
+ * L.Yandex is used for Yandex.Maps layers ( http://maps.yandex.ru/ , http://api.yandex.ru/maps/ ) via API v2.
  */
+(function (W, L) {
+
+var ymaps,
+	debug = function() {
+		if (W.console && W.console.debug) {
+			W.console.debug.apply(W.console, arguments)
+		}
+	};
 
 L.Yandex = L.Class.extend({
 	includes: L.Mixin.Events,
@@ -10,10 +18,16 @@ L.Yandex = L.Class.extend({
 		maxZoom: 18,
 		attribution: '',
 		opacity: 1,
-		traffic: false,
+		traffic: false
 	},
 
-	// Possible types: SATELLITE, ROADMAP, HYBRID
+	statics: {
+		url: 'http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU'
+	},
+
+	_yandex: null,
+
+	// Possible types: map, satellite, hybrid, publicMap, publicMapHybrid
 	initialize: function(type, options) {
 		L.Util.setOptions(this, options);
 
@@ -67,7 +81,7 @@ L.Yandex = L.Class.extend({
 	},
 
 	_initContainer: function() {
-		var tilePane = this._map._container
+		var tilePane = this._map._container,
 			first = tilePane.firstChild;
 
 		if (!this._container) {
@@ -89,27 +103,71 @@ L.Yandex = L.Class.extend({
 	},
 
 	_initMapObject: function() {
-		if (this._yandex) return;
+		if (this._yandex) {
+			return;
+		}
+
+		if (typeof W.ymaps == 'undefined') {
+			debug("L.Yandex: dynamically load script");
+
+			var script = document.createElement('script'),
+				head = document.head || document.getElementsByTagName('head')[0] || document.documentElement,
+				callback = L.Util.bind(this._initMapObject, this);
+
+			script.type = 'text/javascript';
+			script.async = 'async';
+			script.src = L.Yandex.url;
+
+			script.onload = script.onreadystatechange = function(_, isAbort) {
+				if (isAbort || !script.readyState || /loaded|complete/.test(script.readyState)) {
+					// Handle memory leak in IE
+					script.onload = script.onreadystatechange = null;
+
+					// Remove the script
+					if (head && script.parentNode ) {
+						head.removeChild(script);
+					}
+
+					// Dereference the script
+					script = undefined;
+
+					// Callback if not abort
+					if (!isAbort) {
+						callback();
+					}
+				}
+			};
+
+			head.insertBefore( script, head.firstChild );
+
+			return;
+		}
+
+		ymaps = W.ymaps;
 
 		// Check that ymaps.Map is ready
 		if (ymaps.Map === undefined) {
-			console.debug("L.Yandex: Waiting on ymaps.load('package.map')");
-			return ymaps.load(["package.map"], this._initMapObject, this);
+			debug("L.Yandex: Waiting on ymaps.load('package.map')");
+			ymaps.load(["package.map"], this._initMapObject, this);
+
+			return;
 		}
 
 		// If traffic layer is requested check if control.TrafficControl is ready
-		if (this.options.traffic)
-			if (ymaps.control === undefined ||
-			    ymaps.control.TrafficControl === undefined) {
-				console.debug("L.Yandex: loading traffic and controls");
-				return ymaps.load(["package.traffic", "package.controls"],
-					this._initMapObject, this);
+		if (this.options.traffic) {
+			if (ymaps.control === undefined || ymaps.control.TrafficControl === undefined) {
+				debug("L.Yandex: loading traffic and controls");
+				ymaps.load(["package.traffic", "package.controls"], this._initMapObject, this);
+
+				return;
 			}
+		}
 
-		var map = new ymaps.Map(this._container, {center: [0,0], zoom: 0});
+		var map = new ymaps.Map(this._container, {center: [0,0], zoom: 0, behaviors: []});
 
-		if (this.options.traffic)
+		if (this.options.traffic) {
 			map.controls.add(new ymaps.control.TrafficControl({shown: true}));
+		}
 
 		if (this._type == "yandex#null") {
 			this._type = new ymaps.MapType("null", []);
@@ -152,3 +210,5 @@ L.Yandex = L.Class.extend({
 		this._yandex.container.fitToViewport();
 	}
 });
+
+})(window, L);
