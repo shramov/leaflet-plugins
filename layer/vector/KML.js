@@ -321,8 +321,7 @@ L.KMLIcon = L.Icon.extend({
 	},
 
 	_setIconStyles: function (img, name) {
-		var parent = Object.getPrototypeOf(this);
-		parent._setIconStyles(img, name);
+		L.Icon.prototype._setIconStyles.apply(this, [img, name])
 		// save anchor information to the image
 		img.anchor = this.options.iconAnchorRef;
 		img.anchorType = this.options.iconAnchorType;
