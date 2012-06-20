@@ -4,6 +4,7 @@ L.Control.Permalink = L.Control.extend({
 	options: {
 		position: "bottomleft",
 		useAnchor: true,
+		useLocation: false,
 		text: "Permalink"
 	},
 
@@ -55,6 +56,8 @@ L.Control.Permalink = L.Control.extend({
 		if (this.options.useAnchor) sep = '#';
 		var url = this._url_base + sep + params.slice(1);
 		if (this._href) this._href.setAttribute('href', url);
+		if (this.options.useLocation)
+			location.replace('#' + params.slice(1));
 		return url;
 	},
 

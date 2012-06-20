@@ -28,7 +28,7 @@ map.addLayer(osm);
 map.addControl(new L.Control.Layers({}, {}));
 var d = new L.Control.Distance(); map.addControl(d);
 map.addControl(new L.Control.Scale());
-map.addControl(new L.Control.Permalink({line: d.getLine()}));
+map.addControl(new L.Control.Permalink({line: d.getLine(), useLocation: true}));
 
 </script>
 </body>
