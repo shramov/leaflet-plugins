@@ -1,3 +1,5 @@
+//#include "Permalink.js
+
 L.Control.Permalink.include({
 	/*
 	options: {
