@@ -42,13 +42,13 @@ L.Control.Layers.include({
 
 	loadLayer: function(name, deflt) {
 		var _this = this, l = this._layer_defs[name];
-		l.default = deflt;
+		l['default'] = deflt;
 		this._loadScripts(l.js.reverse(), function(l) {_this._loadLayer(l)}, l);
 	},
 
 	_loadLayer: function(l) {
 		var x = l.init();
-		if (l.default && this._map)
+		if (l['default'] && this._map)
 			this._map.addLayer(x);
 		if (!l.overlay)
 			this.addBaseLayer(x, l.name);

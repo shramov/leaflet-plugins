@@ -471,7 +471,7 @@ L.Marker.include({
 		};
 		this.on("mouseout", onout, this);
 		this.on("click", onclick, this);
-	},
+	}
 });
 
 L.i18n = function(s) { return (L.i18n.lang[L.i18n.current] || {})[s] || s; }
@@ -493,5 +493,5 @@ L.i18n.extend('ru', {
 	"Cancel":"Отмена",
 	"New bug":"Я нашел ошибку",
 	"Find your bug?":"Нашли ошибку?",
-	"Contact details and someone will fix it.":"Напишите подробнее и кто-нибудь её исправит.",
+	"Contact details and someone will fix it.":"Напишите подробнее и кто-нибудь её исправит."
 });
