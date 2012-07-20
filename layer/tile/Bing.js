@@ -1,6 +1,7 @@
 L.BingLayer = L.TileLayer.extend({
 	options: {
 		subdomains: [0, 1, 2, 3],
+		type: 'Aerial',
 		attribution: 'Bing'
 	},
 
@@ -35,7 +36,7 @@ L.BingLayer = L.TileLayer.extend({
 
 	loadMetadata: function() {
 		var _this = this;
-		var cbid = '_bing_metadata';
+		var cbid = '_bing_metadata_' + L.Util.stamp(this);
 		window[cbid] = function (meta) {
 			_this.meta = meta;
 			window[cbid] = undefined;
@@ -47,7 +48,7 @@ L.BingLayer = L.TileLayer.extend({
 			}
 			_this.initMetadata();
 		};
-		var url = "http://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?include=ImageryProviders&jsonp=" + cbid + "&key=" + this._key;
+		var url = "http://dev.virtualearth.net/REST/v1/Imagery/Metadata/" + this.options.type + "?include=ImageryProviders&jsonp=" + cbid + "&key=" + this._key;
 		var script = document.createElement("script");
 		script.type = "text/javascript";
 		script.src = url;
