@@ -14,7 +14,7 @@ L.Marker.include({
 		if (this.options.iconAngle) {
 			var a = this.options.icon.options.iconAnchor;
 			var s = this.options.icon.options.iconSize;
-			a = L.point(s).divideBy(2)._subtract(a);
+			a = L.point(s).divideBy(2)._subtract(L.point(a));
 			var transform = '';
 			transform += ' translate(' + -a.x + 'px, ' + -a.y + 'px)';
 			transform += ' rotate(' + this.options.iconAngle + 'deg)';
