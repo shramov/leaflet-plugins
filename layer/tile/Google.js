@@ -8,7 +8,7 @@ L.Google = L.Class.extend({
 
 	options: {
 		minZoom: 0,
-		maxZoom: 22,
+		maxZoom: 18,
 		tileSize: 256,
 		subdomains: 'abc',
 		errorTileUrl: '',
