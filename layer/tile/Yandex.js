@@ -1,7 +1,7 @@
 /*
  * L.TileLayer is used for standard xyz-numbered tile layers.
  */
-(function (ymaps, L) {
+//(function (ymaps, L) {
 
 L.Yandex = L.Class.extend({
 	includes: L.Mixin.Events,
@@ -154,4 +154,4 @@ L.Yandex = L.Class.extend({
 		this._yandex.container.fitToViewport();
 	}
 });
-})(ymaps, L)
+//})(ymaps, L)

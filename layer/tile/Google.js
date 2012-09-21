@@ -1,7 +1,7 @@
 /*
  * Google layer using Google Maps API
  */
-(function (google, L) {
+//(function (google, L) {
 
 L.Google = L.Class.extend({
 	includes: L.Mixin.Events,
@@ -173,4 +173,4 @@ L.Google.asyncInitialize = function() {
 	}
 	L.Google.asyncWait = [];
 }
-})(window.google, L)
+//})(window.google, L)
