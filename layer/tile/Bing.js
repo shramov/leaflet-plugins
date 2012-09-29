@@ -2,7 +2,8 @@ L.BingLayer = L.TileLayer.extend({
 	options: {
 		subdomains: [0, 1, 2, 3],
 		type: 'Aerial',
-		attribution: 'Bing'
+		attribution: 'Bing',
+		culture: ''
 	},
 
 	initialize: function(key, options) {
@@ -32,7 +33,7 @@ L.BingLayer = L.TileLayer.extend({
 			s = this.options.subdomains[(p.x + p.y) % subdomains.length];
 		return this._url.replace('{subdomain}', s)
 				.replace('{quadkey}', this.tile2quad(p.x, p.y, z))
-				.replace('{culture}', '');
+				.replace('{culture}', this.options.culture);
 	},
 
 	loadMetadata: function() {
