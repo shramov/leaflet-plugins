@@ -63,6 +63,7 @@ L.BingLayer = L.TileLayer.extend({
 		this.options.subdomains = r.imageUrlSubdomains;
 		this._url = r.imageUrl;
 		this._providers = [];
+		if (r.imageryProviders) {
 		for (var i = 0; i < r.imageryProviders.length; i++) {
 			var p = r.imageryProviders[i];
 			for (var j = 0; j < p.coverageAreas.length; j++) {
@@ -76,6 +77,7 @@ L.BingLayer = L.TileLayer.extend({
 				coverage.attrib = p.attribution;
 				this._providers.push(coverage);
 			}
+		}
 		}
 		this._update();
 	},
