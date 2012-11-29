@@ -142,6 +142,9 @@ L.Google = L.Class.extend({
 
 		this._google.setCenter(_center);
 		this._google.setZoom(this._map.getZoom());
+		if (this._google.getZoom() != this._map.getZoom()) {
+			this._map.setZoom(this._google.getZoom());
+		}
 		//this._google.fitBounds(google_bounds);
 	},
 
