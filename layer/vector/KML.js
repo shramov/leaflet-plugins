@@ -334,16 +334,18 @@ L.KMLIcon = L.Icon.extend({
 		img.onload = function () {
 			var i = new Image();
 			i.src = this.src;
-			this.style.width = i.width + 'px';
-			this.style.height = i.height + 'px';
+			if((i.width > 0) && (i.height > 0)) {
+				this.style.width = i.width + 'px';
+				this.style.height = i.height + 'px';
 
-			if (this.anchorType.x === 'UNITS_FRACTION' || this.anchorType.x === 'fraction') {
-				img.style.marginLeft = (-this.anchor.x * i.width) + 'px';
+				if (this.anchorType.x === 'UNITS_FRACTION' || this.anchorType.x === 'fraction') {
+					img.style.marginLeft = (-this.anchor.x * i.width) + 'px';
+				}
+				if (this.anchorType.y === 'UNITS_FRACTION' || this.anchorType.x === 'fraction') {
+					img.style.marginTop  = (-(1 - this.anchor.y) * i.height) + 'px';
+				}
+				this.style.display = "";
 			}
-			if (this.anchorType.y === 'UNITS_FRACTION' || this.anchorType.x === 'fraction') {
-				img.style.marginTop  = (-(1 - this.anchor.y) * i.height) + 'px';
-			}
-			this.style.display = "";
 		};
 		return img;
 	},
