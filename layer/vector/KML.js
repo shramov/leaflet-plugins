@@ -135,6 +135,21 @@ L.Util.extend(L.KML, {
 			return options;
 		}
 
+		/** Determine url to use taking into account relative paths. */
+		function _get_icon_url(href) {
+			var full_href = href;
+			var is_abs_path = ((href.indexOf('/') === 0) ||
+			   (href.indexOf('https://') === 0) || (href.indexOf('http://') == 0));
+
+			if(!is_abs_path && state.kml_url) {
+				var base_url = state.kml_url.substring(0, state.kml_url.lastIndexOf('/'));
+				if(base_url !== '') {
+					full_href = base_url + '/' + href;
+				}
+			}
+			return full_href;
+		}
+
 		for (var i = 0; i < sl.length; i++) {
 			var e = sl[i], el;
 			var options = {}, poptions = {}, ioptions = {};
@@ -149,7 +164,7 @@ L.Util.extend(L.KML, {
 			if (ioptions.href) {
 				// save anchor info until the image is loaded
 				options.icon = new L.KMLIcon({
-					iconUrl: ioptions.href,
+					iconUrl: _get_icon_url(ioptions.href),
 					shadowUrl: null,
 					iconAnchorRef: {x: ioptions.x, y: ioptions.y},
 					iconAnchorType:	{x: ioptions.xunits, y: ioptions.yunits}
