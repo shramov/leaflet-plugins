@@ -33,12 +33,20 @@ L.KML = L.FeatureGroup.extend({
 
 	addKML: function(url, options, async) {
 		var _this = this;
-		var cb = function(gpx, options) { _this._addKML(gpx, options) };
+		options = options || {};
+		options = L.Util.extend(options, {
+			kml_url: url
+		});
+		var cb = function(gpx, options) {
+			_this._addKML(gpx, options)
+
+		};
 		this.loadXML(url, cb, options, async);
 	},
 
 	_addKML: function(xml, options) {
-		var layers = L.KML.parseKML(xml);
+		options = options || {};
+		var layers = L.KML.parseKML(xml, {kml_url: options.kml_url});
 		if (!layers || !layers.length) return;
 		for (var i = 0; i < layers.length; i++)
 		{
@@ -56,19 +64,24 @@ L.KML = L.FeatureGroup.extend({
 
 L.Util.extend(L.KML, {
 
-	parseKML: function (xml) {
-		var style = this.parseStyle(xml);
+	/* Parse the KML document.
+	* state: object of intial state for the parser or null.
+	*   { kml_url: base url for the KML file }
+	*/
+	parseKML: function (xml, state) {
+		state = state || {};
+		var style = this.parseStyle(xml, state);
 		var el = xml.getElementsByTagName("Folder");
 		var layers = [], l;
 		for (var i = 0; i < el.length; i++) {
 			if (!this._check_folder(el[i])) { continue; }
-			l = this.parseFolder(el[i], style);
+			l = this.parseFolder(el[i], style, state);
 			if (l) { layers.push(l); }
 		}
 		el = xml.getElementsByTagName('Placemark');
 		for (var j = 0; j < el.length; j++) {
 			if (!this._check_folder(el[j])) { continue; }
-			l = this.parsePlacemark(el[j], xml, style);
+			l = this.parsePlacemark(el[j], xml, style, state);
 			if (l) { layers.push(l); }
 		}
 		return layers;
@@ -85,7 +98,7 @@ L.Util.extend(L.KML, {
 		return !e || e === folder;
 	},
 
-	parseStyle: function (xml) {
+	parseStyle: function (xml, state) {
 		var style = {};
 		var sl = xml.getElementsByTagName("Style");
 
@@ -147,18 +160,18 @@ L.Util.extend(L.KML, {
 		return style;
 	},
 
-	parseFolder: function (xml, style) {
+	parseFolder: function (xml, style, state) {
 		var el, layers = [], l;
 		el = xml.getElementsByTagName('Folder');
 		for (var i = 0; i < el.length; i++) {
 			if (!this._check_folder(el[i], xml)) { continue; }
-			l = this.parseFolder(el[i], style);
+			l = this.parseFolder(el[i], style, state);
 			if (l) { layers.push(l); }
 		}
 		el = xml.getElementsByTagName('Placemark');
 		for (var j = 0; j < el.length; j++) {
 			if (!this._check_folder(el[j], xml)) { continue; }
-			l = this.parsePlacemark(el[j], xml, style);
+			l = this.parsePlacemark(el[j], xml, style, state);
 			if (l) { layers.push(l); }
 		}
 		if (!layers.length) { return; }
@@ -166,7 +179,7 @@ L.Util.extend(L.KML, {
 		return new L.FeatureGroup(layers);
 	},
 
-	parsePlacemark: function (place, xml, style) {
+	parsePlacemark: function (place, xml, style, state) {
 		var i, j, el, options = {};
 		el = place.getElementsByTagName('styleUrl');
 		for (i = 0; i < el.length; i++) {
