@@ -8,7 +8,9 @@
     var _old_update = L.Marker.prototype.update;
     L.Marker.include({
         update: function() {
-            this._icon.style[L.DomUtil.TRANSFORM] = "";
+            if (this._icon) {
+                this._icon.style[L.DomUtil.TRANSFORM] = "";
+            }
             if (this._shadow) {
                 this._shadow.style[L.DomUtil.TRANSFORM] = "";
             }
@@ -17,8 +19,11 @@
             if (this.options.iconAngle) {
                 var a = this.options.icon.options.iconAnchor;
                 var s = this.options.icon.options.iconSize;
-                var i = this._icon;
-                this._updateImg(i, a, s);
+                var i;
+                if (this._icon) {
+                    i = this._icon;
+                    this._updateImg(i, a, s);
+                }
 
                 if (this._shadow) {
                     // Rotate around the icons anchor.
