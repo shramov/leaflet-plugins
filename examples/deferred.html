@@ -18,7 +18,7 @@ var layerdefs = {
 		init: function() {return new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');}},
 	kosmo: { name: "Космоснимки", js: [],
 		init: function() {return new L.TileLayer('http://{s}.tile.osmosnimki.ru/kosmo/{z}/{x}/{y}.png', {attribution:'Tiles Courtesy of <a href="http://kosmosnimki.ru/" target="_blank">kosmosnimki.ru</a>'});}},
-	gsat: { name: "Google", js: ["/leaflet-plugins/layer/tile/Google.js", "http://maps.google.com/maps/api/js?v=3.2&sensor=false&callback=L.Google.asyncInitialize"],
+	gsat: { name: "Google", js: ["/leaflet-plugins/layer/tile/Google.js", "http://maps.google.com/maps/api/js?v=3.exp&sensor=false&callback=L.Google.asyncInitialize"],
 		init: function() {return new L.Google(); }},
 	ysat: { name: "Yandex", js: ["/leaflet-plugins/layer/tile/Yandex.js", "http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU"],
 		init: function() {return new L.Yandex("satellite"); }},
@@ -32,14 +32,21 @@ var layerdefs = {
 		init: function() {return new L.BingLayer("Anqm0F_JjIZvT0P3abS6KONpaBaKuTnITRrnYuiJCE0WOhH6ZbE4DzeT6brvKVR5");}},
 };
 
+var google = new L.DeferredLayer(layerdefs.gsat);
+var bng = new L.DeferredLayer(layerdefs.bing);
 var yndx = new L.DeferredLayer(layerdefs.ysat);
 //var ytraffic = new L.Yandex("null", {traffic:true, opacity:0.8, overlay:true});
 var ytraffic = new L.DeferredLayer(layerdefs.traffic);
 
 map.addLayer(osm);
 //map.addLayer(ytraffic);
-map.addControl(new L.Control.Layers({'OSM':osm, "Yandex":yndx},
-				    {"Пробки":ytraffic}));
+map.addControl(new L.Control.Layers({
+	'OSM': osm, 
+	"Yandex": yndx,
+	"bng": bing,
+	"google": google
+	},{"Пробки": ytraffic}
+));
 </script>
  
 </body>
