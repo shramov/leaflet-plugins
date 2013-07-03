@@ -32,14 +32,21 @@ var layerdefs = {
 		init: function() {return new L.BingLayer("Anqm0F_JjIZvT0P3abS6KONpaBaKuTnITRrnYuiJCE0WOhH6ZbE4DzeT6brvKVR5");}},
 };
 
+var google = new L.DeferredLayer(layerdefs.gsat);
+var bng = new L.DeferredLayer(layerdefs.bing);
 var yndx = new L.DeferredLayer(layerdefs.ysat);
 //var ytraffic = new L.Yandex("null", {traffic:true, opacity:0.8, overlay:true});
 var ytraffic = new L.DeferredLayer(layerdefs.traffic);
 
 map.addLayer(osm);
 //map.addLayer(ytraffic);
-map.addControl(new L.Control.Layers({'OSM':osm, "Yandex":yndx},
-				    {"Пробки":ytraffic}));
+map.addControl(new L.Control.Layers({
+	'OSM': osm, 
+	"Yandex": yndx,
+	"bng": bing,
+	"google": google
+	},{"Пробки": ytraffic}
+));
 </script>
  
 </body>
