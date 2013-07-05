@@ -95,7 +95,9 @@ L.Yandex = L.Class.extend({
 
 		// Check that ymaps.Map is ready
 		if (ymaps.Map === undefined) {
-			console.debug("L.Yandex: Waiting on ymaps.load('package.map')");
+			if (console) {
+				console.debug("L.Yandex: Waiting on ymaps.load('package.map')");
+			}
 			return ymaps.load(["package.map"], this._initMapObject, this);
 		}
 
@@ -103,7 +105,9 @@ L.Yandex = L.Class.extend({
 		if (this.options.traffic)
 			if (ymaps.control === undefined ||
 			    ymaps.control.TrafficControl === undefined) {
-				console.debug("L.Yandex: loading traffic and controls");
+				if (console) {
+					console.debug("L.Yandex: loading traffic and controls");
+				}
 				return ymaps.load(["package.traffic", "package.controls"],
 					this._initMapObject, this);
 			}
