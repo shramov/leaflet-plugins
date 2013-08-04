@@ -108,7 +108,7 @@ L.Util.extend(L.KML, {
 					var value = e.childNodes[0].nodeValue;
 					if (key === 'color') {
 						options.opacity = parseInt(value.substring(0, 2), 16) / 255.0;
-						options.color = "#" + value.substring(2, 8);
+						options.color = "#" + value.substring(6, 8) + value.substring(4, 6) + value.substring(2, 4);
 					} else if (key === 'width') {
 						options.weight = value;
 					} else if (key === 'Icon') {
