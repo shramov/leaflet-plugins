@@ -77,7 +77,7 @@ L.Google = L.Class.extend({
 	},
 
 	_initContainer: function() {
-		var tilePane = this._map._container,
+		var tilePane = this._map.getPanes().tilePane,
 			first = tilePane.firstChild;
 
 		if (!this._container) {
