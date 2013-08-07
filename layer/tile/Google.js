@@ -50,7 +50,7 @@ L.Google = L.Class.extend({
 	},
 
 	onRemove: function(map) {
-		this._map._container.removeChild(this._container);
+		this._map.getPanes().tilePane.removeChild(this._container);
 		//this._container = null;
 
 		this._map.off('viewreset', this._resetCallback, this);
