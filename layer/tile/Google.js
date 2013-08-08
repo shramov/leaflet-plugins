@@ -50,7 +50,7 @@ L.Google = L.Class.extend({
 	},
 
 	onRemove: function(map) {
-		this._map.getPanes().tilePane.removeChild(this._container);
+		this._map._container.removeChild(this._container);
 		//this._container = null;
 
 		this._map.off('viewreset', this._resetCallback, this);
@@ -77,13 +77,13 @@ L.Google = L.Class.extend({
 	},
 
 	_initContainer: function() {
-		var tilePane = this._map.getPanes().tilePane,
+		var tilePane = this._map._container,
 			first = tilePane.firstChild;
 
 		if (!this._container) {
 			this._container = L.DomUtil.create('div', 'leaflet-google-layer leaflet-top leaflet-left');
 			this._container.id = "_GMapContainer_" + L.Util.stamp(this);
-			this._container.style.zIndex = "auto";
+			this._container.style.zIndex = -1;
 		}
 
 		if (true) {
