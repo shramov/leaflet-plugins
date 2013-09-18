@@ -115,3 +115,7 @@ L.BingLayer = L.TileLayer.extend({
         	L.TileLayer.prototype.onRemove.apply(this, [map]);
 	}
 });
+
+L.bingLayer = function (key, options) {
+    return new L.BingLayer(key, options);
+};
