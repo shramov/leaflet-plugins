@@ -41,7 +41,14 @@ L.Google = L.Class.extend({
 
 		this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
 		map.on('move', this._update, this);
-		//map.on('moveend', this._update, this);
+
+		map.on('zoomanim', function (e) {
+			var center = e.center;
+			var _center = new google.maps.LatLng(center.lat, center.lng);
+
+			this._google.setCenter(_center);
+			this._google.setZoom(e.zoom);
+		}, this);
 
 		map._controlCorners['bottomright'].style.marginBottom = "1em";
 
@@ -126,18 +133,11 @@ L.Google = L.Class.extend({
 		this._initContainer();
 	},
 
-	_update: function() {
+	_update: function(e) {
 		if (!this._google) return;
 		this._resize();
 
-		var bounds = this._map.getBounds();
-		var ne = bounds.getNorthEast();
-		var sw = bounds.getSouthWest();
-		var google_bounds = new google.maps.LatLngBounds(
-			new google.maps.LatLng(sw.lat, sw.lng),
-			new google.maps.LatLng(ne.lat, ne.lng)
-		);
-		var center = this._map.getCenter();
+		var center = e && e.latlng ? e.latlng : this._map.getCenter();
 		var _center = new google.maps.LatLng(center.lat, center.lng);
 
 		this._google.setCenter(_center);
