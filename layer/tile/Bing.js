@@ -65,20 +65,20 @@ L.BingLayer = L.TileLayer.extend({
 		this._url = r.imageUrl;
 		this._providers = [];
 		if (r.imageryProviders) {
-		for (var i = 0; i < r.imageryProviders.length; i++) {
-			var p = r.imageryProviders[i];
-			for (var j = 0; j < p.coverageAreas.length; j++) {
-				var c = p.coverageAreas[j];
-				var coverage = {zoomMin: c.zoomMin, zoomMax: c.zoomMax, active: false};
-				var bounds = new L.LatLngBounds(
-						new L.LatLng(c.bbox[0]+0.01, c.bbox[1]+0.01),
-						new L.LatLng(c.bbox[2]-0.01, c.bbox[3]-0.01)
-				);
-				coverage.bounds = bounds;
-				coverage.attrib = p.attribution;
-				this._providers.push(coverage);
+			for (var i = 0; i < r.imageryProviders.length; i++) {
+				var p = r.imageryProviders[i];
+				for (var j = 0; j < p.coverageAreas.length; j++) {
+					var c = p.coverageAreas[j];
+					var coverage = {zoomMin: c.zoomMin, zoomMax: c.zoomMax, active: false};
+					var bounds = new L.LatLngBounds(
+							new L.LatLng(c.bbox[0]+0.01, c.bbox[1]+0.01),
+							new L.LatLng(c.bbox[2]-0.01, c.bbox[3]-0.01)
+					);
+					coverage.bounds = bounds;
+					coverage.attrib = p.attribution;
+					this._providers.push(coverage);
+				}
 			}
-		}
 		}
 		this._update();
 	},
