@@ -95,7 +95,7 @@ L.Control.Permalink = L.Control.extend({
 
 	_set_urlvars: function()
 	{
-		this._url_base = window.location.href.split('#')[0];
+		this._url_base = window.location.href.split('#')[0].split('?')[0];
 
 		var p;
 		if (this.options.useAnchor)
@@ -138,7 +138,7 @@ L.UrlUtil = {
 		for(var i = 0; i < params.length; i++) {
 			var tmp = params[i].split('=');
 			if (tmp.length != 2) continue;
-			p[tmp[0]] = tmp[1];
+			p[tmp[0]] = decodeURI(tmp[1]);
 		}
 		return p;
 	},

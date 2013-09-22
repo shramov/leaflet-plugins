@@ -2,7 +2,8 @@ L.BingLayer = L.TileLayer.extend({
 	options: {
 		subdomains: [0, 1, 2, 3],
 		type: 'Aerial',
-		attribution: 'Bing'
+		attribution: 'Bing',
+		culture: ''
 	},
 
 	initialize: function(key, options) {
@@ -29,10 +30,11 @@ L.BingLayer = L.TileLayer.extend({
 	getTileUrl: function(p, z) {
 		var z = this._getZoomForUrl();
 		var subdomains = this.options.subdomains,
-			s = this.options.subdomains[(p.x + p.y) % subdomains.length];
+			s = this.options.subdomains[Math.abs((p.x + p.y) % subdomains.length)];
 		return this._url.replace('{subdomain}', s)
 				.replace('{quadkey}', this.tile2quad(p.x, p.y, z))
-				.replace('{culture}', '');
+				.replace('http:', document.location.protocol)
+				.replace('{culture}', this.options.culture);
 	},
 
 	loadMetadata: function() {
@@ -49,7 +51,7 @@ L.BingLayer = L.TileLayer.extend({
 			}
 			_this.initMetadata();
 		};
-		var url = "http://dev.virtualearth.net/REST/v1/Imagery/Metadata/" + this.options.type + "?include=ImageryProviders&jsonp=" + cbid + "&key=" + this._key;
+		var url = document.location.protocol + "//dev.virtualearth.net/REST/v1/Imagery/Metadata/" + this.options.type + "?include=ImageryProviders&jsonp=" + cbid + "&key=" + this._key;
 		var script = document.createElement("script");
 		script.type = "text/javascript";
 		script.src = url;
@@ -62,18 +64,20 @@ L.BingLayer = L.TileLayer.extend({
 		this.options.subdomains = r.imageUrlSubdomains;
 		this._url = r.imageUrl;
 		this._providers = [];
-		for (var i = 0; i < r.imageryProviders.length; i++) {
-			var p = r.imageryProviders[i];
-			for (var j = 0; j < p.coverageAreas.length; j++) {
-				var c = p.coverageAreas[j];
-				var coverage = {zoomMin: c.zoomMin, zoomMax: c.zoomMax, active: false};
-				var bounds = new L.LatLngBounds(
-						new L.LatLng(c.bbox[0]+0.01, c.bbox[1]+0.01),
-						new L.LatLng(c.bbox[2]-0.01, c.bbox[3]-0.01)
-				);
-				coverage.bounds = bounds;
-				coverage.attrib = p.attribution;
-				this._providers.push(coverage);
+		if (r.imageryProviders) {
+			for (var i = 0; i < r.imageryProviders.length; i++) {
+				var p = r.imageryProviders[i];
+				for (var j = 0; j < p.coverageAreas.length; j++) {
+					var c = p.coverageAreas[j];
+					var coverage = {zoomMin: c.zoomMin, zoomMax: c.zoomMax, active: false};
+					var bounds = new L.LatLngBounds(
+							new L.LatLng(c.bbox[0]+0.01, c.bbox[1]+0.01),
+							new L.LatLng(c.bbox[2]-0.01, c.bbox[3]-0.01)
+					);
+					coverage.bounds = bounds;
+					coverage.attrib = p.attribution;
+					this._providers.push(coverage);
+				}
 			}
 		}
 		this._update();
@@ -92,11 +96,11 @@ L.BingLayer = L.TileLayer.extend({
 			var p = this._providers[i];
 			if ((zoom <= p.zoomMax && zoom >= p.zoomMin) &&
 					bounds.intersects(p.bounds)) {
-				if (!p.active)
+				if (!p.active && this._map.attributionControl)
 					this._map.attributionControl.addAttribution(p.attrib);
 				p.active = true;
 			} else {
-				if (p.active)
+				if (p.active && this._map.attributionControl)
 					this._map.attributionControl.removeAttribution(p.attrib);
 				p.active = false;
 			}
@@ -106,7 +110,7 @@ L.BingLayer = L.TileLayer.extend({
 	onRemove: function(map) {
 		for (var i = 0; i < this._providers.length; i++) {
 			var p = this._providers[i];
-			if (p.active) {
+			if (p.active && this._map.attributionControl) {
 				this._map.attributionControl.removeAttribution(p.attrib);
 				p.active = false;
 			}
@@ -114,3 +118,7 @@ L.BingLayer = L.TileLayer.extend({
         	L.TileLayer.prototype.onRemove.apply(this, [map]);
 	}
 });
+
+L.bingLayer = function (key, options) {
+    return new L.BingLayer(key, options);
+};

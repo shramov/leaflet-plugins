@@ -1,20 +1,23 @@
 <html>
 <head>
-	<title>OpenStreetMap // Leaflet</title>
+	<title>Leaflet - GPX track without Waypoints</title>
 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
 	<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
-	<script src="http://maps.google.com/maps/api/js?v=3&sensor=false"></script>
-	<script src="../layer/tile/Google.js"></script>
+	<script src="../layer/vector/GPX.js"></script>
 </head>
 <body>
 	<!-- define a DIV into which the map will appear. Make it take up the whole window -->
 	<div style="width:100%; height:100%" id="map"></div>
 <script type='text/javascript'>
-var map = new L.Map('map', {center: new L.LatLng(53.9618, 58.4277), zoom: 13});
+var map = new L.Map('map', {center: new L.LatLng(58.4, 43.0), zoom: 11});
 var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-var ggl = new L.Google();
-map.addLayer(ggl);
-map.addControl(new L.Control.Layers( {'OSM':osm, 'Google':ggl}, {}));
+
+var track = new L.GPX("fells_loop.gpx", {async: true, display_wpt:false})
+			.on("loaded", function(e) { map.fitBounds(e.target.getBounds()); });
+
+map.addLayer(track);
+map.addLayer(osm);
+map.addControl(new L.Control.Layers({}, {'GPX':track}));
 </script>
  
 </body>
