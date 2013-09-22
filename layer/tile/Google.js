@@ -3,6 +3,8 @@
  */
 //(function (google, L) {
 
+var adsense_status = 'enabled';
+
 L.Google = L.Class.extend({
 	includes: L.Mixin.Events,
 
@@ -35,6 +37,10 @@ L.Google = L.Class.extend({
 		// create a container div for tiles
 		this._initContainer();
 		this._initMapObject();
+
+		if (adsense_status == 'enabled') { 
+			this._initAdSense(); 
+		}
 
 		// set up events
 		map.on('viewreset', this._resetCallback, this);
@@ -157,7 +163,42 @@ L.Google = L.Class.extend({
 	onReposition: function() {
 		if (!this._google) return;
 		google.maps.event.trigger(this._google, "resize");
-	}
+	},
+	_initAdSense: function() {
+	  var adUnitDiv = document.createElement('div');
+	  adUnitDiv.className = "leaflet-control";
+	  adUnitDiv.style.margin = "0";
+	  adUnitDiv.style.clear = "none";
+	  var user_adsense = new String;
+	  user_adsense.format = google.maps.adsense.AdFormat["HALF_BANNER"];
+	  user_adsense.position = google.maps.ControlPosition["TOP_CENTER"];
+	  user_adsense.cposition = "TOP_CENTER";
+	  user_adsense.backgroundColor = "#c4d4f3";
+	  user_adsense.borderColor = "#e5ecf9";
+	  user_adsense.titleColor = "#0000cc";
+	  user_adsense.textColor = "#000000";
+	  user_adsense.urlColor = "#009900";
+	  user_adsense.channelNumber = "";
+	  user_adsense.publisherID = ""; //add your ID here
+
+	  var adUnitOptions = {
+	    format: user_adsense.format,
+	    position: user_adsense.position,
+	    backgroundColor: user_adsense.backgroundColor,
+	    borderColor: user_adsense.borderColor,
+	    titleColor: user_adsense.titleColor,
+	    textColor: user_adsense.textColor,
+	    urlColor: user_adsense.urlColor,
+	    map: this._google,
+	    visible: true,
+		channelNumber: user_adsense.channelNumber,
+	    publisherId: user_adsense.publisherID
+	  }
+	  //info: dont load ads on minimaps  
+	  var size = this._map.getSize();
+	  if (size.x > 150) {
+		this._adUnit = new google.maps.adsense.AdUnit(adUnitDiv, adUnitOptions);
+	  }
 });
 
 L.Google.asyncWait = [];
@@ -168,6 +209,7 @@ L.Google.asyncInitialize = function() {
 		o._ready = true;
 		if (o._container) {
 			o._initMapObject();
+			if (adsense_status == 'enabled') { o._initAdSense(); }
 			o._update();
 		}
 	}
