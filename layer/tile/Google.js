@@ -124,6 +124,19 @@ L.Google = L.Class.extend({
 
 		map.backgroundColor = '#ff0000';
 		this._google = map;
+
+		google.maps.event.addListenerOnce(map, "idle",
+			function() { _this._checkZoomLevels(); });
+	},
+
+	_checkZoomLevels: function() {
+		//setting the zoom level on the Google map may result in a different zoom level than the one requested
+		//(it won't go beyond the level for which they have data).
+		// verify and make sure the zoom levels on both Leaflet and Google maps are consistent
+		if (this._google.getZoom() !== this._map.getZoom()) {
+			//zoom levels are out of sync. Set the leaflet zoom level to match the google one
+			this._map.setZoom( this._google.getZoom() );
+		} 
 	},
 
 	_resetCallback: function(e) {
@@ -143,6 +156,8 @@ L.Google = L.Class.extend({
 
 		this._google.setCenter(_center);
 		this._google.setZoom(this._map.getZoom());
+
+		this._checkZoomLevels();
 		//this._google.fitBounds(google_bounds);
 	},
 
