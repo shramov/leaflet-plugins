@@ -50,7 +50,8 @@ L.Google = L.Class.extend({
 			this._google.setZoom(e.zoom);
 		}, this);
 
-		map._controlCorners['bottomright'].style.marginBottom = "1em";
+		//20px instead of 1em to avoid a slight overlap with google's attribution
+		map._controlCorners['bottomright'].style.marginBottom = "20px";
 
 		this._reset();
 		this._update();
