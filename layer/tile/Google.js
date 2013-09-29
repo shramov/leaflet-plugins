@@ -42,13 +42,7 @@ L.Google = L.Class.extend({
 		this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
 		map.on('move', this._update, this);
 
-		map.on('zoomanim', function (e) {
-			var center = e.center;
-			var _center = new google.maps.LatLng(center.lat, center.lng);
-
-			this._google.setCenter(_center);
-			this._google.setZoom(e.zoom);
-		}, this);
+		map.on('zoomanim', this._handleZoomAnim, this);
 
 		//20px instead of 1em to avoid a slight overlap with google's attribution
 		map._controlCorners['bottomright'].style.marginBottom = "20px";
@@ -64,6 +58,9 @@ L.Google = L.Class.extend({
 		this._map.off('viewreset', this._resetCallback, this);
 
 		this._map.off('move', this._update, this);
+
+		this._map.off('zoomanim', this._handleZoomAnim, this);
+
 		map._controlCorners['bottomright'].style.marginBottom = "0em";
 		//this._map.off('moveend', this._update, this);
 	},
@@ -136,7 +133,7 @@ L.Google = L.Class.extend({
 		if (this._google.getZoom() !== this._map.getZoom()) {
 			//zoom levels are out of sync. Set the leaflet zoom level to match the google one
 			this._map.setZoom( this._google.getZoom() );
-		} 
+		}
 	},
 
 	_resetCallback: function(e) {
@@ -170,6 +167,16 @@ L.Google = L.Class.extend({
 		this.onReposition();
 	},
 
+
+	_handleZoomAnim: function (e) {
+		var center = e.center;
+		var _center = new google.maps.LatLng(center.lat, center.lng);
+
+		this._google.setCenter(_center);
+		this._google.setZoom(e.zoom);
+	},
+
+
 	onReposition: function() {
 		if (!this._google) return;
 		google.maps.event.trigger(this._google, "resize");
@@ -188,5 +195,5 @@ L.Google.asyncInitialize = function() {
 		}
 	}
 	L.Google.asyncWait = [];
-}
+};
 //})(window.google, L)
