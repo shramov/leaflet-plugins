@@ -87,6 +87,24 @@ L.Google = L.TileLayer.extend({
 		e.style.height = size.y + "px";
 	},
 
+	_initContainer: function() {
+		var tilePane = this._map._container,
+			first = tilePane.firstChild;
+
+		if (!this._container) {
+			this._container = L.DomUtil.create('div', 'leaflet-google-layer leaflet-top leaflet-left');
+			this._container.id = "_GMapContainer_" + L.Util.stamp(this);
+			this._container.style.zIndex = "auto";
+		}
+
+		if (true) {
+			tilePane.insertBefore(this._container, first);
+
+			this.setOpacity(this.options.opacity);
+			this.setElementSize(this._container, this._map.getSize());
+		}
+	},
+
 	_initMapObject: function() {
 		if (!this._ready) return;
 		this._google_center = new google.maps.LatLng(0, 0);
