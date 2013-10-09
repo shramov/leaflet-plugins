@@ -3,7 +3,7 @@
  */
 //(function (google, L) {
 
-L.Google = L.Class.extend({
+L.Google = L.TileLayer.extend({
 	includes: L.Mixin.Events,
 
 	options: {
