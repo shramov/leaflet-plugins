@@ -40,7 +40,10 @@ L.Google = L.TileLayer.extend({
 		this._initMapObject();
 
 		// set up events
-		map.on('viewreset', this._resetCallback, this);
+		map.on({
+			'viewreset': this._reset,
+			'moveend': this._update
+		}, this);
 
 		this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
 		map.on('move', this._update, this);
