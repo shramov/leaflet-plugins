@@ -146,7 +146,24 @@ L.Google = L.TileLayer.extend({
 		this._reset(e.hard);
 	},
 
-	_reset: function(clearOldContainer) {
+	_reset: function (e) {
+		for (var key in this._tiles) {
+			this.fire('tileunload', {tile: this._tiles[key]});
+		}
+
+		this._tiles = {};
+		this._tilesToLoad = 0;
+
+		if (this.options.reuseTiles) {
+			this._unusedTiles = [];
+		}
+
+		//this._tileContainer.innerHTML = '';
+
+		if (this._animated && e && e.hard) {
+			this._clearBgBuffer();
+		}
+
 		this._initContainer();
 	},
 
