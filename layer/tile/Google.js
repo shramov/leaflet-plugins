@@ -17,7 +17,7 @@ L.Google = L.Class.extend({
 		continuousWorld: false,
 		noWrap: false,
 		mapOptions: {
-			backgroundColor: '#ff0000'
+			backgroundColor: '#dddddd'
 		}
 	},
 
