@@ -15,7 +15,10 @@ L.Google = L.Class.extend({
 		attribution: '',
 		opacity: 1,
 		continuousWorld: false,
-		noWrap: false
+		noWrap: false,
+		mapOptions: {
+			backgroundColor: '#ff0000'
+		}
 	},
 
 	// Possible types: SATELLITE, ROADMAP, HYBRID, TERRAIN
@@ -114,14 +117,14 @@ L.Google = L.Class.extend({
 		    draggable: false,
 		    disableDoubleClickZoom: true,
 		    scrollwheel: false,
-		    streetViewControl: false
+		    streetViewControl: false,
+		    styles: this.options.mapOptions.styles,
+		    backgroundColor: this.options.mapOptions.backgroundColor
 		});
 
 		var _this = this;
 		this._reposition = google.maps.event.addListenerOnce(map, "center_changed",
 			function() { _this.onReposition(); });
-
-		map.backgroundColor = '#ff0000';
 		this._google = map;
 	},
 
