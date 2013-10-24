@@ -36,11 +36,11 @@ L.GPX = L.FeatureGroup.extend({
 	
 	_polylineLen: function(line)//line is a L.Polyline()
 	{
-		var ll = line.getLatLngs();
+		var ll = line._latlngs;
 		var d = 0, p = null;
-		for(var i=0; i<ll.length; i++)
+		for(var i in ll)
 		{
-			if(i)
+			if(i && p)
 				d += p.distanceTo(ll[i]);
 			p = ll[i];
 		}
@@ -94,14 +94,16 @@ L.GPX = L.FeatureGroup.extend({
 	parse_name: function(xml, layer) {
 		var i, el, txt="", name, descr="", len=0;
 		el = xml.getElementsByTagName('name');
-		if (el.length) name = el[0].childNodes[0].nodeValue;
+		if (el.length)
+			name = el[0].childNodes[0].nodeValue;
 		el = xml.getElementsByTagName('desc');
 		for (i = 0; i < el.length; i++) {
 			for (var j = 0; j < el[i].childNodes.length; j++)
 				descr = descr + el[i].childNodes[j].nodeValue;
 		}
 
-		len = this._polylineLen(layer);
+		if(layer instanceof L.Path)
+			len = this._polylineLen(layer);
 
 		if (name) txt += "<h2>" + name + "</h2>" + descr;
 		if (len) txt += "<p>" + this._humanLen(len) + "</p>";
