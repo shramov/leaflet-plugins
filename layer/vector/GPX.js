@@ -76,11 +76,13 @@ L.GPX = L.FeatureGroup.extend({
 		}
 
 		el = xml.getElementsByTagName('wpt');
-		for (i = 0; i < el.length; i++) {
-			var l = this.parse_wpt(el[i], xml, options);
-			if (!l) continue;
-			if (this.parse_name(el[i], l)) named = true;
-			layers.push(l);
+		if (options.display_wpt != false) {
+			for (i = 0; i < el.length; i++) {
+				var l = this.parse_wpt(el[i], xml, options);
+				if (!l) continue;
+				if (this.parse_name(el[i], l)) named = true;
+				layers.push(l);
+			}
 		}
 
 		if (!layers.length) return;

@@ -39,9 +39,9 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 
 	onAdd : function(map)
 	{
-		this._map = map;
+		L.FeatureGroup.prototype.onAdd.apply(this, [map]);
+
 		this._map.on("moveend", this.loadBugs, this);
-		this._iterateLayers(map.addLayer, map);
 		this.loadBugs();
 		if (!this.options.readonly) {
 		  if (this.options.dblClick) {
