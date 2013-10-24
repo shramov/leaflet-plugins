@@ -33,12 +33,20 @@ L.KML = L.FeatureGroup.extend({
 
 	addKML: function(url, options, async) {
 		var _this = this;
-		var cb = function(gpx, options) { _this._addKML(gpx, options) };
+		options = options || {};
+		options = L.Util.extend(options, {
+			kml_url: url
+		});
+		var cb = function(gpx, options) {
+			_this._addKML(gpx, options)
+
+		};
 		this.loadXML(url, cb, options, async);
 	},
 
 	_addKML: function(xml, options) {
-		var layers = L.KML.parseKML(xml);
+		options = options || {};
+		var layers = L.KML.parseKML(xml, {kml_url: options.kml_url});
 		if (!layers || !layers.length) return;
 		for (var i = 0; i < layers.length; i++)
 		{
@@ -56,19 +64,24 @@ L.KML = L.FeatureGroup.extend({
 
 L.Util.extend(L.KML, {
 
-	parseKML: function (xml) {
-		var style = this.parseStyle(xml);
+	/* Parse the KML document.
+	* state: object of intial state for the parser or null.
+	*   { kml_url: base url for the KML file }
+	*/
+	parseKML: function (xml, state) {
+		state = state || {};
+		var style = this.parseStyle(xml, state);
 		var el = xml.getElementsByTagName("Folder");
 		var layers = [], l;
 		for (var i = 0; i < el.length; i++) {
 			if (!this._check_folder(el[i])) { continue; }
-			l = this.parseFolder(el[i], style);
+			l = this.parseFolder(el[i], style, state);
 			if (l) { layers.push(l); }
 		}
 		el = xml.getElementsByTagName('Placemark');
 		for (var j = 0; j < el.length; j++) {
 			if (!this._check_folder(el[j])) { continue; }
-			l = this.parsePlacemark(el[j], xml, style);
+			l = this.parsePlacemark(el[j], xml, style, state);
 			if (l) { layers.push(l); }
 		}
 		return layers;
@@ -85,7 +98,7 @@ L.Util.extend(L.KML, {
 		return !e || e === folder;
 	},
 
-	parseStyle: function (xml) {
+	parseStyle: function (xml, state) {
 		var style = {};
 		var sl = xml.getElementsByTagName("Style");
 
@@ -122,6 +135,21 @@ L.Util.extend(L.KML, {
 			return options;
 		}
 
+		/** Determine url to use taking into account relative paths. */
+		function _get_icon_url(href) {
+			var full_href = href;
+			var is_abs_path = ((href.indexOf('/') === 0) ||
+			   (href.indexOf('https://') === 0) || (href.indexOf('http://') == 0));
+
+			if(!is_abs_path && state.kml_url) {
+				var base_url = state.kml_url.substring(0, state.kml_url.lastIndexOf('/'));
+				if(base_url !== '') {
+					full_href = base_url + '/' + href;
+				}
+			}
+			return full_href;
+		}
+
 		for (var i = 0; i < sl.length; i++) {
 			var e = sl[i], el;
 			var options = {}, poptions = {}, ioptions = {};
@@ -136,7 +164,7 @@ L.Util.extend(L.KML, {
 			if (ioptions.href) {
 				// save anchor info until the image is loaded
 				options.icon = new L.KMLIcon({
-					iconUrl: ioptions.href,
+					iconUrl: _get_icon_url(ioptions.href),
 					shadowUrl: null,
 					iconAnchorRef: {x: ioptions.x, y: ioptions.y},
 					iconAnchorType:	{x: ioptions.xunits, y: ioptions.yunits}
@@ -147,18 +175,18 @@ L.Util.extend(L.KML, {
 		return style;
 	},
 
-	parseFolder: function (xml, style) {
+	parseFolder: function (xml, style, state) {
 		var el, layers = [], l;
 		el = xml.getElementsByTagName('Folder');
 		for (var i = 0; i < el.length; i++) {
 			if (!this._check_folder(el[i], xml)) { continue; }
-			l = this.parseFolder(el[i], style);
+			l = this.parseFolder(el[i], style, state);
 			if (l) { layers.push(l); }
 		}
 		el = xml.getElementsByTagName('Placemark');
 		for (var j = 0; j < el.length; j++) {
 			if (!this._check_folder(el[j], xml)) { continue; }
-			l = this.parsePlacemark(el[j], xml, style);
+			l = this.parsePlacemark(el[j], xml, style, state);
 			if (l) { layers.push(l); }
 		}
 		if (!layers.length) { return; }
@@ -166,7 +194,7 @@ L.Util.extend(L.KML, {
 		return new L.FeatureGroup(layers);
 	},
 
-	parsePlacemark: function (place, xml, style) {
+	parsePlacemark: function (place, xml, style, state) {
 		var i, j, el, options = {};
 		el = place.getElementsByTagName('styleUrl');
 		for (i = 0; i < el.length; i++) {
@@ -306,16 +334,18 @@ L.KMLIcon = L.Icon.extend({
 		img.onload = function () {
 			var i = new Image();
 			i.src = this.src;
-			this.style.width = i.width + 'px';
-			this.style.height = i.height + 'px';
+			if((i.width > 0) && (i.height > 0)) {
+				this.style.width = i.width + 'px';
+				this.style.height = i.height + 'px';
 
-			if (this.anchorType.x === 'UNITS_FRACTION' || this.anchorType.x === 'fraction') {
-				img.style.marginLeft = (-this.anchor.x * i.width) + 'px';
+				if (this.anchorType.x === 'UNITS_FRACTION' || this.anchorType.x === 'fraction') {
+					img.style.marginLeft = (-this.anchor.x * i.width) + 'px';
+				}
+				if (this.anchorType.y === 'UNITS_FRACTION' || this.anchorType.x === 'fraction') {
+					img.style.marginTop  = (-(1 - this.anchor.y) * i.height) + 'px';
+				}
+				this.style.display = "";
 			}
-			if (this.anchorType.y === 'UNITS_FRACTION' || this.anchorType.x === 'fraction') {
-				img.style.marginTop  = (-(1 - this.anchor.y) * i.height) + 'px';
-			}
-			this.style.display = "";
 		};
 		return img;
 	},
