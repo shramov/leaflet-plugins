@@ -46,7 +46,7 @@ L.BingLayer = L.TileLayer.extend({
 			var e = document.getElementById(cbid);
 			e.parentNode.removeChild(e);
 			if (meta.errorDetails) {
-				alert("Got metadata" + meta.errorDetails);
+				if (window.console) console.log("Leaflet Bing Plugin Error - Got metadata: " + meta.errorDetails);
 				return;
 			}
 			_this.initMetadata();

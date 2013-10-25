@@ -58,6 +58,7 @@ L.Util.extend(L.KML, {
 
 	parseKML: function (xml) {
 		var style = this.parseStyle(xml);
+		this.parseStyleMap(xml, style);
 		var el = xml.getElementsByTagName("Folder");
 		var layers = [], l;
 		for (var i = 0; i < el.length; i++) {
@@ -145,6 +146,27 @@ L.Util.extend(L.KML, {
 			style['#' + e.getAttribute('id')] = options;
 		}
 		return style;
+	},
+	
+	parseStyleMap: function (xml, existingStyles) {
+		var sl = xml.getElementsByTagName("StyleMap");
+		
+		for (var i = 0; i < sl.length; i++) {
+			var e = sl[i], el;
+			var smKey, smStyleUrl;
+			
+			el = e.getElementsByTagName("key");
+			if (el && el[0]) { smKey = el[0].textContent; }
+			el = e.getElementsByTagName("styleUrl");
+			if (el && el[0]) { smStyleUrl = el[0].textContent; }
+			
+			if (smKey=='normal')
+			{
+				existingStyles['#' + e.getAttribute('id')] = existingStyles[smStyleUrl];
+			}
+		}
+		
+		return;
 	},
 
 	parseFolder: function (xml, style) {
