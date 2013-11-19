@@ -228,7 +228,7 @@ L.Util.extend(L.KML, {
 
 		var name, descr = "";
 		el = place.getElementsByTagName('name');
-		if (el.length) {
+		if (el.length && el[0].childNodes.length) {
 			name = el[0].childNodes[0].nodeValue;
 		}
 		el = place.getElementsByTagName('description');
