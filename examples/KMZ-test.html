@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>KMZ test script</title>
+
+
+  	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
+	<script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+    <script type="text/javascript" src="../layer/vector/KML.js"></script>
+    <script type="text/javascript" src="../layer/vector/KMZ.js"></script>
+    <script type="text/javascript" src="../layer/tile/Bing.js"></script>
+	
+	<script type="text/javascript" src="zip/zip.js"></script>
+	
+	
+        
+	<script>
+	var _xml = {
+			_str2xml : function(strXML){
+			if (window.ActiveXObject)
+			{
+			var doc=new ActiveXObject('Microsoft.XMLDOM');
+			doc.async='false';
+			doc.loadXML(strXML);
+			}
+			// code for Mozilla, Firefox, Opera, etc.
+			else
+			{
+			var parser=new DOMParser();
+			var doc=parser.parseFromString(strXML,'text/xml');
+			}// documentElement always represents the root node
+			return doc;
+			},
+			_xml2string : function(xmlDom){
+			var strs = null;
+			var doc = xmlDom.documentElement;
+			if(doc.xml == undefined){
+			strs = (new XMLSerializer()).serializeToString(xmlDom);
+			}else strs = doc.xml;
+			return strs;
+
+			}
+			};
+	</script>
+
+	<script>
+	
+		zip.workerScriptsPath = 'zip/';
+		var map;
+		var oneBlob;
+	
+		var thisKMZ;
+		
+		
+		window.onload = function()
+		{
+			map = new L.Map('testMap', {center: new L.LatLng(-10, 34), zoom: 8, zoomControl:true, attributionControl:false});
+			
+			new L.Control.Zoom({ position: 'topright' }).addTo(map);
+			var bing = new L.BingLayer('ArcaLay02NzS45ONl4kspJAMskwdC9jlFfKfhe3zMrMbXtrjW-VxrzqQs9vJh7hy');
+			map.addLayer(bing);
+			console.log('map loaded');
+		}
+		
+	
+		function onClickAddButton()
+		{
+			var thisKMZURL = 'usa-ca-sf.kmz';
+			thisKMZ = new L.KMZ(thisKMZURL, 
+								{ 	imageOverlayBoundingBoxCreatePopUp: true, 
+									imageOverlayBoundingBoxDrawOptions: {	stroke: true,
+																			weight: 2,
+																			fillOpacity: 0.05,
+																			clickable: true} 
+								},
+								'KMZ');
+			
+			thisKMZ.on('loaded', 	function(e) 	
+									{ 
+										console.log('In the post L.KMZ call back at the end - loaded!');
+										map.addLayer(thisKMZ);
+										map.fitBounds(thisKMZ.getBounds());
+										
+									}
+					  );
+		}
+	
+		function onClickRemoveButton()
+		{	map.removeLayer(thisKMZ);
+		}
+
+	
+	
+	</script>
+	
+	
+</head>
+
+
+<form action="">
+ <input type="button" value="Add KMZ" onClick="onClickAddButton();">
+ <input type="button" value="Remove KMZ" onClick="onClickRemoveButton();">
+</form>    
+<div id="testMap" style="width: 600px; height: 400px">
+</div>
+
+</body>
+</html>
