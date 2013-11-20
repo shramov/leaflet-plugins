@@ -267,7 +267,5 @@ L.KMZ = L.KML.extend({
    			}
 		}
      }
-     
-    
  
 });
