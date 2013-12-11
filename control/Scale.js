@@ -35,9 +35,7 @@ L.Control.Scale = L.Control.extend({
 	},
 
 	onRemove: function(map) {
-		map._container.removeChild(this._label);
-		map._container.removeChild(this._canvas);
-		map.off('zoomend', this._reset);
+		map.off('zoomend', this._update, this);
 	},
 
 	getPosition: function() {
