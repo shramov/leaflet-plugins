@@ -37,6 +37,42 @@ L.KML = L.FeatureGroup.extend({
 		this.loadXML(url, cb, options, async);
 	},
 
+	addKML: function (url, options, async) {
+		var _this = this;
+		var cb = function (gpx, options) { _this._addKML(gpx, options) };
+		if (options.fromText) {
+			this.textToXML(url, cb, options);
+		} else {
+			this.loadXML(url, cb, options, async);
+		}
+	},
+
+	textToXML: function (text, cb, options) {
+		try {
+			var xml = null;
+			if (window.DOMParser) {
+				var parser = new DOMParser();
+				xml = parser.parseFromString(text, 'text/xml');
+				var found = xml.getElementsByTagName('parsererror');
+
+				if (!found || !found.length || !found[0].childNodes.length) {
+					return cb(xml, options);
+				}
+
+				return cb(null, options);
+			} else {
+
+				xml = new ActiveXObject('Microsoft.XMLDOM');
+				xml.async = false;
+				xml.loadXML(text);
+
+				return cb(xml, options);
+			}
+		} catch (e) {
+			return cb(null, options);
+		}
+	},
+
 	_addKML: function(xml, options) {
 		var layers = L.KML.parseKML(xml);
 		if (!layers || !layers.length) return;
