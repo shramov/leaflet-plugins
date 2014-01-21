@@ -33,7 +33,6 @@ L.BingLayer = L.TileLayer.extend({
 			s = this.options.subdomains[Math.abs((p.x + p.y) % subdomains.length)];
 		return this._url.replace('{subdomain}', s)
 				.replace('{quadkey}', this.tile2quad(p.x, p.y, z))
-				.replace('http:', document.location.protocol)
 				.replace('{culture}', this.options.culture);
 	},
 
@@ -51,7 +50,8 @@ L.BingLayer = L.TileLayer.extend({
 			}
 			_this.initMetadata();
 		};
-		var url = document.location.protocol + "//dev.virtualearth.net/REST/v1/Imagery/Metadata/" + this.options.type + "?include=ImageryProviders&jsonp=" + cbid + "&key=" + this._key;
+		var url = document.location.protocol + "//dev.virtualearth.net/REST/v1/Imagery/Metadata/" + this.options.type + "?include=ImageryProviders&jsonp=" + cbid +
+		          "&key=" + this._key + "&UriScheme=" + document.location.protocol.slice(0, -1);
 		var script = document.createElement("script");
 		script.type = "text/javascript";
 		script.src = url;
