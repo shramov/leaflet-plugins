@@ -326,8 +326,7 @@ L.KMLIcon = L.Icon.extend({
 	createIcon: function () {
 		var img = this._createIcon('icon');
 		img.onload = function () {
-			var i = new Image();
-			i.src = this.src;
+			var i = img;
 			this.style.width = i.width + 'px';
 			this.style.height = i.height + 'px';
 
