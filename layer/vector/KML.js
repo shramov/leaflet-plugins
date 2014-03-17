@@ -347,57 +347,56 @@ L.KMLMarker = L.Marker.extend({
 });
 
 L.KMLQuery = L.FeatureGroup.extend({
-    options: {
-        async: true
-    },
-
-    initialize: function (kml, name, options) {
-        L.Util.setOptions(this, options);
-        this._kml = kml;
-        this._layers = {};
-
-        if (kml) {
-            this.addKML(kml, name, options, this.options.async);
-        }
-    },
-
-    loadXML: function (url, name, cb, options, async) {
-        if (async == undefined) async = this.options.async;
-        if (options == undefined) options = this.options;
-
-        var req = new window.XMLHttpRequest();
-        req.open('GET', url, async);
-        try {
-            req.overrideMimeType('text/xml'); // unsupported by IE
-        } catch (e) { }
-        req.onreadystatechange = function () {
-            if (req.readyState != 4) return;
-            if (req.status == 200) cb(req.responseXML, name, options);
-        };
-        req.send(null);
-    },
-
-    addKML: function (url, name, options, async) {
-        var _this = this;
-        var cb = function (gpx, name, options) {
-                _this._addKML(gpx, name, options) 
-             };
-        this.loadXML(url, name, cb, options, async);
-    },
-
-    _addKML: function (xml, name, options) {
-        var layers = L.KML.parseKMLByName(xml, name);
-        if (!layers || !layers.length) return;
-        for (var i = 0; i < layers.length; i++) {
-            this.fire('addlayer', {
-                layer: layers[i]
-            });
-            this.addLayer(layers[i]);
-        }
-        this.latLngs = L.KML.getLatLngs(xml);
-        this.fire("loaded");
-    },
-
-    latLngs: []
-
+	options: {
+		async: true
+	},
+	
+	initialize: function (kml, name, options) {
+		L.Util.setOptions(this, options);
+		this._kml = kml;
+		this._layers = {};
+		
+		if (kml) {
+			this.addKML(kml, name, options, this.options.async);
+		}
+	},
+	
+	loadXML: function (url, name, cb, options, async) {
+		if (async == undefined) async = this.options.async;
+		if (options == undefined) options = this.options;
+		
+		var req = new window.XMLHttpRequest();
+		req.open('GET', url, async);
+		try {
+			req.overrideMimeType('text/xml'); // unsupported by IE
+		} catch (e) { }
+		req.onreadystatechange = function () {
+			if (req.readyState != 4) return;
+			if (req.status == 200) cb(req.responseXML, name, options);
+		};
+		req.send(null);
+	},
+	
+	addKML: function (url, name, options, async) {
+	var _this = this;
+	var cb = function (gpx, name, options) {
+		_this._addKML(gpx, name, options) 
+	};
+	this.loadXML(url, name, cb, options, async);
+	},
+	
+	_addKML: function (xml, name, options) {
+	var layers = L.KML.parseKMLByName(xml, name);
+	if (!layers || !layers.length) return;
+	for (var i = 0; i < layers.length; i++) {
+		this.fire('addlayer', {
+			layer: layers[i]
+		});
+	    this.addLayer(layers[i]);
+	}
+	this.latLngs = L.KML.getLatLngs(xml);
+	this.fire("loaded");
+	},
+	
+	latLngs: []
 });
