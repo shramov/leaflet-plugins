@@ -1,0 +1,38 @@
+{
+  "name": "shramov/leaflet-plugins",
+  "description": "Miscellaneous plugins for Leaflet library for services that need to display route information and need satellite imagery from different providers",
+  "type": "component",
+  "keywords": [
+    "leaflet",
+    "plugins",
+    "map",
+    "google",
+    "bing",
+    "yandex"
+  ],
+  "extra": {
+    "component": {
+      "scripts": [
+        "control/Permalink.js",
+        "control/Permalink.Marker.js",
+        "control/Permalink.Line.js",
+        "control/Permalink.Layer.js",
+        "control/Distance.js",
+        "control/Layers.Load.js",
+        "layer/*.js",
+        "layer/vector/GPX.js",
+        "layer/vector/GPX.Speed.js",
+        "layer/vector/KML.js",
+        "layer/vector/OSM.js",
+        "layer/tile/*.js"
+      ],
+      "files": [
+        "control/*",
+        "layer/*",
+        "layer/vector/*",
+        "layer/tile/*",
+        "css/*"
+      ]
+    }
+  }
+}
