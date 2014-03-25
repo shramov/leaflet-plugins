@@ -29,10 +29,10 @@
 	],
 	"files": [
 		"control/*",
-        "layer/*",
-        "layer/vector/*",
-        "layer/tile/*",
-        "layer/*",
-        "css/*"
+		"layer/*",
+		"layer/vector/*",
+		"layer/tile/*",
+		"layer/*",
+		"css/*"
     ]
 }
