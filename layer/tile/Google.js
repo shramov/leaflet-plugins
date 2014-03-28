@@ -3,7 +3,7 @@
  */
 //(function (google, L) {
 
-L.Google = L.Class.extend({
+L.Google = L.TileLayer.extend({
 	includes: L.Mixin.Events,
 
 	options: {
@@ -31,24 +31,34 @@ L.Google = L.Class.extend({
 		this._type = type || 'SATELLITE';
 	},
 
-	onAdd: function(map, insertAtTheBottom) {
+	onAdd: function(map) {
 		this._map = map;
-		this._insertAtTheBottom = insertAtTheBottom;
 
 		// create a container div for tiles
 		this._initContainer();
 		this._initMapObject();
 
 		// set up events
-		map.on('viewreset', this._resetCallback, this);
+		map.on({
+			'viewreset': this._reset,
+			'moveend': this._update
+		}, this);
 
 		this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
 		map.on('move', this._update, this);
 
-		map.on('zoomanim', this._handleZoomAnim, this);
+		// Fixes zoom animation for Google tiles.
+		map.on('zoomanim', function (e) {
+			var center = e.center;
+			var _center = new google.maps.LatLng(center.lat, center.lng);
 
-		//20px instead of 1em to avoid a slight overlap with google's attribution
-		map._controlCorners['bottomright'].style.marginBottom = "20px";
+			this._google.setCenter(_center);
+			this._google.setZoom(e.zoom);
+		}, this);
+
+		// Moves Leaflet attributions up to properly display Google's attribution.
+		this._google.lmap = map;
+		google.maps.event.addListenerOnce(this._google, "tilesloaded", this._moveGoogleAttribution);
 
 		this._reset();
 		this._update();
@@ -69,7 +79,42 @@ L.Google = L.Class.extend({
 	},
 
 	getAttribution: function() {
+		var googleMap = typeof(this._google);
+		var oldAttribution = typeof(this._google.leafletAttribution);
+		//if (this._google.leafletAttribution !== 'undefined') {
+		if (googleMap !== 'undefined' && oldAttribution !== 'undefined') {
+			this.options.attribution = this._google.leafletAttribution;
+			delete this._google.leafletAttribution;
+		}
+
 		return this.options.attribution;
+	},
+
+	_moveGoogleAttribution: function() {
+		// Get the Google attribution elements.
+		var googleAttribution = document.getElementsByClassName('gmnoprint');
+
+		// Builds the attribution text.
+		var attribution = ' | ';
+		attribution += googleAttribution[0].outerHTML + ' - ';
+		attribution += googleAttribution[1].outerHTML;
+
+		// Modify some styles.
+		var sheet = document.createElement('style');
+		sheet.innerHTML = ".gmnoprint {position: inherit !important; display: inline-block; right: 0 !important;}";
+		sheet.innerHTML += ".gm-style-cc div:first-child {opacity: 0 !important;}";
+		document.body.appendChild(sheet);
+
+		// Removes old attribution.
+		googleAttribution[0].parentNode.removeChild(googleAttribution[0]);
+		googleAttribution[0].parentNode.removeChild(googleAttribution[0]);
+
+		// Adds to Leaflet Attribution Control.
+		this.lmap.attributionControl.addAttribution(attribution);
+		// Saves the attribution to be sent to options.
+		this.leafletAttribution = attribution;
+
+		delete this.lmap;
 	},
 
 	setOpacity: function(opacity) {
@@ -89,9 +134,11 @@ L.Google = L.Class.extend({
 			first = tilePane.firstChild;
 
 		if (!this._container) {
-			this._container = L.DomUtil.create('div', 'leaflet-google-layer leaflet-top leaflet-left');
-			this._container.id = "_GMapContainer_" + L.Util.stamp(this);
-			this._container.style.zIndex = "auto";
+			this._container = L.DomUtil.create('div', 'leaflet-layer leaflet-google-layer');
+			this._updateZIndex();
+		}
+		else {
+			this._tileContainer = this._container;
 		}
 
 		tilePane.insertBefore(this._container, first);
@@ -141,7 +188,24 @@ L.Google = L.Class.extend({
 		this._reset(e.hard);
 	},
 
-	_reset: function(clearOldContainer) {
+	_reset: function (e) {
+		for (var key in this._tiles) {
+			this.fire('tileunload', {tile: this._tiles[key]});
+		}
+
+		this._tiles = {};
+		this._tilesToLoad = 0;
+
+		if (this.options.reuseTiles) {
+			this._unusedTiles = [];
+		}
+
+		//this._tileContainer.innerHTML = '';
+
+		if (this._animated && e && e.hard) {
+			this._clearBgBuffer();
+		}
+
 		this._initContainer();
 	},
 
