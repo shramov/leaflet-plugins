@@ -58,7 +58,6 @@ L.Util.extend(L.KML, {
 
 	parseKML: function (xml) {
 		var style = this.parseStyle(xml);
-		this.parseStyleMap(xml, style);
 		var el = xml.getElementsByTagName("Folder");
 		var layers = [], l;
 		for (var i = 0; i < el.length; i++) {
@@ -75,12 +74,26 @@ L.Util.extend(L.KML, {
 		return layers;
 	},
 
+	parseKMLByName: function (xml, name) {
+		var style = this.parseStyle(xml);
+		var layers = [], l;
+		var el = xml.getElementsByTagName('Placemark');
+		for (var j = 0; j < el.length; j++) {
+			var nm = el[j].getElementsByTagName('name');
+			var match = nm[0].childNodes[0].textContent;
+			if (match == name) {
+				l = this.parsePlacemark(el[j], xml, style);
+				if (l) { layers.push(l); }
+			}
+		}
+		return layers;
+	},
+
 	// Return false if e's first parent Folder is not [folder]
 	// - returns true if no parent Folders
 	_check_folder: function (e, folder) {
 		e = e.parentElement;
-		while (e && e.tagName !== "Folder")
-		{
+		while (e && e.tagName !== "Folder") {
 			e = e.parentElement;
 		}
 		return !e || e === folder;
@@ -91,8 +104,9 @@ L.Util.extend(L.KML, {
 		var sl = xml.getElementsByTagName("Style");
 
 		//for (var i = 0; i < sl.length; i++) {
-		var attributes = {color: true, width: true, Icon: true, href: true,
-						  hotSpot: true};
+		var attributes = { color: true, width: true, Icon: true, href: true,
+			hotSpot: true
+		};
 
 		function _parse(xml) {
 			var options = {};
@@ -100,8 +114,7 @@ L.Util.extend(L.KML, {
 				var e = xml.childNodes[i];
 				var key = e.tagName;
 				if (!attributes[key]) { continue; }
-				if (key === 'hotSpot')
-				{
+				if (key === 'hotSpot') {
 					for (var j = 0; j < e.attributes.length; j++) {
 						options[e.attributes[j].name] = e.attributes[j].nodeValue;
 					}
@@ -109,7 +122,7 @@ L.Util.extend(L.KML, {
 					var value = e.childNodes[0].nodeValue;
 					if (key === 'color') {
 						options.opacity = parseInt(value.substring(0, 2), 16) / 255.0;
-						options.color = "#" + value.substring(6, 8) + value.substring(4, 6) + value.substring(2, 4);
+						options.color = "#" + value.substring(2, 8);
 					} else if (key === 'width') {
 						options.weight = value;
 					} else if (key === 'Icon') {
@@ -139,34 +152,13 @@ L.Util.extend(L.KML, {
 				options.icon = new L.KMLIcon({
 					iconUrl: ioptions.href,
 					shadowUrl: null,
-					iconAnchorRef: {x: ioptions.x, y: ioptions.y},
-					iconAnchorType:	{x: ioptions.xunits, y: ioptions.yunits}
+					iconAnchorRef: { x: ioptions.x, y: ioptions.y },
+					iconAnchorType: { x: ioptions.xunits, y: ioptions.yunits }
 				});
 			}
 			style['#' + e.getAttribute('id')] = options;
 		}
 		return style;
-	},
-	
-	parseStyleMap: function (xml, existingStyles) {
-		var sl = xml.getElementsByTagName("StyleMap");
-		
-		for (var i = 0; i < sl.length; i++) {
-			var e = sl[i], el;
-			var smKey, smStyleUrl;
-			
-			el = e.getElementsByTagName("key");
-			if (el && el[0]) { smKey = el[0].textContent; }
-			el = e.getElementsByTagName("styleUrl");
-			if (el && el[0]) { smStyleUrl = el[0].textContent; }
-			
-			if (smKey=='normal')
-			{
-				existingStyles['#' + e.getAttribute('id')] = existingStyles[smStyleUrl];
-			}
-		}
-		
-		return;
 	},
 
 	parseFolder: function (xml, style) {
@@ -193,11 +185,9 @@ L.Util.extend(L.KML, {
 		el = place.getElementsByTagName('styleUrl');
 		for (i = 0; i < el.length; i++) {
 			var url = el[i].childNodes[0].nodeValue;
-			for (var a in style[url])
-			{
+			for (var a in style[url]) {
 				// for jshint
-				if (true)
-				{
+				if (true) {
 					options[a] = style[url][a];
 				}
 			}
@@ -207,8 +197,7 @@ L.Util.extend(L.KML, {
 		var parse = ['LineString', 'Polygon', 'Point'];
 		for (j in parse) {
 			// for jshint
-			if (true)
-			{
+			if (true) {
 				var tag = parse[j];
 				el = place.getElementsByTagName(tag);
 				for (i = 0; i < el.length; i++) {
@@ -228,7 +217,7 @@ L.Util.extend(L.KML, {
 
 		var name, descr = "";
 		el = place.getElementsByTagName('name');
-		if (el.length && el[0].childNodes.length) {
+		if (el.length) {
 			name = el[0].childNodes[0].nodeValue;
 		}
 		el = place.getElementsByTagName('description');
@@ -297,7 +286,7 @@ L.Util.extend(L.KML, {
 		var el = xml.getElementsByTagName('coordinates');
 		var coords = [];
 		for (var j = 0; j < el.length; j++) {
-			// text might span many childNodes
+			// text might span many childnodes
 			coords = coords.concat(this._read_coords(el[j]));
 		}
 		return coords;
@@ -356,3 +345,57 @@ L.KMLMarker = L.Marker.extend({
 	}
 });
 
+L.KMLQuery = L.FeatureGroup.extend({
+	options: {
+		async: true
+	},
+	
+	initialize: function (kml, name, options) {
+		L.Util.setOptions(this, options);
+		this._kml = kml;
+		this._layers = {};
+		
+		if (kml) {
+			this.addKML(kml, name, options, this.options.async);
+		}
+	},
+	
+	loadXML: function (url, name, cb, options, async) {
+		if (async == undefined) async = this.options.async;
+		if (options == undefined) options = this.options;
+		
+		var req = new window.XMLHttpRequest();
+		req.open('GET', url, async);
+		try {
+			req.overrideMimeType('text/xml'); // unsupported by IE
+		} catch (e) { }
+		req.onreadystatechange = function () {
+			if (req.readyState != 4) return;
+			if (req.status == 200) cb(req.responseXML, name, options);
+		};
+		req.send(null);
+	},
+	
+	addKML: function (url, name, options, async) {
+	var _this = this;
+	var cb = function (gpx, name, options) {
+		_this._addKML(gpx, name, options) 
+	};
+	this.loadXML(url, name, cb, options, async);
+	},
+	
+	_addKML: function (xml, name, options) {
+	var layers = L.KML.parseKMLByName(xml, name);
+	if (!layers || !layers.length) return;
+	for (var i = 0; i < layers.length; i++) {
+		this.fire('addlayer', {
+			layer: layers[i]
+		});
+		this.addLayer(layers[i]);
+	}
+	this.latLngs = L.KML.getLatLngs(xml);
+	this.fire("loaded");
+	},
+	
+	latLngs: []
+});
