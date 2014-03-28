@@ -39,7 +39,8 @@
 					this._updateImg(i, a, s);
 				}
 				if (this._shadow) {
-					// Rotate around the icons anchor.
+					if (this.options.icon.options.shadowAnchor)
+						a = this.options.icon.options.shadowAnchor;
 					s = this.options.icon.options.shadowSize;
 					i = this._shadow;
 					this._updateImg(i, a, s);
