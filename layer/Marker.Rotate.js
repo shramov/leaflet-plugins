@@ -24,9 +24,9 @@
 
 		_setPos: function (pos) {
 			if (this._icon)
-				this._icon.style[L.DomUtil.TRANSFORM] = "";
+				this._icon.style[L.DomUtil.TRANSFORM] = '';
 			if (this._shadow)
-				this._shadow.style[L.DomUtil.TRANSFORM] = "";
+				this._shadow.style[L.DomUtil.TRANSFORM] = '';
 
 			_old__setPos.apply(this,[pos]);
 
