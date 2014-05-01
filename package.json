@@ -7,6 +7,12 @@
     "type": "git",
     "url": "git@github.com:shramov/leaflet-plugins.git"
   },
+  "scripts": {
+    "test": "jshint control/* layer/*"
+  },
+  "devDependencies": {
+    "jshint": "2.5.0"
+  },
   "contributors": [
     "Bruno Bergot <bruno@eliaz.fr>",
     "Andrey Lushchick <andrew@lushchick.org>"
