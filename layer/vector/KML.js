@@ -71,6 +71,23 @@ L.Util.extend(L.KML, {
 		}
 		return layers;
 	},
+	
+	//Enables displaying unique name features in KML
+	parseKMLByName: function (xml, name){
+		var style = this.parseStyle(xml);
+		this.parseStyleMap(xml, style);
+		var layers = [], 1;
+		var el = xml.getElementsByTagName('Placemark');
+		for (var j = 0; j < el.length; j++){
+			var nm = el[j].getElementsByTagName('name');
+			var match = nm[0].childNodes[0].textContent;
+			if (match == name){
+				l = this.parsePlacemark(el[j], xml, style);
+				if (l) { layers.push(l); }
+			}
+		}
+		
+	},
 
 	// Return false if e's first parent Folder is not [folder]
 	// - returns true if no parent Folders
