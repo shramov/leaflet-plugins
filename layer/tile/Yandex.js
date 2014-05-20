@@ -16,16 +16,37 @@ L.Yandex = L.Class.extend({
 		traffic: false
 	},
 
+	possibleShortMapTypes: {
+		schemaMap: 'map',
+		satelliteMap: 'satellite',
+		hybridMap: 'hybrid',
+		publicMap: 'publicMap',
+		publicMapInHybridView: 'publicMapHybrid'
+	},
+	
+	_getPossibleMapType: function (mapType) {
+		var result = 'yandex#map';
+		if (typeof mapType != "string") {
+	            return result;
+		}
+	        for (var key in this.possibleShortMapTypes) {
+	            if (mapType == this.possibleShortMapTypes[key]) {
+	                result = 'yandex#' + mapType;
+	                break;
+	            }
+	            if (mapType == ('yandex#' + this.possibleShortMapTypes[key])) {
+	            	result = mapType;
+	            }
+	        }
+	        return result;
+	},
+	
 	// Possible types: yandex#map, yandex#satellite, yandex#hybrid, yandex#publicMap, yandex#publicMapHybrid
+	// Or their short names: map, satellite, hybrid, publicMap, publicMapHybrid
 	initialize: function(type, options) {
 		L.Util.setOptions(this, options);
-		
-		//to set map type like that: this._type = "yandex#" + (type || "map"), is less universally. 
-		//It is better to do so, as stated in the <mapObject>.setType(<newType>) method of ymaps JS API.
-		//For example if user has his own map type, and he want's to initialize yandex layer with it,
-		//this way: this._type = "yandex#" + (type || "map"), won't let him do that.
-		//So i suppose, the way below would be better.
-		this._type = type || "yandex#map";
+		//Assigning an initial map type for the Yandex layer
+		this._type = this._getPossibleMapType(type);
 	},
 
 	onAdd: function(map, insertAtTheBottom) {
@@ -118,8 +139,7 @@ L.Yandex = L.Class.extend({
 				return ymaps.load(['package.traffic', 'package.controls'],
 					this._initMapObject, this);
 			}
-		//"controls: []" added, because ymaps API v2.1 adding to map some new controls by default.
-		//(ymaps zoom, ymaps geosearch etc.)
+		//Creating ymaps map-object without any default controls on it
 		var map = new ymaps.Map(this._container, { center: [0, 0], zoom: 0, behaviors: [], controls: [] });
 
 		if (this.options.traffic)
@@ -134,8 +154,7 @@ L.Yandex = L.Class.extend({
 		this._yandex = map;
 		this._update(true);
 		
-		//Firing event with map-object as its argument, for the code that uses plug-in 
-		//will be able to use the Yandex-maps JS API through it.
+		//Reporting that map-object was initialized
 		this.fire('MapObjectInitialized', { mapObject: map });
 	},
 
