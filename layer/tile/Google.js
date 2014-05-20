@@ -126,8 +126,7 @@ L.Google = L.Class.extend({
 
 		google.maps.event.addListenerOnce(map, 'idle',
 			function() { _this._checkZoomLevels(); });
-		//Firing event with map-object as its argument, for the code that uses plug-in 
-		//will be able to use the Google-maps JS API through it.
+		//Reporting that map-object was initialized.
 		this.fire('MapObjectInitialized', { mapObject: map });
 	},
 
