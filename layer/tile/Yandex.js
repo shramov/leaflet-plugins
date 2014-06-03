@@ -26,15 +26,15 @@ L.Yandex = L.Class.extend({
 	
 	_getPossibleMapType: function (mapType) {
 		var result = 'yandex#map';
-		if (typeof mapType != "string") {
+		if (typeof mapType !== 'string') {
 	            return result;
 		}
 	        for (var key in this.possibleShortMapTypes) {
-	            if (mapType == this.possibleShortMapTypes[key]) {
+	            if (mapType === this.possibleShortMapTypes[key]) {
 	                result = 'yandex#' + mapType;
 	                break;
 	            }
-	            if (mapType == ('yandex#' + this.possibleShortMapTypes[key])) {
+	            if (mapType === ('yandex#' + this.possibleShortMapTypes[key])) {
 	            	result = mapType;
 	            }
 	        }
