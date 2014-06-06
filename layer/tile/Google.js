@@ -56,17 +56,15 @@ L.Google = L.Class.extend({
 	},
 
 	onRemove: function(map) {
-		this._map._container.removeChild(this._container);
-		//this._container = null;
+		map._container.removeChild(this._container);
 
-		this._map.off('viewreset', this._resetCallback, this);
+		map.off('viewreset', this._resetCallback, this);
 
-		this._map.off('move', this._update, this);
+		map.off('move', this._update, this);
 
-		this._map.off('zoomanim', this._handleZoomAnim, this);
+		map.off('zoomanim', this._handleZoomAnim, this);
 
 		map._controlCorners.bottomright.style.marginBottom = '0em';
-		//this._map.off('moveend', this._update, this);
 	},
 
 	getAttribution: function() {
@@ -159,7 +157,6 @@ L.Google = L.Class.extend({
 		this._google.setZoom(this._map.getZoom());
 
 		this._checkZoomLevels();
-		//this._google.fitBounds(google_bounds);
 	},
 
 	_resize: function() {
