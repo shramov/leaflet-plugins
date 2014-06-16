@@ -190,13 +190,8 @@ L.Util.extend(L.KML, {
 		el = place.getElementsByTagName('styleUrl');
 		for (i = 0; i < el.length; i++) {
 			var url = el[i].childNodes[0].nodeValue;
-			for (var a in style[url])
-			{
-				// for jshint
-				if (true)
-				{
-					options[a] = style[url][a];
-				}
+			for (var a in style[url]) {
+				options[a] = style[url][a];
 			}
 		}
 		var layers = [];
