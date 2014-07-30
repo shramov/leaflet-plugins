@@ -356,7 +356,11 @@ L.Util.extend(L.KML, {
 		}
 		var options = {};
 		options = _parse(xml);
-		return new L.ImageOverlay(options.href, bounds, {opacity: options.opacity});
+		if (latlonbox.getElementsByTagName('rotation')[0] !== undefined) {
+			var rotation = latlonbox.getElementsByTagName('rotation')[0].childNodes[0].nodeValue;
+			options.rotation = parseFloat(rotation);
+		}
+		return new L.RotatedImageOverlay(options.href, bounds, {opacity: options.opacity, angle: options.rotation});
 	}
 
 });
@@ -393,6 +397,27 @@ L.KMLIcon = L.Icon.extend({
 L.KMLMarker = L.Marker.extend({
 	options: {
 		icon: new L.KMLIcon.Default()
+	}
+});
+
+// Inspired by https://github.com/bbecquet/Leaflet.PolylineDecorator/tree/master/src
+L.RotatedImageOverlay = L.ImageOverlay.extend({
+	options: {
+		angle: 0
+	},
+	_reset: function () {
+		L.ImageOverlay.prototype._reset.call(this);
+        if (L.DomUtil.TRANSFORM) {
+            // use the CSS transform rule if available
+            this._image.style[L.DomUtil.TRANSFORM] += ' rotate(' + this.options.angle + 'deg)';
+        } else if(L.Browser.ie) {
+            // fallback for IE6, IE7, IE8
+            var rad = this.options.angle * (Math.PI / 180),
+                costheta = Math.cos(rad),
+                sintheta = Math.sin(rad);
+            this._image.style.filter += ' progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\'auto expand\', M11=' + 
+                costheta + ', M12=' + (-sintheta) + ', M21=' + sintheta + ', M22=' + costheta + ')';                
+        }
 	}
 });
 
