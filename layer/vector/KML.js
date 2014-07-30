@@ -69,6 +69,11 @@ L.Util.extend(L.KML, {
 			l = this.parsePlacemark(el[j], xml, style);
 			if (l) { layers.push(l); }
 		}
+		el = xml.getElementsByTagName('GroundOverlay');
+		for (var k = 0; k < el.length; k++) {
+			l = this.parseGroundOverlay(el[k]);
+			if (l) { layers.push(l); }
+		}
 		return layers;
 	},
 
@@ -178,6 +183,12 @@ L.Util.extend(L.KML, {
 		for (var j = 0; j < el.length; j++) {
 			if (!this._check_folder(el[j], xml)) { continue; }
 			l = this.parsePlacemark(el[j], xml, style);
+			if (l) { layers.push(l); }
+		}
+		el = xml.getElementsByTagName('GroundOverlay');
+		for (var k = 0; k < el.length; k++) {
+			if (!this._check_folder(el[k], xml)) { continue; }
+			l = this.parseGroundOverlay(el[k]);
 			if (l) { layers.push(l); }
 		}
 		if (!layers.length) { return; }
@@ -309,6 +320,43 @@ L.Util.extend(L.KML, {
 			coords.push(new L.LatLng(ll[1], ll[0]));
 		}
 		return coords;
+	},
+
+	parseGroundOverlay: function (xml) {
+		var latlonbox = xml.getElementsByTagName('LatLonBox')[0];
+		var bounds = new L.LatLngBounds(
+			[
+				latlonbox.getElementsByTagName('south')[0].childNodes[0].nodeValue,
+				latlonbox.getElementsByTagName('west')[0].childNodes[0].nodeValue
+			],
+			[
+				latlonbox.getElementsByTagName('north')[0].childNodes[0].nodeValue,
+				latlonbox.getElementsByTagName('east')[0].childNodes[0].nodeValue
+			]
+		);
+		var attributes = {Icon: true, href: true, color: true};
+		function _parse(xml) {
+			var options = {}, ioptions = {};
+			for (var i = 0; i < xml.childNodes.length; i++) {
+				var e = xml.childNodes[i];
+				var key = e.tagName;
+				if (!attributes[key]) { continue; }
+				var value = e.childNodes[0].nodeValue;
+				if (key === 'Icon') {
+					ioptions = _parse(e);
+					if (ioptions.href) { options.href = ioptions.href; }
+				} else if (key === 'href') {
+					options.href = value;
+				} else if (key === 'color') {
+					options.opacity = parseInt(value.substring(0, 2), 16) / 255.0;
+					options.color = '#' + value.substring(6, 8) + value.substring(4, 6) + value.substring(2, 4);
+				}
+			}
+			return options;
+		}
+		var options = {};
+		options = _parse(xml);
+		return new L.ImageOverlay(options.href, bounds, {opacity: options.opacity});
 	}
 
 });
