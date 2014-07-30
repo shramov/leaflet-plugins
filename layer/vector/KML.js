@@ -407,6 +407,13 @@ L.RotatedImageOverlay = L.ImageOverlay.extend({
 	},
 	_reset: function () {
 		L.ImageOverlay.prototype._reset.call(this);
+		this._rotate();
+	},
+	_animateZoom: function (e) {
+		L.ImageOverlay.prototype._animateZoom.call(this, e);
+		this._rotate();
+	},
+	_rotate: function () {
         if (L.DomUtil.TRANSFORM) {
             // use the CSS transform rule if available
             this._image.style[L.DomUtil.TRANSFORM] += ' rotate(' + this.options.angle + 'deg)';
