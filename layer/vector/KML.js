@@ -425,6 +425,9 @@ L.RotatedImageOverlay = L.ImageOverlay.extend({
             this._image.style.filter += ' progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\'auto expand\', M11=' + 
                 costheta + ', M12=' + (-sintheta) + ', M21=' + sintheta + ', M22=' + costheta + ')';                
         }
+	},
+	getBounds: function() {
+		return this._bounds;
 	}
 });
 
