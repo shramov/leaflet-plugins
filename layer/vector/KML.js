@@ -69,6 +69,11 @@ L.Util.extend(L.KML, {
 			l = this.parsePlacemark(el[j], xml, style);
 			if (l) { layers.push(l); }
 		}
+		el = xml.getElementsByTagName('GroundOverlay');
+		for (var k = 0; k < el.length; k++) {
+			l = this.parseGroundOverlay(el[k]);
+			if (l) { layers.push(l); }
+		}
 		return layers;
 	},
 
@@ -178,6 +183,12 @@ L.Util.extend(L.KML, {
 		for (var j = 0; j < el.length; j++) {
 			if (!this._check_folder(el[j], xml)) { continue; }
 			l = this.parsePlacemark(el[j], xml, style);
+			if (l) { layers.push(l); }
+		}
+		el = xml.getElementsByTagName('GroundOverlay');
+		for (var k = 0; k < el.length; k++) {
+			if (!this._check_folder(el[k], xml)) { continue; }
+			l = this.parseGroundOverlay(el[k]);
 			if (l) { layers.push(l); }
 		}
 		if (!layers.length) { return; }
@@ -309,6 +320,47 @@ L.Util.extend(L.KML, {
 			coords.push(new L.LatLng(ll[1], ll[0]));
 		}
 		return coords;
+	},
+
+	parseGroundOverlay: function (xml) {
+		var latlonbox = xml.getElementsByTagName('LatLonBox')[0];
+		var bounds = new L.LatLngBounds(
+			[
+				latlonbox.getElementsByTagName('south')[0].childNodes[0].nodeValue,
+				latlonbox.getElementsByTagName('west')[0].childNodes[0].nodeValue
+			],
+			[
+				latlonbox.getElementsByTagName('north')[0].childNodes[0].nodeValue,
+				latlonbox.getElementsByTagName('east')[0].childNodes[0].nodeValue
+			]
+		);
+		var attributes = {Icon: true, href: true, color: true};
+		function _parse(xml) {
+			var options = {}, ioptions = {};
+			for (var i = 0; i < xml.childNodes.length; i++) {
+				var e = xml.childNodes[i];
+				var key = e.tagName;
+				if (!attributes[key]) { continue; }
+				var value = e.childNodes[0].nodeValue;
+				if (key === 'Icon') {
+					ioptions = _parse(e);
+					if (ioptions.href) { options.href = ioptions.href; }
+				} else if (key === 'href') {
+					options.href = value;
+				} else if (key === 'color') {
+					options.opacity = parseInt(value.substring(0, 2), 16) / 255.0;
+					options.color = '#' + value.substring(6, 8) + value.substring(4, 6) + value.substring(2, 4);
+				}
+			}
+			return options;
+		}
+		var options = {};
+		options = _parse(xml);
+		if (latlonbox.getElementsByTagName('rotation')[0] !== undefined) {
+			var rotation = latlonbox.getElementsByTagName('rotation')[0].childNodes[0].nodeValue;
+			options.rotation = parseFloat(rotation);
+		}
+		return new L.RotatedImageOverlay(options.href, bounds, {opacity: options.opacity, angle: options.rotation});
 	}
 
 });
@@ -345,6 +397,37 @@ L.KMLIcon = L.Icon.extend({
 L.KMLMarker = L.Marker.extend({
 	options: {
 		icon: new L.KMLIcon.Default()
+	}
+});
+
+// Inspired by https://github.com/bbecquet/Leaflet.PolylineDecorator/tree/master/src
+L.RotatedImageOverlay = L.ImageOverlay.extend({
+	options: {
+		angle: 0
+	},
+	_reset: function () {
+		L.ImageOverlay.prototype._reset.call(this);
+		this._rotate();
+	},
+	_animateZoom: function (e) {
+		L.ImageOverlay.prototype._animateZoom.call(this, e);
+		this._rotate();
+	},
+	_rotate: function () {
+        if (L.DomUtil.TRANSFORM) {
+            // use the CSS transform rule if available
+            this._image.style[L.DomUtil.TRANSFORM] += ' rotate(' + this.options.angle + 'deg)';
+        } else if(L.Browser.ie) {
+            // fallback for IE6, IE7, IE8
+            var rad = this.options.angle * (Math.PI / 180),
+                costheta = Math.cos(rad),
+                sintheta = Math.sin(rad);
+            this._image.style.filter += ' progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\'auto expand\', M11=' + 
+                costheta + ', M12=' + (-sintheta) + ', M21=' + sintheta + ', M22=' + costheta + ')';                
+        }
+	},
+	getBounds: function() {
+		return this._bounds;
 	}
 });
 
