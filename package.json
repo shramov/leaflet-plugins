@@ -23,6 +23,8 @@
     "map",
     "google",
     "bing",
-    "yandex"
+    "yandex",
+    "kml",
+    "gpx"
   ]
 }

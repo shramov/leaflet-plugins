@@ -1,9 +1,10 @@
 Leaflet plugins
-===============
+============
 
-== What's it?
+What ?
+------
 
-Miscellaneous plugins for Leaflet library for services that need to display
+Miscellaneous Leaflet plugins for services that need to display
 route information and need satellite imagery from different providers.
 Currently it consists of:
 
@@ -24,18 +25,11 @@ Also there are some useful control plugins (`control/`):
    location data in hash part (#lat=...);
  * Distance - simple tool to measure distances on maps
 
-== How to get?
+Where ?
+------
 
-http://psha.org.ru/cgit/psha/leaflet-plugins.git
+Homepage : https://github.com/shramov/leaflet-plugins
 
-or
+Downloads : https://github.com/shramov/leaflet-plugins/releases
 
-http://github.com/shramov/leaflet-plugins.git
-
-== Russian docs
-
-See link:http://psha.org.ru/b/leaflet-plugins.ru.html[russian documentation] for more info.
-
-////////////////////////////////////
-vim: sts=4 sw=4 et tw=80 ft=asciidoc
-////////////////////////////////////
+npm : https://www.npmjs.org/package/leaflet-plugins
