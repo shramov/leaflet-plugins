@@ -27,18 +27,18 @@ L.Yandex = L.Class.extend({
 	_getPossibleMapType: function (mapType) {
 		var result = 'yandex#map';
 		if (typeof mapType !== 'string') {
-	            return result;
+			return result;
 		}
-	        for (var key in this.possibleShortMapTypes) {
-	            if (mapType === this.possibleShortMapTypes[key]) {
-	                result = 'yandex#' + mapType;
-	                break;
-	            }
-	            if (mapType === ('yandex#' + this.possibleShortMapTypes[key])) {
-	            	result = mapType;
-	            }
-	        }
-	        return result;
+		for (var key in this.possibleShortMapTypes) {
+			if (mapType === this.possibleShortMapTypes[key]) {
+				result = 'yandex#' + mapType;
+				break;
+			}
+			if (mapType === ('yandex#' + this.possibleShortMapTypes[key])) {
+				result = mapType;
+			}
+		}
+		return result;
 	},
 	
 	// Possible types: yandex#map, yandex#satellite, yandex#hybrid, yandex#publicMap, yandex#publicMapHybrid
