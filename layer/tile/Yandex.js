@@ -123,9 +123,7 @@ L.Yandex = L.Class.extend({
 
 		// Check that ymaps.Map is ready
 		if (ymaps.Map === undefined) {
-			if (console) {
-				console.debug('L.Yandex: Waiting on ymaps.load("package.map")');
-			}
+			this._debug('Waiting on ymaps.load("package.map")');
 			return ymaps.load(['package.map'], this._initMapObject, this);
 		}
 
@@ -133,9 +131,7 @@ L.Yandex = L.Class.extend({
 		if (this.options.traffic)
 			if (ymaps.control === undefined ||
 					ymaps.control.TrafficControl === undefined) {
-				if (console) {
-					console.debug('L.Yandex: loading traffic and controls');
-				}
+				this._debug('Loading traffic and controls');
 				return ymaps.load(['package.traffic', 'package.controls'],
 					this._initMapObject, this);
 			}
@@ -186,5 +182,16 @@ L.Yandex = L.Class.extend({
 		this.setElementSize(this._container, size);
 		var b = this._map.getBounds(), sw = b.getSouthWest(), ne = b.getNorthEast();
 		this._yandex.container.fitToViewport();
+	},
+
+	_debug: function(message) {
+		if (!console) {
+			return;
+		}
+		if (typeof console.debug !== 'function') {
+			return;
+		}
+		var output = ['L.Yandex:', message].join('');
+		console.debug(output);
 	}
 });
