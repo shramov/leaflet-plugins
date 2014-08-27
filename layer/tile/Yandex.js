@@ -3,7 +3,6 @@
  */
 
 /* global ymaps: true */
-/* global console: true */
 
 L.Yandex = L.Class.extend({
 	includes: L.Mixin.Events,
@@ -123,9 +122,6 @@ L.Yandex = L.Class.extend({
 
 		// Check that ymaps.Map is ready
 		if (ymaps.Map === undefined) {
-			if (console) {
-				console.debug('L.Yandex: Waiting on ymaps.load("package.map")');
-			}
 			return ymaps.load(['package.map'], this._initMapObject, this);
 		}
 
@@ -133,13 +129,10 @@ L.Yandex = L.Class.extend({
 		if (this.options.traffic)
 			if (ymaps.control === undefined ||
 					ymaps.control.TrafficControl === undefined) {
-				if (console) {
-					console.debug('L.Yandex: loading traffic and controls');
-				}
 				return ymaps.load(['package.traffic', 'package.controls'],
 					this._initMapObject, this);
 			}
-		//Creating ymaps map-object without any default controls on it
+		// Creating ymaps map-object without any default controls on it
 		var map = new ymaps.Map(this._container, { center: [0, 0], zoom: 0, behaviors: [], controls: [] });
 
 		if (this.options.traffic)
@@ -154,7 +147,7 @@ L.Yandex = L.Class.extend({
 		this._yandex = map;
 		this._update(true);
 		
-		//Reporting that map-object was initialized
+		// Reporting that map-object was initialized
 		this.fire('MapObjectInitialized', { mapObject: map });
 	},
 
