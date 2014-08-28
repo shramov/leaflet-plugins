@@ -1,4 +1,3 @@
-/* global console: true */
 L.BingLayer = L.TileLayer.extend({
 	options: {
 		subdomains: [0, 1, 2, 3],
@@ -46,7 +45,6 @@ L.BingLayer = L.TileLayer.extend({
 			var e = document.getElementById(cbid);
 			e.parentNode.removeChild(e);
 			if (meta.errorDetails) {
-				if (window.console) console.log('Leaflet Bing Plugin Error - Got metadata: ' + meta.errorDetails);
 				return;
 			}
 			_this.initMetadata();
