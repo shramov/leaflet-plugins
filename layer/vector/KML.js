@@ -43,6 +43,7 @@ L.KML = L.FeatureGroup.extend({
 				layer: layers[i]
 			});
 			this.addLayer(layers[i]);
+			this.bringToBack();
 		}
 		this.latLngs = L.KML.getLatLngs(xml);
 		this.fire('loaded');
