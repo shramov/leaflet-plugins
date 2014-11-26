@@ -1,0 +1,28 @@
+{
+  "name": "leaflet",
+  "version": "0.7.4",
+  "description": "Plugins for Leaflet library",
+  "main": [
+    "control/Distance.js",
+    "control/Layers.Load.js",
+    "control/Permalink.js",
+    "control/Permalink.Layer.js",
+    "control/Permalink.Line.js",
+    "control/Permalink.Marker.js",
+    "layer/Icon.Canvas.js",
+    "layer/Layer.Deferred.js",
+    "layer/Marker.Rotate.js",
+    "layer/Marker.Text.js",
+    "layer/OpenStreetBugs.js",
+    "layer/vector/GPX.js",
+    "layer/vector/GPX.Speed.js",
+    "layer/vector/KML.js",
+    "layer/vector/OSM.js",
+    "layer/tile/Bing.js",
+    "layer/tile/Google.js",
+    "layer/tile/Yandex.js"
+  ],
+  "ignore": [
+    "build"
+  ]
+}
