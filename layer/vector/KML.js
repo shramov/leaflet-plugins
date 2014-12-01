@@ -76,6 +76,22 @@ L.Util.extend(L.KML, {
 		}
 		return layers;
 	},
+	
+	parseKMLByName: function (xml, name) {
+		var style = this.parseStyle(xml);
+		this.parseStyleMap(xml, style);
+		var layers = [], l;
+		var el = xml.getElementsByTagName('Placemark');
+		for (var j = 0; j < el.length; j++) {
+			var nm = el[j].getElementsByTagName('name');
+			var match = nm[0].childNodes[0].textContent;
+			if (match == name) {
+				l = this.parsePlacemark(el[j], xml, style);
+				if (l) { layers.push(l); }
+			}
+		}
+		return layers;
+	},
 
 	// Return false if e's first parent Folder is not [folder]
 	// - returns true if no parent Folders
@@ -431,3 +447,56 @@ L.RotatedImageOverlay = L.ImageOverlay.extend({
 	}
 });
 
+L.KMLQuery = L.FeatureGroup.extend({
+	options: {
+		async: true
+	},
+	
+	initialize: function (kml, name, options) {
+		L.Util.setOptions(this, options);
+		this._kml = kml;
+		this._layers = {};
+		
+		if (kml) {
+			this.addKML(kml, name, options, this.options.async);
+		}
+	},
+	
+	loadXML: function (url, name, cb, options, async) {
+		if (async == undefined) async = this.options.async;
+		if (options == undefined) options = this.options;
+		
+		var req = new window.XMLHttpRequest();
+		req.open('GET', url, async);
+		try {
+			req.overrideMimeType('text/xml'); // unsupported by IE
+		} catch (e) { }
+		req.onreadystatechange = function () {
+			if (req.readyState != 4) return;
+			if (req.status == 200) cb(req.responseXML, name, options);
+		};
+		req.send(null);
+	},
+	
+	addKML: function (url, name, options, async) {
+		var _this = this;
+		var cb = function (gpx, name, options) { _this._addKML(gpx, name, options) };
+		this.loadXML(url, name, cb, options, async);
+	},
+	
+	_addKML: function (xml, name, options) {
+		var layers = L.KML.parseKMLByName(xml, name);
+		if (!layers || !layers.length) return;
+		for (var i = 0; i < layers.length; i++) {
+			this.fire('addlayer', {
+				layer: layers[i]
+			});
+			this.addLayer(layers[i]);
+		}
+		this.latLngs = L.KML.getLatLngs(xml);
+		this.fire("loaded");
+		
+	},
+	
+	latLngs: []
+});
