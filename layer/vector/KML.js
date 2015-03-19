@@ -209,15 +209,11 @@ L.Util.extend(L.KML, {
 
 		var parse = ['LineString', 'Polygon', 'Point'];
 		for (j in parse) {
-			// for jshint
-			if (true)
-			{
-				var tag = parse[j];
-				el = place.getElementsByTagName(tag);
-				for (i = 0; i < el.length; i++) {
-					var l = this['parse' + tag](el[i], xml, options);
-					if (l) { layers.push(l); }
-				}
+			var tag = parse[j];
+			el = place.getElementsByTagName(tag);
+			for (i = 0; i < el.length; i++) {
+				var l = this['parse' + tag](el[i], xml, options);
+				if (l) { layers.push(l); }
 			}
 		}
 
