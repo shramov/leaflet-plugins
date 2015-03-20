@@ -197,7 +197,16 @@ L.Util.extend(L.KML, {
 	},
 
 	parsePlacemark: function (place, xml, style) {
-		var i, j, el, options = {};
+		var h, i, j, el, options = {};
+
+		var multi = ['MultiGeometry', 'gx:MultiTrack'];
+		for (h in multi) {
+			el = place.getElementsByTagName(multi[h]);
+			for (i = 0; i < el.length; i++) {
+				return this.parsePlacemark(el[i], xml, style);
+			}
+		}
+
 		el = place.getElementsByTagName('styleUrl');
 		for (i = 0; i < el.length; i++) {
 			var url = el[i].childNodes[0].nodeValue;
@@ -207,12 +216,12 @@ L.Util.extend(L.KML, {
 		}
 		var layers = [];
 
-		var parse = ['LineString', 'Polygon', 'Point'];
+		var parse = ['LineString', 'Polygon', 'Point', 'gx:Track'];
 		for (j in parse) {
 			var tag = parse[j];
 			el = place.getElementsByTagName(tag);
 			for (i = 0; i < el.length; i++) {
-				var l = this['parse' + tag](el[i], xml, options);
+				var l = this['parse' + tag.replace(/gx:/, '')](el[i], xml, options);
 				if (l) { layers.push(l); }
 			}
 		}
@@ -251,6 +260,16 @@ L.Util.extend(L.KML, {
 
 	parseLineString: function (line, xml, options) {
 		var coords = this.parseCoords(line);
+		if (!coords.length) { return; }
+		return new L.Polyline(coords, options);
+	},
+
+	parseTrack: function (line, xml, options) {
+		var el = xml.getElementsByTagName('gx:coord');
+		var coords = [];
+		for (var j = 0; j < el.length; j++) {
+			coords = coords.concat(this._read_gxcoords(el[j]));
+		}
 		if (!coords.length) { return; }
 		return new L.Polyline(coords, options);
 	},
@@ -315,6 +334,13 @@ L.Util.extend(L.KML, {
 			}
 			coords.push(new L.LatLng(ll[1], ll[0]));
 		}
+		return coords;
+	},
+
+	_read_gxcoords: function (el) {
+		var text = '', coords = [];
+		text = el.firstChild.nodeValue.split(' ');
+		coords.push(new L.LatLng(text[1], text[0]));
 		return coords;
 	},
 
