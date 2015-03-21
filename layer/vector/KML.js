@@ -199,7 +199,7 @@ L.Util.extend(L.KML, {
 	parsePlacemark: function (place, xml, style) {
 		var h, i, j, el, options = {};
 
-		var multi = ['MultiGeometry', 'gx:MultiTrack'];
+		var multi = ['MultiGeometry', 'MultiTrack', 'gx:MultiTrack'];
 		for (h in multi) {
 			el = place.getElementsByTagName(multi[h]);
 			for (i = 0; i < el.length; i++) {
@@ -216,7 +216,7 @@ L.Util.extend(L.KML, {
 		}
 		var layers = [];
 
-		var parse = ['LineString', 'Polygon', 'Point', 'gx:Track'];
+		var parse = ['LineString', 'Polygon', 'Point', 'Track', 'gx:Track'];
 		for (j in parse) {
 			var tag = parse[j];
 			el = place.getElementsByTagName(tag);
@@ -266,6 +266,7 @@ L.Util.extend(L.KML, {
 
 	parseTrack: function (line, xml, options) {
 		var el = xml.getElementsByTagName('gx:coord');
+		if (el.length === 0) { el = xml.getElementsByTagName('coord'); }
 		var coords = [];
 		for (var j = 0; j < el.length; j++) {
 			coords = coords.concat(this._read_gxcoords(el[j]));
