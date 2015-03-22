@@ -395,10 +395,8 @@ L.KMLIcon = L.Icon.extend({
 			this.style.width = i.width + 'px';
 			this.style.height = i.height + 'px';
 
-			if (this.anchorType.x === 'UNITS_FRACTION' || this.anchorType.x === 'fraction') {
+			if (this.anchorType.x === 'fraction' && this.anchorType.y === 'fraction') {
 				img.style.marginLeft = (-this.anchor.x * i.width) + 'px';
-			}
-			if (this.anchorType.y === 'UNITS_FRACTION' || this.anchorType.x === 'fraction') {
 				img.style.marginTop  = (-(1 - this.anchor.y) * i.height) + 'px';
 			}
 			this.style.display = '';
