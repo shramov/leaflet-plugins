@@ -92,9 +92,7 @@ L.Util.extend(L.KML, {
 		var style = {};
 		var sl = xml.getElementsByTagName('Style');
 
-		//for (var i = 0; i < sl.length; i++) {
-		var attributes = {color: true, width: true, Icon: true, href: true,
-						  hotSpot: true};
+		var attributes = { color: true, width: true, Icon: true, href: true, hotSpot: true };
 
 		function _parse(xml) {
 			var options = {};
