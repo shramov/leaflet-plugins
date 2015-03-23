@@ -399,6 +399,10 @@ L.KMLIcon = L.Icon.extend({
 				img.style.marginLeft = (-this.anchor.x * i.width) + 'px';
 				img.style.marginTop  = (-(1 - this.anchor.y) * i.height) + 'px';
 			}
+			if (this.anchorType.x === 'pixels' && this.anchorType.y === 'pixels') {
+				img.style.marginLeft = (-this.anchor.x) + 'px';
+				img.style.marginTop  = (this.anchor.y - i.height + 1) + 'px';
+			}
 			this.style.display = '';
 		};
 		return img;
