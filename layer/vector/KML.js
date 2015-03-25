@@ -389,14 +389,14 @@ L.KMLIcon = L.Icon.extend({
 	_setIconStyles: function (img, name) {
 		L.Icon.prototype._setIconStyles.apply(this, [img, name]);
 		var options = this.options;
-		if (options.anchorType.x === 'fraction' && options.anchorType.y === 'fraction') {
+		if (options.anchorType.x === 'fraction')
 			img.style.marginLeft = (-options.anchorRef.x * img.width) + 'px';
+		if (options.anchorType.y === 'fraction')
 			img.style.marginTop  = (-(1 - options.anchorRef.y) * img.height) + 'px';
-		}
-		if (options.anchorType.x === 'pixels' && options.anchorType.y === 'pixels') {
+		if (options.anchorType.x === 'pixels')
 			img.style.marginLeft = (-options.anchorRef.x) + 'px';
+		if (options.anchorType.y === 'pixels')
 			img.style.marginTop  = (options.anchorRef.y - img.height + 1) + 'px';
-		}
 	}
 });
 
