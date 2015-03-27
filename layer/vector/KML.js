@@ -80,10 +80,10 @@ L.Util.extend(L.KML, {
 	// Return false if e's first parent Folder is not [folder]
 	// - returns true if no parent Folders
 	_check_folder: function (e, folder) {
-		e = e.parentElement;
+		e = e.parentNode;
 		while (e && e.tagName !== 'Folder')
 		{
-			e = e.parentElement;
+			e = e.parentNode;
 		}
 		return !e || e === folder;
 	},
