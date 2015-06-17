@@ -19,21 +19,32 @@ L.KML = L.FeatureGroup.extend({
 
 		var req = new window.XMLHttpRequest
 		
-		
-        	//Check for IE8 and IE9 Fix Cors for those browsers
-		if (req.withCredentials === undefined) {
-		    req = new XDomainRequest();
+		//Check for IE8 and IE9 Fix Cors for those browsers
+		if (req.withCredentials === undefined && typeof XDomainRequest != "undefined") {
+		    var xdr = new XDomainRequest();
+		    xdr.open("GET", url, async);
+		    xdr.onprogress = function () { };
+		    xdr.ontimeout = function () { };
+		    xdr.onerror = function () { };
+		    xdr.onload = function () {
+		        if (xdr.responseText) {
+		            var xml = new ActiveXObject('Microsoft.XMLDOM');
+		            xml.loadXML(xdr.responseText);
+		            cb(xml, options);
+		        }
+		    }
+		    setTimeout(function () { xdr.send(); }, 0);
+		} else {
+		    req.open('GET', url, async);
+		    try {
+		        req.overrideMimeType('text/xml'); // unsupported by IE
+		    } catch (e) { }
+		    req.onreadystatechange = function () {
+		        if (req.readyState !== 4) return;
+		        if (req.status === 200) cb(req.responseXML, options);
+		    };
+		    req.send(null);
 		}
-		
-		req.open('GET', url, async);
-		try {
-			req.overrideMimeType('text/xml'); // unsupported by IE
-		} catch(e) {}
-		req.onreadystatechange = function() {
-			if (req.readyState !== 4) return;
-			if (req.status === 200) cb(req.responseXML, options);
-		};
-		req.send(null);
 	},
 
 	addKML: function(url, options, async) {
