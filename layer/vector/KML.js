@@ -17,7 +17,14 @@ L.KML = L.FeatureGroup.extend({
 		if (async === undefined) async = this.options.async;
 		if (options === undefined) options = this.options;
 
-		var req = new window.XMLHttpRequest();
+		var req = new window.XMLHttpRequest
+		
+		
+        	//Check for IE8 and IE9 Fix Cors for those browsers
+		if (req.withCredentials === undefined) {
+		    req = new XDomainRequest();
+		}
+		
 		req.open('GET', url, async);
 		try {
 			req.overrideMimeType('text/xml'); // unsupported by IE
