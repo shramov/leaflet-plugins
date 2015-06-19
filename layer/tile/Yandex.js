@@ -4,7 +4,7 @@
 
 /* global ymaps: true */
 
-L.Yandex = L.Class.extend({
+module.exports = L.Yandex = L.Class.extend({
 	includes: L.Mixin.Events,
 
 	options: {
@@ -181,3 +181,7 @@ L.Yandex = L.Class.extend({
 		this._yandex.container.fitToViewport();
 	}
 });
+
+L.yandex = function( key, options ) {
+	return new L.Yandex ( key, options );
+};

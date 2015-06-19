@@ -1,4 +1,4 @@
-L.DeferredLayer = L.LayerGroup.extend({
+module.exports = L.DeferredLayer = L.LayerGroup.extend({
 	options: {
 		js: [],
 		init: null
@@ -50,3 +50,7 @@ L.DeferredLayer = L.LayerGroup.extend({
 		this._script_cache[s] = c;
 	}
 });
+
+L.deferredLayer = function( key, options ) {
+	return new L.DeferredLayer ( key, options );
+};

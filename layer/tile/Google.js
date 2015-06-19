@@ -4,7 +4,7 @@
 
 /* global google: true */
 
-L.Google = L.Class.extend({
+module.exports = L.Google = L.Class.extend({
 	includes: L.Mixin.Events,
 
 	options: {
@@ -196,4 +196,8 @@ L.Google.asyncInitialize = function() {
 		}
 	}
 	L.Google.asyncWait = [];
+};
+
+L.google = function( key, options ) {
+	return new L.Google ( key, options );
 };
