@@ -244,7 +244,9 @@ L.Util.extend(L.KML, {
 		}
 
 		if (name) {
-			layer.bindPopup('<h2>' + name + '</h2>' + descr);
+			layer.on('add', function(e) {
+				layer.bindPopup('<h2>' + name + '</h2>' + descr);
+			});
 		}
 
 		return layer;
@@ -389,6 +391,7 @@ L.KMLIcon = L.Icon.extend({
 	_setIconStyles: function (img, name) {
 		L.Icon.prototype._setIconStyles.apply(this, [img, name]);
 		var options = this.options;
+		this.options.popupAnchor = [0,(-0.83*img.height)];
 		if (options.anchorType.x === 'fraction')
 			img.style.marginLeft = (-options.anchorRef.x * img.width) + 'px';
 		if (options.anchorType.y === 'fraction')
