@@ -135,12 +135,11 @@ L.Util.extend(L.KML, {
 			el = e.getElementsByTagName('IconStyle');
 			if (el && el[0]) { ioptions = _parse(el[0]); }
 			if (ioptions.href) {
-				// save anchor info until the image is loaded
 				options.icon = new L.KMLIcon({
 					iconUrl: ioptions.href,
 					shadowUrl: null,
-					iconAnchorRef: {x: ioptions.x, y: ioptions.y},
-					iconAnchorType:	{x: ioptions.xunits, y: ioptions.yunits}
+					anchorRef: {x: ioptions.x, y: ioptions.y},
+					anchorType:	{x: ioptions.xunits, y: ioptions.yunits}
 				});
 			}
 			style['#' + e.getAttribute('id')] = options;
@@ -245,7 +244,9 @@ L.Util.extend(L.KML, {
 		}
 
 		if (name) {
-			layer.bindPopup('<h2>' + name + '</h2>' + descr);
+			layer.on('add', function(e) {
+				layer.bindPopup('<h2>' + name + '</h2>' + descr);
+			});
 		}
 
 		return layer;
@@ -387,32 +388,18 @@ L.Util.extend(L.KML, {
 });
 
 L.KMLIcon = L.Icon.extend({
-
-	createIcon: function () {
-		var img = this._createIcon('icon');
-		img.onload = function () {
-			var i = img;
-			this.style.width = i.width + 'px';
-			this.style.height = i.height + 'px';
-
-			if (this.anchorType.x === 'fraction' && this.anchorType.y === 'fraction') {
-				img.style.marginLeft = (-this.anchor.x * i.width) + 'px';
-				img.style.marginTop  = (-(1 - this.anchor.y) * i.height) + 'px';
-			}
-			if (this.anchorType.x === 'pixels' && this.anchorType.y === 'pixels') {
-				img.style.marginLeft = (-this.anchor.x) + 'px';
-				img.style.marginTop  = (this.anchor.y - i.height + 1) + 'px';
-			}
-			this.style.display = '';
-		};
-		return img;
-	},
-
 	_setIconStyles: function (img, name) {
 		L.Icon.prototype._setIconStyles.apply(this, [img, name]);
-		// save anchor information to the image
-		img.anchor = this.options.iconAnchorRef;
-		img.anchorType = this.options.iconAnchorType;
+		var options = this.options;
+		this.options.popupAnchor = [0,(-0.83*img.height)];
+		if (options.anchorType.x === 'fraction')
+			img.style.marginLeft = (-options.anchorRef.x * img.width) + 'px';
+		if (options.anchorType.y === 'fraction')
+			img.style.marginTop  = (-(1 - options.anchorRef.y) * img.height) + 'px';
+		if (options.anchorType.x === 'pixels')
+			img.style.marginLeft = (-options.anchorRef.x) + 'px';
+		if (options.anchorType.y === 'pixels')
+			img.style.marginTop  = (options.anchorRef.y - img.height + 1) + 'px';
 	}
 });
 
