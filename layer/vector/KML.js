@@ -43,6 +43,7 @@ L.KML = L.FeatureGroup.extend({
 				layer: layers[i]
 			});
 			this.addLayer(layers[i]);
+			this.bringToBack();
 		}
 		this.latLngs = L.KML.getLatLngs(xml);
 		this.fire('loaded');
@@ -426,10 +427,10 @@ L.RotatedImageOverlay = L.ImageOverlay.extend({
 	_rotate: function () {
         if (L.DomUtil.TRANSFORM) {
             // use the CSS transform rule if available
-            this._image.style[L.DomUtil.TRANSFORM] += ' rotate(' + this.options.angle + 'deg)';
+            this._image.style[L.DomUtil.TRANSFORM] += ' rotate(' + -this.options.angle + 'deg)';
         } else if(L.Browser.ie) {
             // fallback for IE6, IE7, IE8
-            var rad = this.options.angle * (Math.PI / 180),
+            var rad = -this.options.angle * (Math.PI / 180),
                 costheta = Math.cos(rad),
                 sintheta = Math.sin(rad);
             this._image.style.filter += ' progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\'auto expand\', M11=' + 
