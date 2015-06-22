@@ -124,6 +124,8 @@ L.Google = L.Class.extend({
 
 		google.maps.event.addListenerOnce(map, 'idle',
 			function() { _this._checkZoomLevels(); });
+                google.maps.event.addListenerOnce(map, 'tilesloaded',
+                        function() { _this.fire('load'); });
 		//Reporting that map-object was initialized.
 		this.fire('MapObjectInitialized', { mapObject: map });
 	},
