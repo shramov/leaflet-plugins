@@ -1,4 +1,4 @@
-module.export = {
+module.exports = {
   tile: {
     Bing: require('./tile/Bing'),
     Google: require('./tile/Google'),
