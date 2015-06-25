@@ -4,6 +4,21 @@
 
 /* global google: true */
 
+(function(factory) {
+	if (typeof define === 'function' && define.amd) {
+		// AMD
+		define(['leaflet'], factory);
+	} else if (typeof module !== 'undefined') {
+		// Node/CommonJS
+		module.exports = factory(require('leaflet'));
+	} else {
+		// Browser globals
+		if (typeof this.L === 'undefined')
+			throw 'Leaflet must be loaded first!';
+		factory(this.L);
+	}
+}(function(L) {
+
 L.Google = L.Class.extend({
 	includes: L.Mixin.Events,
 
@@ -199,3 +214,9 @@ L.Google.asyncInitialize = function() {
 	}
 	L.Google.asyncWait = [];
 };
+
+
+return L.Google;
+
+}));
+
