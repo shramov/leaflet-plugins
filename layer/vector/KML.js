@@ -1,6 +1,13 @@
 L.KML = L.FeatureGroup.extend({
 	options: {
-		async: true
+		async: true,
+		popup: true,
+		displayName: false,
+		displayName_suffix: '_display_name',
+		name_on_props : false,
+		name_prop : 'kml_name',
+		descr_on_props : false,
+		descr_prop : 'kml_description'
 	},
 
 	initialize: function(kml, options) {
@@ -275,23 +282,65 @@ L.Util.extend(L.KML, {
 			layer = new L.FeatureGroup(layers);
 		}
 
-		var name, descr = '';
-		el = place.getElementsByTagName('name');
+		this.parseData(place, layer)
+
+		return layer;
+	},
+
+	parseData: function(xml, layer) {
+		var name,
+			descr = '',
+			props = {},
+			eld, eldn, el, i, j, prop
+		;
+
+		el = xml.getElementsByTagName('ExtendedData')
+		for (i = 0; i < el.length; i++) {
+			for (j = 0; j < el[i].childNodes.length; j++) {
+				eld = el[i].childNodes[j];
+
+				if(eld.tagName === 'Data') {
+					prop = eld.getAttribute('name');
+					props[prop] = null
+
+					eldn = eld.getElementsByTagName('value')
+					if(eldn.length)
+						props[prop] = eldn[0].firstChild.nodeValue;
+
+					if(this.options.displayName) {
+						eldn = eld.getElementsByTagName('displayName')
+						if(eldn.length)
+							props[prop + this.options.displayName_suffix] = eldn[0].firstChild.nodeValue;
+					}
+				}
+			}
+		}
+
+		el = xml.getElementsByTagName('name');
 		if (el.length && el[0].childNodes.length) {
 			name = el[0].childNodes[0].nodeValue;
 		}
-		el = place.getElementsByTagName('description');
+
+		el = xml.getElementsByTagName('description');
 		for (i = 0; i < el.length; i++) {
 			for (j = 0; j < el[i].childNodes.length; j++) {
 				descr = descr + el[i].childNodes[j].nodeValue;
 			}
 		}
 
-		if (name) {
-			layer.on('add', function(e) {
-				layer.bindPopup('<h2>' + name + '</h2>' + descr);
-			});
-		}
+		layer.name = name;
+		if(this.options.name_on_props)
+			props[this.options.name_prop] = name;
+
+		layer.description = descr;
+		if(this.options.descr_on_props)
+			props[this.options.descr_prop] = descr;
+
+		layer.feature = layer.toGeoJSON();
+		layer.feature.properties = props;
+
+		if(this.options.popup && ( name || descr ))
+			layer.bindPopup('<h2>' + name + '</h2>' + descr);
 
 		return layer;
 	},
