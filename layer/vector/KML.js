@@ -7,7 +7,8 @@ L.KML = L.FeatureGroup.extend({
 		name_on_props : false,
 		name_prop : 'kml_name',
 		descr_on_props : false,
-		descr_prop : 'kml_description'
+		descr_prop : 'kml_description',
+		onEachFeature: null
 	},
 
 	initialize: function(kml, options) {
@@ -341,6 +342,9 @@ L.Util.extend(L.KML, {
 
 		if(this.options.popup && ( name || descr ))
 			layer.bindPopup('<h2>' + name + '</h2>' + descr);
+
+		if(typeof(this.options.onEachFeature) === 'function')
+			this.options.onEachFeature(layer.feature, layer);
 
 		return layer;
 	},
