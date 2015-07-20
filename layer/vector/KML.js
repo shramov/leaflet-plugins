@@ -4,12 +4,12 @@ L.KML = L.FeatureGroup.extend({
 	},
 
 	initialize: function(kml, options) {
-		L.Util.setOptions(this, options);
+		this.options = L.Util.setOptions(this, options);
 		this._kml = kml;
 		this._layers = {};
 
 		if (kml) {
-			this.addKML(kml, options, this.options.async);
+			this.addKML(kml, this.options, this.options.async);
 		}
 	},
 
@@ -54,7 +54,7 @@ L.KML = L.FeatureGroup.extend({
 	},
 
 	_addKML: function(xml, options) {
-		var layers = L.KML.parseKML(xml);
+		var layers = L.KML.parseKML(xml, options);
 		if (!layers || !layers.length) return;
 		for (var i = 0; i < layers.length; i++) {
 			this.fire('addlayer', {
@@ -70,8 +70,10 @@ L.KML = L.FeatureGroup.extend({
 });
 
 L.Util.extend(L.KML, {
+	parseKML: function (xml, options) {
+		if(options !== undefined)
+			this.options = options;
 
-	parseKML: function (xml) {
 		var style = this.parseStyles(xml);
 		this.parseStyleMap(xml, style);
 		var el = xml.getElementsByTagName('Folder');
