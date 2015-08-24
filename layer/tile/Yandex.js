@@ -4,6 +4,21 @@
 
 /* global ymaps: true */
 
+(function(factory) {
+	if (typeof define === 'function' && define.amd) {
+		// AMD
+		define(['leaflet'], factory);
+	} else if (typeof module !== 'undefined') {
+		// Node/CommonJS
+		module.exports = factory(require('leaflet'));
+	} else {
+		// Browser globals
+		if (typeof this.L === 'undefined')
+			throw 'Leaflet must be loaded first!';
+		factory(this.L);
+	}
+}(function(L) {
+
 L.Yandex = L.Class.extend({
 	includes: L.Mixin.Events,
 
@@ -181,3 +196,8 @@ L.Yandex = L.Class.extend({
 		this._yandex.container.fitToViewport();
 	}
 });
+
+
+return L.Yandex;
+
+}));

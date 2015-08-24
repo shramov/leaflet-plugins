@@ -1,3 +1,19 @@
+(function(factory) {
+	if (typeof define === 'function' && define.amd) {
+		// AMD
+		define(['leaflet'], factory);
+	} else if (typeof module !== 'undefined') {
+		// Node/CommonJS
+		module.exports = factory(require('leaflet'));
+	} else {
+		// Browser globals
+		if (typeof this.L === 'undefined')
+			throw 'Leaflet must be loaded first!';
+		factory(this.L);
+	}
+}(function(L) {
+
+
 L.BingLayer = L.TileLayer.extend({
 	options: {
 		subdomains: [0, 1, 2, 3],
@@ -123,3 +139,8 @@ L.BingLayer = L.TileLayer.extend({
 L.bingLayer = function (key, options) {
     return new L.BingLayer(key, options);
 };
+
+
+return L.BingLayer;
+
+}));
