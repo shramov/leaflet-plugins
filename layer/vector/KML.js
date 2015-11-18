@@ -55,7 +55,10 @@ L.KML = L.FeatureGroup.extend({
 
 	_addKML: function(xml, options) {
 		var layers = L.KML.parseKML(xml);
-		if (!layers || !layers.length) return;
+      if (!layers || !layers.length) {
+         this.fire("load-error");
+         return;
+      }
 		for (var i = 0; i < layers.length; i++) {
 			this.fire('addlayer', {
 				layer: layers[i]
