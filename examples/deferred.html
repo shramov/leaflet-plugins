@@ -19,7 +19,7 @@ var layerdefs = {
 		init: function() {return new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');}},
 	kosmo: { name: "Космоснимки", js: [],
 		init: function() {return new L.TileLayer('http://{s}.tile.osmosnimki.ru/kosmo/{z}/{x}/{y}.png', {attribution:'Tiles Courtesy of <a href="http://kosmosnimki.ru/" target="_blank">kosmosnimki.ru</a>'});}},
-	gsat: { name: "Google", js: ["../layer/tile/Google.js", "http://maps.google.com/maps/api/js?v=3&sensor=false&callback=L.Google.asyncInitialize"],
+	gsat: { name: "Google", js: ["../layer/tile/Google.js", "http://maps.google.com/maps/api/js?v=3&callback=L.Google.asyncInitialize"],
 		init: function() {return new L.Google(); }},
 	ysat: { name: "Yandex", js: ["../layer/tile/Yandex.js", "http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU"],
 		init: function() {return new L.Yandex("satellite"); }},
