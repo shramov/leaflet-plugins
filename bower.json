@@ -15,6 +15,7 @@
     "control/Permalink.Layer.js",
     "control/Permalink.Line.js",
     "control/Permalink.Marker.js",
+    "control/Permalink.Overlay.js",
     "layer/Icon.Canvas.js",
     "layer/Layer.Deferred.js",
     "layer/Marker.Rotate.js",
