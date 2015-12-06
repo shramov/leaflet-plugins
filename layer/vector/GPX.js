@@ -136,7 +136,7 @@ L.GPX = L.FeatureGroup.extend({
 		var m = new L.Marker(new L.LatLng(e.getAttribute('lat'),
 						e.getAttribute('lon')), options);
 		var attributes = {};
-		for (i = 0; i < e.childNodes.length; i++) {
+		for (var i = 0; i < e.childNodes.length; i++) {
 			var ch = e.childNodes[i];
 			if (ch.nodeName !== '#text') {
 				attributes[ch.nodeName] = ch.textContent;
