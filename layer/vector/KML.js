@@ -36,6 +36,8 @@ L.KML = L.FeatureGroup.extend({
 			setTimeout(function () { xdr.send(); }, 0);
 		} else {
 			req.open('GET', url, async);
+			req.setRequestHeader("Accept",
+					"application/vnd.google-earth.kml+xml");
 			try {
 				req.overrideMimeType('text/xml'); // unsupported by IE
 			} catch (e) { }
