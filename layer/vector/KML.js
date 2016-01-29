@@ -224,16 +224,8 @@ L.Util.extend(L.KML, {
 		return new L.FeatureGroup(layers);
 	},
 
-	parsePlacemark: function (place, xml, style) {
-		var h, i, j, k, el, il, options = {};
-
-		var multi = ['MultiGeometry', 'MultiTrack', 'gx:MultiTrack'];
-		for (h in multi) {
-			el = place.getElementsByTagName(multi[h]);
-			for (i = 0; i < el.length; i++) {
-				return this.parsePlacemark(el[i], xml, style);
-			}
-		}
+	parsePlacemark: function (place, xml, style, options) {
+		var h, i, j, k, el, il, options = options || {};
 
 		el = place.getElementsByTagName('styleUrl');
 		for (i = 0; i < el.length; i++) {
@@ -251,6 +243,14 @@ L.Util.extend(L.KML, {
 					options[k] = inlineStyle[k];
 				}
 			}
+		}
+
+		var multi = ['MultiGeometry', 'MultiTrack', 'gx:MultiTrack'];
+		for (h in multi) {
+		  el = place.getElementsByTagName(multi[h]);
+		  for (i = 0; i < el.length; i++) {
+		    return this.parsePlacemark(el[i], xml, style, options);
+		  }
 		}
 		
 		var layers = [];
