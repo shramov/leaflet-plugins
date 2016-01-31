@@ -133,8 +133,8 @@ L.Google = L.Layer.extend({
 	_checkZoomLevels: function() {
 		// setting the zoom level on the Google map may result in a different zoom level than the one requested
 		// (it won't go beyond the level for which they have data).
-		// verify and make sure the zoom levels on both Leaflet and Google maps are consistent
-		if (this._google.getZoom() !== this._map.getZoom()) {
+		// verify and make sure the zoom levels on both Leaflet (rounded val) and Google maps are consistent
+		if (this._google.getZoom() !== Math.round(this._map.getZoom())) {
 			// zoom levels are out of sync. Set the leaflet zoom level to match the google one
 			this._map.setZoom( this._google.getZoom() );
 		}
