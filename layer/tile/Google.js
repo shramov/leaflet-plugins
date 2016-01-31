@@ -48,7 +48,7 @@ L.Google = L.Layer.extend({
 
 		map.on('zoomanim', this._handleZoomAnim, this);
 
-		//20px instead of 1em to avoid a slight overlap with google's attribution
+		// 20px instead of 1em to avoid a slight overlap with google's attribution
 		map._controlCorners.bottomright.style.marginBottom = '20px';
 
 		this._reset();
@@ -126,16 +126,16 @@ L.Google = L.Layer.extend({
 			function() { _this._checkZoomLevels(); });
 		google.maps.event.addListenerOnce(map, 'tilesloaded',
 			function() { _this.fire('load'); });
-		//Reporting that map-object was initialized.
+		// Reporting that map-object was initialized.
 		this.fire('MapObjectInitialized', { mapObject: map });
 	},
 
 	_checkZoomLevels: function() {
-		//setting the zoom level on the Google map may result in a different zoom level than the one requested
-		//(it won't go beyond the level for which they have data).
+		// setting the zoom level on the Google map may result in a different zoom level than the one requested
+		// (it won't go beyond the level for which they have data).
 		// verify and make sure the zoom levels on both Leaflet and Google maps are consistent
 		if (this._google.getZoom() !== this._map.getZoom()) {
-			//zoom levels are out of sync. Set the leaflet zoom level to match the google one
+			// zoom levels are out of sync. Set the leaflet zoom level to match the google one
 			this._map.setZoom( this._google.getZoom() );
 		}
 	},
