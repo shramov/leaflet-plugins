@@ -226,13 +226,13 @@ L.Util.extend(L.KML, {
 	},
 
 	parsePlacemark: function (place, xml, style, options) {
-		var h, i, j, k, el, il, options = options || {};
+		var h, i, j, k, el, il, opts = options || {};
 
 		el = place.getElementsByTagName('styleUrl');
 		for (i = 0; i < el.length; i++) {
 			var url = el[i].childNodes[0].nodeValue;
 			for (var a in style[url]) {
-				options[a] = style[url][a];
+				opts[a] = style[url][a];
 			}
 		}
 		
@@ -241,7 +241,7 @@ L.Util.extend(L.KML, {
 			var inlineStyle = this.parseStyle(place);
 			if (inlineStyle) {
 				for (k in inlineStyle) {
-					options[k] = inlineStyle[k];
+					opts[k] = inlineStyle[k];
 				}
 			}
 		}
@@ -250,7 +250,7 @@ L.Util.extend(L.KML, {
 		for (h in multi) {
 			el = place.getElementsByTagName(multi[h]);
 			for (i = 0; i < el.length; i++) {
-				return this.parsePlacemark(el[i], xml, style, options);
+				return this.parsePlacemark(el[i], xml, style, opts);
 			}
 		}
 		
@@ -261,7 +261,7 @@ L.Util.extend(L.KML, {
 			var tag = parse[j];
 			el = place.getElementsByTagName(tag);
 			for (i = 0; i < el.length; i++) {
-				var l = this['parse' + tag.replace(/gx:/, '')](el[i], xml, options);
+				var l = this['parse' + tag.replace(/gx:/, '')](el[i], xml, opts);
 				if (l) { layers.push(l); }
 			}
 		}
