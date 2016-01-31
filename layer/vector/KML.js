@@ -248,10 +248,10 @@ L.Util.extend(L.KML, {
 
 		var multi = ['MultiGeometry', 'MultiTrack', 'gx:MultiTrack'];
 		for (h in multi) {
-		  el = place.getElementsByTagName(multi[h]);
-		  for (i = 0; i < el.length; i++) {
-		    return this.parsePlacemark(el[i], xml, style, options);
-		  }
+			el = place.getElementsByTagName(multi[h]);
+			for (i = 0; i < el.length; i++) {
+				return this.parsePlacemark(el[i], xml, style, options);
+			}
 		}
 		
 		var layers = [];
