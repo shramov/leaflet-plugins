@@ -56,7 +56,7 @@ L.GPX = L.FeatureGroup.extend({
 		if (!layers) return;
 		this.addLayer(layers);
 		this.fire('loaded');
-	},	
+	},
 
 	parseGPX: function(xml, options) {
 		var j, i, el, layers = [];
@@ -107,7 +107,7 @@ L.GPX = L.FeatureGroup.extend({
 
 		if (name) txt += '<h2>' + name + '</h2>' + descr;
 		if (len) txt += '<p>' + this._humanLen(len) + '</p>';
-		
+
 		if (layer && layer._popup === undefined) layer.bindPopup(txt);
 		return txt;
 	},
@@ -135,7 +135,14 @@ L.GPX = L.FeatureGroup.extend({
 	parse_wpt: function(e, xml, options) {
 		var m = new L.Marker(new L.LatLng(e.getAttribute('lat'),
 						e.getAttribute('lon')), options);
-		this.fire('addpoint', {point:m});
+		var attributes = {};
+		for (var i = 0; i < e.childNodes.length; i++) {
+			var ch = e.childNodes[i];
+			if (ch.nodeName !== '#text') {
+				attributes[ch.nodeName] = ch.textContent;
+			}
+		}
+		this.fire('addpoint', {point:m, attributes:attributes});
 		return m;
 	}
 });
