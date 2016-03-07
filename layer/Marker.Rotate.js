@@ -26,7 +26,7 @@
 
 		setIconAngle: function (iconAngle) {
 			// find shortest angle to turn over
-			this.options.iconAngle = getShortestEndDegree(this.options.iconAngle, iconAngle);
+			this.options.iconAngle = this._getShortestEndDegree(this.options.iconAngle, iconAngle);
 			if (this._map)
 				this.update();
 		},
