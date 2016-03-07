@@ -15,9 +15,18 @@
 			transform += ' translate(' + a.x + 'px, ' + a.y + 'px)';
 			i.style[L.DomUtil.TRANSFORM] += transform;
 		},
+		
+		_getShortestEndDegree: function(startDegrees, endDegrees) {
+			var turnAngle = Math.abs(endDegrees - startDegrees);
+			var turnAnglePositive = (endDegrees - startDegrees) >= 0;
+			if (turnAngle <= 180) return endDegrees;
+			var result = startDegrees + (360 - turnAngle) * (turnAnglePositive ? -1 : 1);
+			return result;
+		},
 
 		setIconAngle: function (iconAngle) {
-			this.options.iconAngle = iconAngle;
+			// find shortest angle to turn over
+			this.options.iconAngle = getShortestEndDegree(this.options.iconAngle, iconAngle);
 			if (this._map)
 				this.update();
 		},
