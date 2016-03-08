@@ -40,7 +40,7 @@
 			_old__setPos.apply(this,[pos]);
 
 			if (this.options.iconAngle) {
-				var defaultIcon = new L.Icon.Default;
+				var defaultIcon = new L.Icon.Default();
 				var a = this.options.icon.options.iconAnchor || defaultIcon.options.iconAnchor;
 				var s = this.options.icon.options.iconSize || defaultIcon.options.iconSize;
 				var i;
