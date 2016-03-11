@@ -148,7 +148,7 @@ L.Google = L.Class.extend({
 		this._initContainer();
 	},
 
-	_update: function (e) {
+	_update: function () {
 		if (!this._google) return;
 		this._resize();
 
