@@ -80,7 +80,7 @@ L.Control.Permalink = L.Control.extend({
 		return point;
 	},
 
-	_update: function (obj, source) {
+	_update: function (obj) {
 		for (var i in obj) {
 			if (!obj.hasOwnProperty(i)) continue;
 			if (obj[i] !== null && obj[i] !== undefined)

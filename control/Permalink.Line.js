@@ -12,7 +12,7 @@ L.Control.Permalink.include({
 		this.on('add', this._onadd_line, this);
 	},
 
-	_onadd_line: function (e) {
+	_onadd_line: function () {
 		if (!this.options.line) return;
 		this.options.line.on('edit', this._update_line, this);
 		this._update_line();

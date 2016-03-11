@@ -13,7 +13,7 @@ L.Control.Permalink.include({
 		this.on('add', this._onadd_layer, this);
 	},
 
-	_onadd_layer: function (e) {
+	_onadd_layer: function () {
 		this._map.on('layeradd', this._update_layer, this);
 		this._map.on('layerremove', this._update_layer, this);
 		this._update_layer();

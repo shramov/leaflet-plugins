@@ -7,7 +7,7 @@ L.Control.Permalink.include({
 		this.on('add', this._onadd_overlay, this);
 	},
 
-	_onadd_overlay: function (e) {
+	_onadd_overlay: function () {
 		this._map.on('overlayadd', this._update_overlay, this);
 		this._map.on('overlayremove', this._update_overlay, this);
 		this._update_overlay();
@@ -30,7 +30,7 @@ L.Control.Permalink.include({
 
 L.Control.Layers.include({
 	setOverlays: function (overlayflags) {
-		var layer, obj, idx=0;
+		var obj, idx=0;
 		for (var i in this._layers) {
 			if (!this._layers.hasOwnProperty(i)) continue;
 			obj = this._layers[i];
