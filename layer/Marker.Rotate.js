@@ -7,7 +7,7 @@
 (function () {
 	var _old__setPos = L.Marker.prototype._setPos;
 	L.Marker.include({
-		_updateImg: function(i, a, s) {
+		_updateImg: function (i, a, s) {
 			a = L.point(s).divideBy(2)._subtract(L.point(a));
 			var transform = '';
 			transform += ' translate(' + -a.x + 'px, ' + -a.y + 'px)';
@@ -16,7 +16,7 @@
 			i.style[L.DomUtil.TRANSFORM] += transform;
 		},
 		
-		_getShortestEndDegree: function(startDegrees, endDegrees) {
+		_getShortestEndDegree: function (startDegrees, endDegrees) {
 			var turnAngle = Math.abs(endDegrees - startDegrees);
 			var turnAnglePositive = (endDegrees - startDegrees) >= 0;
 			if (turnAngle <= 180) return endDegrees;

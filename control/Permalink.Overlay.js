@@ -2,18 +2,18 @@
 
 L.Control.Permalink.include({
 
-	initialize_overlay: function() {
+	initialize_overlay: function () {
 		this.on('update', this._set_overlays, this);
 		this.on('add', this._onadd_overlay, this);
 	},
 
-	_onadd_overlay: function(e) {
+	_onadd_overlay: function (e) {
 		this._map.on('overlayadd', this._update_overlay, this);
 		this._map.on('overlayremove', this._update_overlay, this);
 		this._update_overlay();
 	},
 
-	_update_overlay: function() {
+	_update_overlay: function () {
 		if (!this.options.layers) return;
 		var overlayflags = this.options.layers.overlayFlags();
 		if (overlayflags && overlayflags !== '') {
@@ -21,7 +21,7 @@ L.Control.Permalink.include({
 		}
 	},
 
-	_set_overlays: function(e) {
+	_set_overlays: function (e) {
 		var p = e.params;
 		if (!this.options.layers || !p.overlays) return;
 		this.options.layers.setOverlays(p.overlays);
@@ -29,7 +29,7 @@ L.Control.Permalink.include({
 });
 
 L.Control.Layers.include({
-	setOverlays: function(overlayflags) {
+	setOverlays: function (overlayflags) {
 		var layer, obj, idx=0;
 		for (var i in this._layers) {
 			if (!this._layers.hasOwnProperty(i)) continue;
@@ -47,7 +47,7 @@ L.Control.Layers.include({
 		}
 	},
 
-	overlayFlags: function() {
+	overlayFlags: function () {
 		var flags = '';
 		for (var i in this._layers) {
 			if (!this._layers.hasOwnProperty(i))

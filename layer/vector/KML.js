@@ -3,7 +3,7 @@ L.KML = L.FeatureGroup.extend({
 		async: true
 	},
 
-	initialize: function(kml, options) {
+	initialize: function (kml, options) {
 		L.Util.setOptions(this, options);
 		this._kml = kml;
 		this._layers = {};
@@ -13,7 +13,7 @@ L.KML = L.FeatureGroup.extend({
 		}
 	},
 
-	loadXML: function(url, cb, options, async) {
+	loadXML: function (url, cb, options, async) {
 		if (async === undefined) async = this.options.async;
 		if (options === undefined) options = this.options;
 
@@ -48,13 +48,13 @@ L.KML = L.FeatureGroup.extend({
 		}
 	},
 
-	addKML: function(url, options, async) {
+	addKML: function (url, options, async) {
 		var _this = this;
-		var cb = function(gpx, options) { _this._addKML(gpx, options); };
+		var cb = function (gpx, options) { _this._addKML(gpx, options); };
 		this.loadXML(url, cb, options, async);
 	},
 
-	_addKML: function(xml, options) {
+	_addKML: function (xml, options) {
 		var layers = L.KML.parseKML(xml);
 		if (!layers || !layers.length) return;
 		for (var i = 0; i < layers.length; i++) {
@@ -107,7 +107,7 @@ L.Util.extend(L.KML, {
 		return !e || e === folder;
 	},
 
-	parseStyles: function(xml) {
+	parseStyles: function (xml) {
 		var styles = {};
 		var sl = xml.getElementsByTagName('Style');
 		for (var i=0, len=sl.length; i<len; i++) {
@@ -123,9 +123,9 @@ L.Util.extend(L.KML, {
 	parseStyle: function (xml) {
 		var style = {}, poptions = {}, ioptions = {}, el, id;
 
-		var attributes = { color: true, width: true, Icon: true, href: true, hotSpot: true };
+		var attributes = {color: true, width: true, Icon: true, href: true, hotSpot: true};
 
-		function _parse(xml) {
+		function _parse (xml) {
 			var options = {};
 			for (var i = 0; i < xml.childNodes.length; i++) {
 				var e = xml.childNodes[i];
@@ -287,7 +287,7 @@ L.Util.extend(L.KML, {
 		}
 
 		if (name) {
-			layer.on('add', function(e) {
+			layer.on('add', function (e) {
 				layer.bindPopup('<h2>' + name + '</h2>' + descr);
 			});
 		}
@@ -400,7 +400,7 @@ L.Util.extend(L.KML, {
 			]
 		);
 		var attributes = {Icon: true, href: true, color: true};
-		function _parse(xml) {
+		function _parse (xml) {
 			var options = {}, ioptions = {};
 			for (var i = 0; i < xml.childNodes.length; i++) {
 				var e = xml.childNodes[i];
@@ -470,7 +470,7 @@ L.RotatedImageOverlay = L.ImageOverlay.extend({
         if (L.DomUtil.TRANSFORM) {
             // use the CSS transform rule if available
             this._image.style[L.DomUtil.TRANSFORM] += ' rotate(' + this.options.angle + 'deg)';
-        } else if(L.Browser.ie) {
+        } else if (L.Browser.ie) {
             // fallback for IE6, IE7, IE8
             var rad = this.options.angle * (Math.PI / 180),
                 costheta = Math.cos(rad),
@@ -479,7 +479,7 @@ L.RotatedImageOverlay = L.ImageOverlay.extend({
                 costheta + ', M12=' + (-sintheta) + ', M21=' + sintheta + ', M22=' + costheta + ')';                
         }
 	},
-	getBounds: function() {
+	getBounds: function () {
 		return this._bounds;
 	}
 });

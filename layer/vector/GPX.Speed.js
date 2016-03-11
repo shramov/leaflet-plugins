@@ -1,8 +1,8 @@
 //#include 'GPX.js'
 
-(function() {
+(function () {
 
-function d2h(d) {
+function d2h (d) {
 	var hex = '0123456789ABCDEF';
 	var r = '';
 	d = Math.floor(d);
@@ -14,9 +14,9 @@ function d2h(d) {
 	return r;
 }
 
-function gradient(color) {
+function gradient (color) {
 	// First arc (0, PI) in HSV colorspace
-	function f2h(d) { return d2h(256 * d); }
+	function f2h (d) { return d2h(256 * d); }
 	if (color < 0)
 		return '#FF0000';
 	else if (color < 1.0/3)
@@ -29,7 +29,7 @@ function gradient(color) {
 		return '#00FFFF';
 }
 
-function gpx2time(s) {
+function gpx2time (s) {
 	// 2011-09-24T12:07:53Z
 	if (s.length !== 10 + 1 + 8 + 1)
 		return new Date();
@@ -42,16 +42,16 @@ L.GPX.include({
 		chunks: 200
 	},
 
-	speedSplitEnable: function(options) {
+	speedSplitEnable: function (options) {
 		L.Util.setOptions(this, options);
 		return this.on('addline', this.speed_split, this);
 	},
 
-	speedSplitDisable: function() {
+	speedSplitDisable: function () {
 		return this.off('addline', this.speed_split, this);
 	},
 
-	speed_split: function(e) {
+	speed_split: function (e) {
 		var l = e.line.pop(), ll = l.getLatLngs();
 		var chunk = Math.floor(ll.length / this.options.chunks);
 		if (chunk < 3) chunk = 3;

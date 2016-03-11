@@ -6,7 +6,7 @@ L.BingLayer = L.TileLayer.extend({
 		culture: ''
 	},
 
-	initialize: function(key, options) {
+	initialize: function (key, options) {
 		L.Util.setOptions(this, options);
 
 		this._key = key;
@@ -15,7 +15,7 @@ L.BingLayer = L.TileLayer.extend({
 		this.metaRequested = false;
 	},
 
-	tile2quad: function(x, y, z) {
+	tile2quad: function (x, y, z) {
 		var quad = '';
 		for (var i = z; i > 0; i--) {
 			var digit = 0;
@@ -27,7 +27,7 @@ L.BingLayer = L.TileLayer.extend({
 		return quad;
 	},
 
-	getTileUrl: function(p, z) {
+	getTileUrl: function (p, z) {
 		var zoom = this._getZoomForUrl();
 		var subdomains = this.options.subdomains,
 			s = this.options.subdomains[Math.abs((p.x + p.y) % subdomains.length)];
@@ -36,7 +36,7 @@ L.BingLayer = L.TileLayer.extend({
 				.replace('{culture}', this.options.culture);
 	},
 
-	loadMetadata: function() {
+	loadMetadata: function () {
 		if (this.metaRequested) return;
 		this.metaRequested = true;
 		var _this = this;
@@ -61,7 +61,7 @@ L.BingLayer = L.TileLayer.extend({
 		document.getElementsByTagName('head')[0].appendChild(script);
 	},
 
-	initMetadata: function(meta) {
+	initMetadata: function (meta) {
 		var r = meta.resourceSets[0].resources[0];
 		this.options.subdomains = r.imageUrlSubdomains;
 		this._url = r.imageUrl;
@@ -84,13 +84,13 @@ L.BingLayer = L.TileLayer.extend({
 		this._update();
 	},
 
-	_update: function() {
+	_update: function () {
 		if (this._url === null || !this._map) return;
 		this._update_attribution();
 		L.TileLayer.prototype._update.apply(this, []);
 	},
 
-	_update_attribution: function() {
+	_update_attribution: function () {
 		var bounds = this._map.getBounds();
 		var zoom = this._map.getZoom();
 		for (var i = 0; i < this._providers.length; i++) {
@@ -108,12 +108,12 @@ L.BingLayer = L.TileLayer.extend({
 		}
 	},
 	
-	onAdd: function(map) {
+	onAdd: function (map) {
 		this.loadMetadata();
 		L.TileLayer.prototype.onAdd.apply(this, [map]);
 	},
 
-	onRemove: function(map) {
+	onRemove: function (map) {
 		for (var i = 0; i < this._providers.length; i++) {
 			var p = this._providers[i];
 			if (p.active && this._map.attributionControl) {

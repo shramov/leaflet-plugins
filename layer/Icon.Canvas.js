@@ -22,6 +22,6 @@ L.Icon.Canvas = L.Icon.extend({
 		return null;
 	},
 
-	draw: function(canvas, width, height) {
+	draw: function (canvas, width, height) {
 	}
 });

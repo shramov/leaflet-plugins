@@ -8,17 +8,17 @@ L.Control.Distance = L.Control.extend({
 		L.Util.setOptions(this, options);
 		this._line = new L.Polyline([], {editable: true});
 		this._line.on('edit', this._update, this);
-		this._line.on('click', function(e) {});
+		this._line.on('click', function (e) {});
 		this._active = false;
 	},
 
-	getLine: function() { return this._line; },
+	getLine: function () { return this._line; },
 
-	onAdd: function(map) {
+	onAdd: function (map) {
 		var className = 'leaflet-control-distance',
 		    container = this._container = L.DomUtil.create('div', className);
 
-		function cb() {
+		function cb () {
 			if (this._active)
 				this._calc_disable();
 			else
@@ -50,11 +50,11 @@ L.Control.Distance = L.Control.extend({
 		return link;
 	},
 
-	onRemove: function(map) {
+	onRemove: function (map) {
 		this._calc_disable();
 	},
 	
-	_calc_enable: function() {
+	_calc_enable: function () {
 		this._map.on('click', this._add_point, this);
 
 		this._map.getContainer().style.cursor = 'crosshair';
@@ -69,7 +69,7 @@ L.Control.Distance = L.Control.extend({
 		this._update();
 	},
 
-	_calc_disable: function() {
+	_calc_disable: function () {
 		this._map.off('click', this._add_point, this);
 		//this._map.removeLayer(this._line);
 		this._map.getContainer().style.cursor = 'default';
@@ -87,25 +87,25 @@ L.Control.Distance = L.Control.extend({
 		this._line.fire('edit', {});
 	},
 
-	_reset: function(e) {
+	_reset: function (e) {
 		this._line.setLatLngs([]);
 		this._line.fire('edit', {});
 		this._line.redraw();
 		this._line.editing.updateMarkers();
 	},
 
-	_update: function(e) {
+	_update: function (e) {
 		this._text.textContent = this._d2txt(this._distance_calc());
 	},
 
-	_d2txt: function(d) {
+	_d2txt: function (d) {
 		if (d < 2000)
 			return d.toFixed(0) + ' m';
 		else
 			return (d/1000).toFixed(1) + ' km';
 	},
 
-	_distance_calc: function(e) {
+	_distance_calc: function (e) {
 		var ll = this._line.getLatLngs();
 		var d = 0, p = null;
 		for (var i = 0; i < ll.length; i++) {
