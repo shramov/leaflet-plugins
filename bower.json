@@ -30,7 +30,7 @@
     "layer/tile/Yandex.js"
   ],
   "devDependencies": {
-    "jshint": "2.5.0"
+    "eslint": "2.3.0"
   },
   "keywords": [
     "leaflet",
