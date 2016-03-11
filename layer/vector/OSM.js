@@ -123,7 +123,7 @@ L.OSM = L.FeatureGroup.extend({
 	parse_way: function (line, nodes, options) {
 		var el = line.getElementsByTagName('nd');
 		if (!el.length) return;
-		var coords = [], tags = [];
+		var coords = [];
 		for (var i = 0; i < el.length; i++) {
 			var ref = el[i].getAttribute('ref'), n = nodes[ref];
 			if (!n) return;
