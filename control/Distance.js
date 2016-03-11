@@ -8,13 +8,12 @@ L.Control.Distance = L.Control.extend({
 		L.Util.setOptions(this, options);
 		this._line = new L.Polyline([], {editable: true});
 		this._line.on('edit', this._update, this);
-		this._line.on('click', function (e) {});
 		this._active = false;
 	},
 
 	getLine: function () { return this._line; },
 
-	onAdd: function (map) {
+	onAdd: function () {
 		var className = 'leaflet-control-distance',
 		    container = this._container = L.DomUtil.create('div', className);
 
@@ -25,9 +24,9 @@ L.Control.Distance = L.Control.extend({
 				this._calc_enable();
 		}
 
-		var link = this._link = this._createButton('Edit', 'leaflet-control-distance leaflet-control-distance-edit', container, cb, this);
-		var del = this._link_delete = this._createButton('Delete', 'leaflet-control-distance leaflet-control-distance-delete', container, this._reset, this);
-		var text = this._text = L.DomUtil.create('div', 'leaflet-control-distance-text', container);
+		this._link = this._createButton('Edit', 'leaflet-control-distance leaflet-control-distance-edit', container, cb, this);
+		this._link_delete = this._createButton('Delete', 'leaflet-control-distance leaflet-control-distance-delete', container, this._reset, this);
+		this._text = L.DomUtil.create('div', 'leaflet-control-distance-text', container);
 
 		//text.style.display = 'inline';
 		//text.style.float = 'right';
@@ -50,7 +49,7 @@ L.Control.Distance = L.Control.extend({
 		return link;
 	},
 
-	onRemove: function (map) {
+	onRemove: function () {
 		this._calc_disable();
 	},
 	
@@ -81,20 +80,19 @@ L.Control.Distance = L.Control.extend({
 	},
 
 	_add_point: function (e) {
-		var len = this._line.getLatLngs().length;
 		this._line.addLatLng(e.latlng);
 		this._line.editing.updateMarkers();
 		this._line.fire('edit', {});
 	},
 
-	_reset: function (e) {
+	_reset: function () {
 		this._line.setLatLngs([]);
 		this._line.fire('edit', {});
 		this._line.redraw();
 		this._line.editing.updateMarkers();
 	},
 
-	_update: function (e) {
+	_update: function () {
 		this._text.textContent = this._d2txt(this._distance_calc());
 	},
 
@@ -105,7 +103,7 @@ L.Control.Distance = L.Control.extend({
 			return (d/1000).toFixed(1) + ' km';
 	},
 
-	_distance_calc: function (e) {
+	_distance_calc: function () {
 		var ll = this._line.getLatLngs();
 		var d = 0, p = null;
 		for (var i = 0; i < ll.length; i++) {
