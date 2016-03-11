@@ -41,7 +41,7 @@ L.Google = L.Class.extend({
 		this._initMapObject();
 
 		// set up events
-		map.on('viewreset', this._resetCallback, this);
+		map.on('viewreset', this._reset, this);
 
 		this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
 		map.on('move', this._update, this);
@@ -58,7 +58,7 @@ L.Google = L.Class.extend({
 	onRemove: function (map) {
 		map._container.removeChild(this._container);
 
-		map.off('viewreset', this._resetCallback, this);
+		map.off('viewreset', this._reset, this);
 
 		map.off('move', this._update, this);
 
@@ -140,11 +140,7 @@ L.Google = L.Class.extend({
 		}
 	},
 
-	_resetCallback: function (e) {
-		this._reset(e.hard);
-	},
-
-	_reset: function (clearOldContainer) {
+	_reset: function () {
 		this._initContainer();
 	},
 
