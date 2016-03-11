@@ -57,7 +57,7 @@ L.Yandex = L.Class.extend({
 		this._initMapObject();
 
 		// set up events
-		map.on('viewreset', this._resetCallback, this);
+		map.on('viewreset', this._reset, this);
 
 		this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
 		map.on('move', this._update, this);
@@ -71,7 +71,7 @@ L.Yandex = L.Class.extend({
 	onRemove: function (map) {
 		this._map._container.removeChild(this._container);
 
-		this._map.off('viewreset', this._resetCallback, this);
+		this._map.off('viewreset', this._reset, this);
 
 		this._map.off('move', this._update, this);
 
@@ -151,11 +151,7 @@ L.Yandex = L.Class.extend({
 		this.fire('MapObjectInitialized', {mapObject: map});
 	},
 
-	_resetCallback: function (e) {
-		this._reset(e.hard);
-	},
-
-	_reset: function (clearOldContainer) {
+	_reset: function () {
 		this._initContainer();
 	},
 
@@ -177,7 +173,6 @@ L.Yandex = L.Class.extend({
 		if (style.width === size.x + 'px' && style.height === size.y + 'px')
 			if (force !== true) return;
 		this.setElementSize(this._container, size);
-		var b = this._map.getBounds(), sw = b.getSouthWest(), ne = b.getNorthEast();
 		this._yandex.container.fitToViewport();
 	}
 });
