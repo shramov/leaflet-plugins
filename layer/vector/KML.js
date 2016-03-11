@@ -50,11 +50,11 @@ L.KML = L.FeatureGroup.extend({
 
 	addKML: function (url, options, async) {
 		var _this = this;
-		var cb = function (gpx, options) { _this._addKML(gpx, options); };
+		var cb = function (kml) { _this._addKML(kml); };
 		this.loadXML(url, cb, options, async);
 	},
 
-	_addKML: function (xml, options) {
+	_addKML: function (xml) {
 		var layers = L.KML.parseKML(xml);
 		if (!layers || !layers.length) return;
 		for (var i = 0; i < layers.length; i++) {
@@ -287,7 +287,7 @@ L.Util.extend(L.KML, {
 		}
 
 		if (name) {
-			layer.on('add', function (e) {
+			layer.on('add', function () {
 				layer.bindPopup('<h2>' + name + '</h2>' + descr);
 			});
 		}
