@@ -27,12 +27,12 @@ L.BingLayer = L.TileLayer.extend({
 		return quad;
 	},
 
-	getTileUrl: function (p, z) {
+	getTileUrl: function (tilePoint) {
 		var zoom = this._getZoomForUrl();
 		var subdomains = this.options.subdomains,
-			s = this.options.subdomains[Math.abs((p.x + p.y) % subdomains.length)];
+			s = this.options.subdomains[Math.abs((tilePoint.x + tilePoint.y) % subdomains.length)];
 		return this._url.replace('{subdomain}', s)
-				.replace('{quadkey}', this.tile2quad(p.x, p.y, zoom))
+				.replace('{quadkey}', this.tile2quad(tilePoint.x, tilePoint.y, zoom))
 				.replace('{culture}', this.options.culture);
 	},
 
@@ -121,7 +121,7 @@ L.BingLayer = L.TileLayer.extend({
 				p.active = false;
 			}
 		}
-        	L.TileLayer.prototype.onRemove.apply(this, [map]);
+		L.TileLayer.prototype.onRemove.apply(this, [map]);
 	}
 });
 
