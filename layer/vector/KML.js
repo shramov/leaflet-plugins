@@ -49,12 +49,12 @@ L.KML = L.FeatureGroup.extend({
 
 	addKML: function(url, options, async) {
 		var _this = this;
-		var cb = function(gpx, options) { _this._addKML(gpx, options); };
+		var cb = function(gpx, options) { _this._addKML(gpx, options, url); };
 		this.loadXML(url, cb, options, async);
 	},
 
-	_addKML: function(xml, options) {
-		var layers = L.KML.parseKML(xml);
+	_addKML: function(xml, options, url) {
+		var layers = L.KML.parseKML(xml, url);
       if (!layers || !layers.length) {
          this.fire("load-error");
          return;
@@ -74,8 +74,8 @@ L.KML = L.FeatureGroup.extend({
 
 L.Util.extend(L.KML, {
 
-	parseKML: function (xml) {
-		var style = this.parseStyles(xml);
+	parseKML: function (xml, url) {
+		var style = this.parseStyles(xml, url);
 		this.parseStyleMap(xml, style);
 		var el = xml.getElementsByTagName('Folder');
 		var layers = [], l;
@@ -109,11 +109,11 @@ L.Util.extend(L.KML, {
 		return !e || e === folder;
 	},
 
-	parseStyles: function(xml) {
+	parseStyles: function(xml, url) {
 		var styles = {};
 		var sl = xml.getElementsByTagName('Style');
 		for (var i=0, len=sl.length; i<len; i++) {
-			var style = this.parseStyle(sl[i]);
+			var style = this.parseStyle(sl[i], url);
 			if (style) {
 				var styleName = '#' + style.id;
 				styles[styleName] = style;
@@ -122,7 +122,7 @@ L.Util.extend(L.KML, {
 		return styles;
 	},
 
-	parseStyle: function (xml) {
+	parseStyle: function (xml, kmlUrl) {
 		var style = {}, poptions = {}, ioptions = {}, el, id;
 
 		var attributes = { color: true, width: true, Icon: true, href: true, hotSpot: true };
@@ -158,17 +158,42 @@ L.Util.extend(L.KML, {
 
 		/** Determine url to use taking into account relative paths. */
 		function _get_icon_url(href) {
-			var full_href = href;
-			var is_abs_path = ((href.indexOf('/') === 0) ||
-			   (href.indexOf('https://') === 0) || (href.indexOf('http://') == 0));
+			// If the URL is fully qualified do nothign
+			if ((href.indexOf('https://') === 0) || (href.indexOf('http://') == 0)) {
+				return href;
+			}
+			// Do nothing for Data URLs as they already have their data
+			if (href.indexOf('data:') === 0) {
+				return href;
+			}
 
-			if(!is_abs_path && state.kml_url) {
-				var base_url = state.kml_url.substring(0, state.kml_url.lastIndexOf('/'));
-				if(base_url !== '') {
-					full_href = base_url + '/' + href;
+			// The URL is relative.
+			// If the KML was downloaded use its URL to determine icons path
+			if(kmlUrl) {
+				var parser = document.createElement('a');
+				parser.href = kmlUrl;
+				// note: host contains the port
+				var base_url = parser.protocol + '//' + parser.host;
+				if (href.indexOf('/') === 0) {
+					// Icon path is absolute so simply tack it on to the KMLs base URL
+					href = base_url + href;
+				}
+				else {
+					// Icon is relative to the KML file
+					// - Strip the end off of the path
+					var path = parser.pathname,
+						 relative_path = path.substring(0, path.lastIndexOf('/'));
+
+					// Add the starting slash back to the relative_path if it was removed
+					if (relative_path.indexOf('/') !== 0) {
+						relative_path = '/' + relative_path;
+					}
+
+					href = base_url + relative_path + '/' + href;
 				}
 			}
-			return full_href;
+			// Otherwise, use the href and hope the icon is on the server.
+			return href;
 		}
 
 		el = xml.getElementsByTagName('LineStyle');
