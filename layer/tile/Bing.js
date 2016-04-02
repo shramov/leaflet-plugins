@@ -46,6 +46,7 @@ L.BingLayer = L.TileLayer.extend({
 			var e = document.getElementById(cbid);
 			e.parentNode.removeChild(e);
 			if (meta.errorDetails) {
+				throw new Error(meta.errorDetails);
 				return;
 			}
 			_this.initMetadata(meta);
@@ -107,7 +108,7 @@ L.BingLayer = L.TileLayer.extend({
 			}
 		}
 	},
-	
+
 	onAdd: function (map) {
 		this.loadMetadata();
 		L.TileLayer.prototype.onAdd.apply(this, [map]);
