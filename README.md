@@ -11,6 +11,7 @@ Currently it consists of:
  - Vector layers (`layer/vector/`):
    * GPX
    * KML
+   * TOPOJSON
 
  - Providers (`layer/tile`):
    * Google - using Google Maps API v3;
