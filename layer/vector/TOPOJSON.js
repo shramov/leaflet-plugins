@@ -1,3 +1,8 @@
+/**
+ * Embed of the topojson library from Mike Bostock v1.6.24
+ * https://github.com/mbostock/topojson
+ * 
+ */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -552,13 +557,13 @@ L.TOPOJSON = L.FeatureGroup.extend({
 		async: true
 	},
 
-	initialize: function(topojson, options) {
+	initialize: function(data, options) {
 		L.Util.setOptions(this, options);
-		this._topojson = topojson;
+		this._topojson = data;
 		this._layers = {};
 
-		if (topojson) {
-			this.addTOPOJSON(topojson, options, this.options.async);
+		if (data) {
+			this.addTOPOJSON(data, options, this.options.async);
 		}
 	},
 
@@ -597,8 +602,8 @@ L.TOPOJSON = L.FeatureGroup.extend({
 	},
 
 	addTOPOJSON: function(url, options, async) {
-		var _this = this;
-		var cb = function(data, options) { _this._addTOPOJSON(data, options); };
+		var _this = this,
+			cb = function(data, options) { _this._addTOPOJSON(data, options); };
 		this.loadJSON(url, cb, options, async);
 	},
 
@@ -618,11 +623,11 @@ L.TOPOJSON = L.FeatureGroup.extend({
 		if ('setGeoJSON' in l) l.setGeoJSON(d);
 	},
 	parseTOPOJSON : function(data, options) {
-	    	var layers = [],
-	    		o = typeof data === 'string' ? JSON.parse(data) : data;
+		var layers = [],
+			o = typeof data === 'string' ? JSON.parse(data) : data;
 		for (var i in o.objects) {
-		    	var layer = L.geoJson(),
-		    		ft = topojson.feature(o, o.objects[i]);
+			var layer = L.geoJson(),
+				ft = topojson.feature(o, o.objects[i]);
 			if (ft.features) this._addData(layer, ft.features);
 			else _this._addData(layer, ft);
 			layers.push(layer);
