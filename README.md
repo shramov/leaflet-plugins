@@ -34,3 +34,5 @@ Homepage : https://github.com/shramov/leaflet-plugins
 Downloads : https://github.com/shramov/leaflet-plugins/releases
 
 npm : https://www.npmjs.org/package/leaflet-plugins
+
+cdnjs : https://cdnjs.com/libraries/leaflet-plugins
