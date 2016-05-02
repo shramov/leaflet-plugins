@@ -6,16 +6,16 @@ L.DeferredLayer = L.LayerGroup.extend({
 
 	_script_cache: {},
 
-	initialize: function(options) {
+	initialize: function (options) {
 		L.Util.setOptions(this, options);
 		L.LayerGroup.prototype.initialize.apply(this);
 		this._loaded = false;
 	},
 
-	onAdd: function(map) {
+	onAdd: function (map) {
 		L.LayerGroup.prototype.onAdd.apply(this, [map]);
 		if (this._loaded) return;
-		var loaded = function() {
+		var loaded = function () {
 			this._loaded = true;
 			var l = this.options.init();
 			if (l)
@@ -24,7 +24,7 @@ L.DeferredLayer = L.LayerGroup.extend({
 		this._loadScripts(this.options.js.reverse(), L.Util.bind(loaded, this));
 	},
 
-	_loadScripts: function(scripts, cb, args) {
+	_loadScripts: function (scripts, cb, args) {
 		if (!scripts || scripts.length === 0)
 			return cb(args);
 		var _this = this, s = scripts.pop(), c;
@@ -43,7 +43,7 @@ L.DeferredLayer = L.LayerGroup.extend({
 			c.e = script;
 			document.getElementsByTagName('head')[0].appendChild(script);
 		}
-		function _cb() { _this._loadScripts(scripts, cb, args); }
+		function _cb () { _this._loadScripts(scripts, cb, args); }
 		c.wait.push(_cb);
 		if (c.e.readyState === 'completed')
 			_cb();

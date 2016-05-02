@@ -7,18 +7,18 @@ L.Control.Permalink.include({
 	},
 	*/
 
-	initialize_line: function() {
+	initialize_line: function () {
 		this.on('update', this._set_line, this);
 		this.on('add', this._onadd_line, this);
 	},
 
-	_onadd_line: function(e) {
+	_onadd_line: function () {
 		if (!this.options.line) return;
 		this.options.line.on('edit', this._update_line, this);
 		this._update_line();
 	},
 
-	_update_line: function() {
+	_update_line: function () {
 		if (!this.options.line) return;
 		var line = this.options.line;
 		if (!line) return;
@@ -30,7 +30,7 @@ L.Control.Permalink.include({
 		this._update({line: text.join(';')});
 	},
 
-	_set_line: function(e) {
+	_set_line: function (e) {
 		var p = e.params, l = this.options.line;
 		if (!l || !p.line) return;
 		var coords = [], text = p.line.split(';');

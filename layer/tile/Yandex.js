@@ -42,13 +42,13 @@ L.Yandex = L.Class.extend({
 	
 	// Possible types: yandex#map, yandex#satellite, yandex#hybrid, yandex#publicMap, yandex#publicMapHybrid
 	// Or their short names: map, satellite, hybrid, publicMap, publicMapHybrid
-	initialize: function(type, options) {
+	initialize: function (type, options) {
 		L.Util.setOptions(this, options);
 		//Assigning an initial map type for the Yandex layer
 		this._type = this._getPossibleMapType(type);
 	},
 
-	onAdd: function(map, insertAtTheBottom) {
+	onAdd: function (map, insertAtTheBottom) {
 		this._map = map;
 		this._insertAtTheBottom = insertAtTheBottom;
 
@@ -57,7 +57,7 @@ L.Yandex = L.Class.extend({
 		this._initMapObject();
 
 		// set up events
-		map.on('viewreset', this._resetCallback, this);
+		map.on('viewreset', this._reset, this);
 
 		this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
 		map.on('move', this._update, this);
@@ -68,33 +68,33 @@ L.Yandex = L.Class.extend({
 		this._update(true);
 	},
 
-	onRemove: function(map) {
+	onRemove: function (map) {
 		this._map._container.removeChild(this._container);
 
-		this._map.off('viewreset', this._resetCallback, this);
+		this._map.off('viewreset', this._reset, this);
 
 		this._map.off('move', this._update, this);
 
 		map._controlCorners.bottomright.style.marginBottom = '0em';
 	},
 
-	getAttribution: function() {
+	getAttribution: function () {
 		return this.options.attribution;
 	},
 
-	setOpacity: function(opacity) {
+	setOpacity: function (opacity) {
 		this.options.opacity = opacity;
 		if (opacity < 1) {
 			L.DomUtil.setOpacity(this._container, opacity);
 		}
 	},
 
-	setElementSize: function(e, size) {
+	setElementSize: function (e, size) {
 		e.style.width = size.x + 'px';
 		e.style.height = size.y + 'px';
 	},
 
-	_initContainer: function() {
+	_initContainer: function () {
 		var tilePane = this._map._container,
 			first = tilePane.firstChild;
 
@@ -117,7 +117,7 @@ L.Yandex = L.Class.extend({
 		this.setElementSize(this._container, this._map.getSize());
 	},
 
-	_initMapObject: function() {
+	_initMapObject: function () {
 		if (this._yandex) return;
 
 		// Check that ymaps.Map is ready
@@ -133,7 +133,7 @@ L.Yandex = L.Class.extend({
 					this._initMapObject, this);
 			}
 		//Creating ymaps map-object without any default controls on it
-		var map = new ymaps.Map(this._container, { center: [0, 0], zoom: 0, behaviors: [], controls: [] });
+		var map = new ymaps.Map(this._container, {center: [0, 0], zoom: 0, behaviors: [], controls: []});
 
 		if (this.options.traffic)
 			map.controls.add(new ymaps.control.TrafficControl({shown: true}));
@@ -148,18 +148,14 @@ L.Yandex = L.Class.extend({
 		this._update(true);
 		
 		//Reporting that map-object was initialized
-		this.fire('MapObjectInitialized', { mapObject: map });
+		this.fire('MapObjectInitialized', {mapObject: map});
 	},
 
-	_resetCallback: function(e) {
-		this._reset(e.hard);
-	},
-
-	_reset: function(clearOldContainer) {
+	_reset: function () {
 		this._initContainer();
 	},
 
-	_update: function(force) {
+	_update: function (force) {
 		if (!this._yandex) return;
 		this._resize(force);
 
@@ -172,12 +168,11 @@ L.Yandex = L.Class.extend({
 		this._yandex.panTo(_center, {duration: 0, delay: 0});
 	},
 
-	_resize: function(force) {
+	_resize: function (force) {
 		var size = this._map.getSize(), style = this._container.style;
 		if (style.width === size.x + 'px' && style.height === size.y + 'px')
 			if (force !== true) return;
 		this.setElementSize(this._container, size);
-		var b = this._map.getBounds(), sw = b.getSouthWest(), ne = b.getNorthEast();
 		this._yandex.container.fitToViewport();
 	}
 });

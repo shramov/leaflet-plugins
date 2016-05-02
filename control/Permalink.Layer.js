@@ -8,25 +8,25 @@ L.Control.Permalink.include({
 	},
 	*/
 
-	initialize_layer: function() {
+	initialize_layer: function () {
 		this.on('update', this._set_layer, this);
 		this.on('add', this._onadd_layer, this);
 	},
 
-	_onadd_layer: function(e) {
+	_onadd_layer: function () {
 		this._map.on('layeradd', this._update_layer, this);
 		this._map.on('layerremove', this._update_layer, this);
 		this._update_layer();
 	},
 
-	_update_layer: function() {
+	_update_layer: function () {
 		if (!this.options.layers) return;
 		var layer = this.options.layers.currentBaseLayer();
 		if (layer)
 			this._update({layer: layer.name});
 	},
 
-	_set_layer: function(e) {
+	_set_layer: function (e) {
 		var p = e.params;
 		if (!this.options.layers || !p.layer) return;
 		this.options.layers.chooseBaseLayer(p.layer);
@@ -34,7 +34,7 @@ L.Control.Permalink.include({
 });
 
 L.Control.Layers.include({
-	chooseBaseLayer: function(name) {
+	chooseBaseLayer: function (name) {
 		var layer, obj;
 		for (var i in this._layers) {
 			if (!this._layers.hasOwnProperty(i))
@@ -57,7 +57,7 @@ L.Control.Layers.include({
 		this._update();
 	},
 
-	currentBaseLayer: function() {
+	currentBaseLayer: function () {
 		for (var i in this._layers) {
 			if (!this._layers.hasOwnProperty(i))
 				continue;

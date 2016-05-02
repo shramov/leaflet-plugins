@@ -4,7 +4,7 @@ L.OSM = L.FeatureGroup.extend({
 		forceAll: false
 	},
 
-	initialize: function(url, options) {
+	initialize: function (url, options) {
 		L.Util.setOptions(this, options);
 		this._url = url;
 		this._layers = {};
@@ -14,34 +14,34 @@ L.OSM = L.FeatureGroup.extend({
 		}
 	},
 	
-	loadXML: function(url, cb, options, async) {
+	loadXML: function (url, cb, options, async) {
 		if (async === undefined) async = this.options.async;
 		if (options === undefined) options = this.options;
 
 		var req = new window.XMLHttpRequest();
 		req.open('GET', url, async);
 		req.overrideMimeType('text/xml');
-		req.onreadystatechange = function() {
+		req.onreadystatechange = function () {
 			if (req.readyState !== 4) return;
 			if (req.status === 200) cb(req.responseXML, options);
 		};
 		req.send(null);
 	},
 
-	addXML: function(url, options, async) {
+	addXML: function (url, options, async) {
 		var _this = this;
-		var cb = function(xml, options) { _this._addXML(xml, options); };
+		var cb = function (xml, options) { _this._addXML(xml, options); };
 		this.loadXML(url, cb, options, async);
 	},
 
-	_addXML: function(xml, options) {
+	_addXML: function (xml, options) {
 		var layers = this.parseOSM(xml, options);
 		if (!layers) return;
 		this.addLayer(layers);
 		this.fire('loaded');
 	},
 
-	parseOSM: function(xml, options) {
+	parseOSM: function (xml, options) {
 		var i, el, ll, layers = [];
 		var nodes = {};
 		var ways = {};
@@ -89,7 +89,7 @@ L.OSM = L.FeatureGroup.extend({
 		return layer;
 	},
 
-	parse_name: function(layer, obj, obj_name) {
+	parse_name: function (layer, obj, obj_name) {
 		if (!this.options.forceAll)
 			if (!obj.tags || !obj.tags.length) return;
 		var i, txt = '<table>';
@@ -103,15 +103,15 @@ L.OSM = L.FeatureGroup.extend({
 		return txt;
 	},
 
-	parse_tags: function(line) {
+	parse_tags: function (line) {
 		var tags = [], el = line.getElementsByTagName('tag');
 		for (var i = 0; i < el.length; i++)
 			tags.push({k: el[i].getAttribute('k'), v: el[i].getAttribute('v')});
 		return tags;
 	},
 
-	parse_node: function(e) {
-		var n = { osmid: e.getAttribute('id'),
+	parse_node: function (e) {
+		var n = {osmid: e.getAttribute('id'),
 			lat:e.getAttribute('lat'),
 			lon:e.getAttribute('lon')
 		};
@@ -120,10 +120,10 @@ L.OSM = L.FeatureGroup.extend({
 		return n;
 	},
 
-	parse_way: function(line, nodes, options) {
+	parse_way: function (line, nodes, options) {
 		var el = line.getElementsByTagName('nd');
 		if (!el.length) return;
-		var coords = [], tags = [];
+		var coords = [];
 		for (var i = 0; i < el.length; i++) {
 			var ref = el[i].getAttribute('ref'), n = nodes[ref];
 			if (!n) return;
@@ -135,7 +135,7 @@ L.OSM = L.FeatureGroup.extend({
 		return layer;
 	},
 
-	parse_relation: function(line, ways, options) {
+	parse_relation: function (line, ways, options) {
 		var el = line.getElementsByTagName('member');
 		if (!el.length) return;
 		var rt, coords = [], tags = this.parse_tags(line);
@@ -160,7 +160,7 @@ L.OSM = L.FeatureGroup.extend({
 		return layer;
 	},
 
-	named_node: function(node, options) {
+	named_node: function (node, options) {
 		var marker = new L.Marker(new L.LatLng(node.lat, node.lon), options);
 		return marker;
 	}

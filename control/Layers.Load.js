@@ -2,7 +2,7 @@
  * Add async initialization of layers to L.Control.Layers
  */
 L.Control.Layers.include({
-	_loadScripts: function(scripts, cb, args) {
+	_loadScripts: function (scripts, cb, args) {
 		if (!scripts || scripts.length === 0)
 			return cb(args);
 		var _this = this, s = scripts.pop(), c;
@@ -20,32 +20,32 @@ L.Control.Layers.include({
 			c.e = script;
 			document.getElementsByTagName('head')[0].appendChild(script);
 		}
-		function _cb() { _this._loadScripts(scripts, cb, args); }
+		function _cb () { _this._loadScripts(scripts, cb, args); }
 		c.wait.push(_cb);
 		if (c.e.readyState === 'completed')
 			_cb();
 		L.Control.Layers._script_cache[s] = c;
 	},
 
-	addLayerDef: function(name, def) {
+	addLayerDef: function (name, def) {
 		if (this._layer_defs === undefined)
 			this._layer_defs = {};
 		this._layer_defs[name] = def;
 	},
 
-	addLayerDefs: function(defs) {
+	addLayerDefs: function (defs) {
 		if (this._layer_defs === undefined)
 			this._layer_defs = {};
 		L.Util.extend(this._layer_defs, defs);
 	},
 
-	loadLayer: function(name, deflt) {
+	loadLayer: function (name, deflt) {
 		var _this = this, l = this._layer_defs[name];
 		l['default'] = deflt;
-		this._loadScripts(l.js.reverse(), function(l) {_this._loadLayer(l);}, l);
+		this._loadScripts(l.js.reverse(), function (l) {_this._loadLayer(l);}, l);
 	},
 
-	_loadLayer: function(l) {
+	_loadLayer: function (l) {
 		var x = l.init();
 		if (l['default'] && this._map)
 			this._map.addLayer(x);

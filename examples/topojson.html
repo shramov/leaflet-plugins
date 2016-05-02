@@ -1,0 +1,33 @@
+<html>
+<head>
+	<title>Leaflet</title>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+	<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+	<script src="../layer/vector/TOPOJSON.js"></script>
+</head>
+<body>
+	<!-- define a DIV into which the map will appear. Make it take up the whole window -->
+	<div style="width:100%; height:100%" id="map"></div>
+<script type='text/javascript'>
+var map = new L.Map('map', {center: new L.LatLng(58.4, 43.0), zoom: 3});
+var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+var borders = new L.TOPOJSON("country.min.topojson", {async: true});
+borders.on('addlayer',function(e){
+	e.layer.eachLayer(function(dist){
+		var iso = dist.toGeoJSON().properties.ISO2.toLowerCase();
+		dist.bindPopup("<strong>"+dist.toGeoJSON().properties.NAME_ISO+"</strong>",{closeButton:false});
+		if(dist.options){
+			dist.options.className = 'country country-'+iso;
+		}else {
+			dist.eachLayer(function (dist2) {
+				dist2.options.className = 'country country-'+iso;
+			});
+		}
+	});
+});
+borders.on("loaded", function(e) { map.fitBounds(e.target.getBounds()); });
+map.addLayer(borders);
+map.addLayer(osm);
+</script>
+</body>
+</html>
