@@ -1,3 +1,9 @@
+-/**
+- * Embed of the topojson library from Mike Bostock v1.6.26
+- * https://github.com/mbostock/topojson
+- *
+- */
+
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
