@@ -92,7 +92,7 @@ L.BingLayer = L.TileLayer.extend({
 	},
 
 	_update_attribution: function () {
-		var bounds = this._map.getBounds();
+		var bounds = L.latLngBounds(this._map.getBounds().getSouthWest().wrap(),this._map.getBounds().getNorthEast().wrap());
 		var zoom = this._map.getZoom();
 		for (var i = 0; i < this._providers.length; i++) {
 			var p = this._providers[i];
