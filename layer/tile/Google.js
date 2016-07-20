@@ -23,7 +23,7 @@ L.Google = L.Layer.extend({
 	},
 
 	// Possible types: SATELLITE, ROADMAP, HYBRID, TERRAIN
-	initialize: function(type, options) {
+	initialize: function (type, options) {
 		L.Util.setOptions(this, options);
 
 		this._ready = google.maps.Map !== undefined;
@@ -32,7 +32,7 @@ L.Google = L.Layer.extend({
 		this._type = type || 'SATELLITE';
 	},
 
-	onAdd: function(map, insertAtTheBottom) {
+	onAdd: function (map, insertAtTheBottom) {
 		this._map = map;
 		this._insertAtTheBottom = insertAtTheBottom;
 
@@ -41,7 +41,7 @@ L.Google = L.Layer.extend({
 		this._initMapObject();
 
 		// set up events
-		map.on('viewreset', this._resetCallback, this);
+		map.on('viewreset', this._reset, this);
 
 		this._limitedUpdate = L.Util.throttle(this._update, 150, this);
 		map.on('move', this._update, this);
@@ -55,10 +55,10 @@ L.Google = L.Layer.extend({
 		this._update();
 	},
 
-	onRemove: function(map) {
+	onRemove: function (map) {
 		map._container.removeChild(this._container);
 
-		map.off('viewreset', this._resetCallback, this);
+		map.off('viewreset', this._reset, this);
 
 		map.off('move', this._update, this);
 
@@ -67,23 +67,23 @@ L.Google = L.Layer.extend({
 		map._controlCorners.bottomright.style.marginBottom = '0em';
 	},
 
-	getAttribution: function() {
+	getAttribution: function () {
 		return this.options.attribution;
 	},
 
-	setOpacity: function(opacity) {
+	setOpacity: function (opacity) {
 		this.options.opacity = opacity;
 		if (opacity < 1) {
 			L.DomUtil.setOpacity(this._container, opacity);
 		}
 	},
 
-	setElementSize: function(e, size) {
+	setElementSize: function (e, size) {
 		e.style.width = size.x + 'px';
 		e.style.height = size.y + 'px';
 	},
 
-	_initContainer: function() {
+	_initContainer: function () {
 		var tilePane = this._map._container,
 			first = tilePane.firstChild;
 
@@ -99,7 +99,7 @@ L.Google = L.Layer.extend({
 		this.setElementSize(this._container, this._map.getSize());
 	},
 
-	_initMapObject: function() {
+	_initMapObject: function () {
 		if (!this._ready) return;
 		this._google_center = new google.maps.LatLng(0, 0);
 		var map = new google.maps.Map(this._container, {
@@ -119,36 +119,32 @@ L.Google = L.Layer.extend({
 
 		var _this = this;
 		this._reposition = google.maps.event.addListenerOnce(map, 'center_changed',
-			function() { _this.onReposition(); });
+			function () { _this.onReposition(); });
 		this._google = map;
 
 		google.maps.event.addListenerOnce(map, 'idle',
-			function() { _this._checkZoomLevels(); });
+			function () { _this._checkZoomLevels(); });
 		google.maps.event.addListenerOnce(map, 'tilesloaded',
-			function() { _this.fire('load'); });
+			function () { _this.fire('load'); });
 		// Reporting that map-object was initialized.
-		this.fire('MapObjectInitialized', { mapObject: map });
+		this.fire('MapObjectInitialized', {mapObject: map});
 	},
 
-	_checkZoomLevels: function() {
+	_checkZoomLevels: function () {
 		//setting the zoom level on the Google map may result in a different zoom level than the one requested
 		//(it won't go beyond the level for which they have data).
 		// verify and make sure the zoom levels on both Leaflet and Google maps are consistent
 		if ((this._map.getZoom() !== undefined) && (this._google.getZoom() !== Math.round(this._map.getZoom()))) {
 			//zoom levels are out of sync. Set the leaflet zoom level to match the google one
-			this._map.setZoom( this._google.getZoom() );
+			this._map.setZoom(this._google.getZoom());
 		}
 	},
 
-	_resetCallback: function(e) {
-		this._reset(e.hard);
-	},
-
-	_reset: function(clearOldContainer) {
+	_reset: function () {
 		this._initContainer();
 	},
 
-	_update: function(e) {
+	_update: function () {
 		if (!this._google) return;
 		this._resize();
 
@@ -162,7 +158,7 @@ L.Google = L.Layer.extend({
 		this._checkZoomLevels();
 	},
 
-	_resize: function() {
+	_resize: function () {
 		var size = this._map.getSize();
 		if (this._container.style.width === size.x &&
 				this._container.style.height === size.y)
@@ -181,14 +177,14 @@ L.Google = L.Layer.extend({
 	},
 
 
-	onReposition: function() {
+	onReposition: function () {
 		if (!this._google) return;
 		google.maps.event.trigger(this._google, 'resize');
 	}
 });
 
 L.Google.asyncWait = [];
-L.Google.asyncInitialize = function() {
+L.Google.asyncInitialize = function () {
 	var i;
 	for (i = 0; i < L.Google.asyncWait.length; i++) {
 		var o = L.Google.asyncWait[i];

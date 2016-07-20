@@ -11,6 +11,7 @@ Currently it consists of:
  - Vector layers (`layer/vector/`):
    * GPX
    * KML
+   * TOPOJSON
 
  - Providers (`layer/tile`):
    * Google - using Google Maps API v3;
@@ -33,3 +34,5 @@ Homepage : https://github.com/shramov/leaflet-plugins
 Downloads : https://github.com/shramov/leaflet-plugins/releases
 
 npm : https://www.npmjs.org/package/leaflet-plugins
+
+cdnjs : https://cdnjs.com/libraries/leaflet-plugins

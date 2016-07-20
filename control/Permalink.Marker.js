@@ -8,11 +8,11 @@ L.Control.Permalink.include({
 	},
 	*/
 
-	initialize_marker: function() {
+	initialize_marker: function () {
 		this.on('update', this._set_marker, this);
 	},
 
-	_set_marker: function(e) {
+	_set_marker: function (e) {
 		var p = e.params;
 		//if (!this.options.useMarker) return;
 		if (this._marker) return;

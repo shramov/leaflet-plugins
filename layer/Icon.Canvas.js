@@ -20,8 +20,5 @@ L.Icon.Canvas = L.Icon.extend({
 
 	createShadow: function () {
 		return null;
-	},
-
-	draw: function(canvas, width, height) {
 	}
 });

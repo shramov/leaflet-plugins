@@ -1,6 +1,6 @@
 {
   "name": "leaflet-plugins",
-  "version": "1.4.3",
+  "version": "1.7.0",
   "homepage": "https://github.com/shramov/leaflet-plugins/",
   "license": "MIT",
   "authors": [
@@ -25,12 +25,13 @@
     "layer/vector/GPX.Speed.js",
     "layer/vector/KML.js",
     "layer/vector/OSM.js",
+    "layer/vector/TOPOJSON.js",
     "layer/tile/Bing.js",
     "layer/tile/Google.js",
     "layer/tile/Yandex.js"
   ],
   "devDependencies": {
-    "jshint": "2.5.0"
+    "eslint": "2.3.0"
   },
   "keywords": [
     "leaflet",

@@ -4,7 +4,7 @@ L.Icon.Text = L.Icon.extend({
 		L.Icon.prototype.initialize.apply(this, [options]);
 	},
 
-	createIcon: function() {
+	createIcon: function () {
 		var el = document.createElement('div');
 		el.appendChild(document.createTextNode(this._text));
 		this._setIconStyles(el, 'icon');
@@ -12,24 +12,24 @@ L.Icon.Text = L.Icon.extend({
 		return el;
 	},
 
-	createShadow: function() { return null; }
+	createShadow: function () { return null; }
 
 });
 
 L.Marker.Text = L.Marker.extend({
 	initialize: function (latlng, text, options) {
-        	L.Marker.prototype.initialize.apply(this, [latlng, options]);
+		L.Marker.prototype.initialize.apply(this, [latlng, options]);
 		this._fakeicon = new L.Icon.Text(text);
 	},
 
-	_initIcon: function() {
-        	L.Marker.prototype._initIcon.apply(this);
+	_initIcon: function () {
+		L.Marker.prototype._initIcon.apply(this);
 
 		var i = this._icon, s = this._shadow, obj = this.options.icon;
 		this._icon = this._shadow = null;
 
 		this.options.icon = this._fakeicon;
-        	L.Marker.prototype._initIcon.apply(this);
+		L.Marker.prototype._initIcon.apply(this);
 		this.options.icon = obj;
 
 		if (s) {

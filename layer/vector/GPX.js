@@ -1,5 +1,5 @@
 L.GPX = L.FeatureGroup.extend({
-	initialize: function(gpx, options) {
+	initialize: function (gpx, options) {
 		L.Util.setOptions(this, options);
 		this._gpx = gpx;
 		this._layers = {};
@@ -9,7 +9,7 @@ L.GPX = L.FeatureGroup.extend({
 		}
 	},
 	
-	loadXML: function(url, cb, options, async) {
+	loadXML: function (url, cb, options, async) {
 		if (async === undefined) async = this.options.async;
 		if (options === undefined) options = this.options;
 
@@ -17,48 +17,48 @@ L.GPX = L.FeatureGroup.extend({
 		req.open('GET', url, async);
 		try {
 			req.overrideMimeType('text/xml'); // unsupported by IE
-		} catch(e) {}
-		req.onreadystatechange = function() {
+		} catch (e) {}
+		req.onreadystatechange = function () {
 			if (req.readyState !== 4) return;
-			if(req.status === 200) cb(req.responseXML, options);
+			if (req.status === 200) cb(req.responseXML, options);
 		};
 		req.send(null);
 	},
 
-	_humanLen: function(l) {
+	_humanLen: function (l) {
 		if (l < 2000)
 			return l.toFixed(0) + ' m';
 		else
 			return (l/1000).toFixed(1) + ' km';
 	},
 	
-	_polylineLen: function(line)//line is a L.Polyline()
+	_polylineLen: function (line)//line is a L.Polyline()
 	{
 		var ll = line._latlngs;
 		var d = 0, p = null;
 		for (var i = 0; i < ll.length; i++)
 		{
-			if(i && p)
+			if (i && p)
 				d += p.distanceTo(ll[i]);
 			p = ll[i];
 		}
 		return d;
 	},
 
-	addGPX: function(url, options, async) {
+	addGPX: function (url, options, async) {
 		var _this = this;
-		var cb = function(gpx, options) { _this._addGPX(gpx, options); };
+		var cb = function (gpx, options) { _this._addGPX(gpx, options); };
 		this.loadXML(url, cb, options, async);
 	},
 
-	_addGPX: function(gpx, options) {
+	_addGPX: function (gpx, options) {
 		var layers = this.parseGPX(gpx, options);
 		if (!layers) return;
 		this.addLayer(layers);
 		this.fire('loaded');
 	},
 
-	parseGPX: function(xml, options) {
+	parseGPX: function (xml, options) {
 		var j, i, el, layers = [];
 		var named = false, tags = [['rte','rtept'], ['trkseg','trkpt']];
 
@@ -91,7 +91,7 @@ L.GPX = L.FeatureGroup.extend({
 		return layer;
 	},
 
-	parse_name: function(xml, layer) {
+	parse_name: function (xml, layer) {
 		var i, el, txt='', name, descr='', len=0;
 		el = xml.getElementsByTagName('name');
 		if (el.length)
@@ -102,7 +102,7 @@ L.GPX = L.FeatureGroup.extend({
 				descr = descr + el[i].childNodes[j].nodeValue;
 		}
 
-		if(layer instanceof L.Path)
+		if (layer instanceof L.Path)
 			len = this._polylineLen(layer);
 
 		if (name) txt += '<h2>' + name + '</h2>' + descr;
@@ -112,7 +112,7 @@ L.GPX = L.FeatureGroup.extend({
 		return txt;
 	},
 
-	parse_trkseg: function(line, xml, options, tag) {
+	parse_trkseg: function (line, xml, options, tag) {
 		var el = line.getElementsByTagName(tag);
 		if (!el.length) return [];
 		var coords = [];
@@ -132,7 +132,7 @@ L.GPX = L.FeatureGroup.extend({
 		return l;
 	},
 
-	parse_wpt: function(e, xml, options) {
+	parse_wpt: function (e, xml, options) {
 		var m = new L.Marker(new L.LatLng(e.getAttribute('lat'),
 						e.getAttribute('lon')), options);
 		var attributes = {};

@@ -8,7 +8,7 @@ L.Control.Permalink = L.Control.extend({
 		text: 'Permalink'
 	},
 
-	initialize: function(options) {
+	initialize: function (options) {
 		L.Util.setOptions(this, options);
 		this._params = {};
 		this._set_urlvars();
@@ -19,7 +19,7 @@ L.Control.Permalink = L.Control.extend({
 		}
 	},
 
-	onAdd: function(map) {
+	onAdd: function (map) {
 		this._container = L.DomUtil.create('div', 'leaflet-control-attribution leaflet-control-permalink');
 		L.DomEvent.disableClickPropagation(this._container);
 		this._map = map;
@@ -32,7 +32,7 @@ L.Control.Permalink = L.Control.extend({
 
 		if (this.options.useAnchor && 'onhashchange' in window) {
 			var _this = this, fn = window.onhashchange;
-			window.onhashchange = function() {
+			window.onhashchange = function () {
 				_this._set_urlvars();
 				if (fn) return fn();
 			};
@@ -43,14 +43,14 @@ L.Control.Permalink = L.Control.extend({
 		return this._container;
 	},
 
-	_update_center: function() {
+	_update_center: function () {
 		if (!this._map) return;
 
 		var center = this._round_point(this._map.getCenter());
 		this._update({zoom: String(this._map.getZoom()), lat: String(center.lat), lon: String(center.lng)});
 	},
 
-	_update_href: function() {
+	_update_href: function () {
 		var params = L.Util.getParamString(this._params);
 		var sep = '?';
 		if (this.options.useAnchor) sep = '#';
@@ -61,7 +61,7 @@ L.Control.Permalink = L.Control.extend({
 		return url;
 	},
 
-	_round_point : function(point) {
+	_round_point : function (point) {
 		var bounds = this._map.getBounds(), size = this._map.getSize();
 		var ne = bounds.getNorthEast(), sw = bounds.getSouthWest();
 
@@ -80,8 +80,8 @@ L.Control.Permalink = L.Control.extend({
 		return point;
 	},
 
-	_update: function(obj, source) {
-		for(var i in obj) {
+	_update: function (obj) {
+		for (var i in obj) {
 			if (!obj.hasOwnProperty(i)) continue;
 			if (obj[i] !== null && obj[i] !== undefined)
 				this._params[i] = obj[i];
@@ -92,7 +92,7 @@ L.Control.Permalink = L.Control.extend({
 		this._update_href();
 	},
 
-	_set_urlvars: function()
+	_set_urlvars: function ()
 	{
 		var p;
 		if (this.options.useAnchor) {
@@ -103,8 +103,8 @@ L.Control.Permalink = L.Control.extend({
 			this._url_base = window.location.href.split('#')[0].split('?')[0];
 		}
 		
-		function eq(x, y) {
-			for(var i in x)
+		function eq (x, y) {
+			for (var i in x)
 				if (x.hasOwnProperty(i) && x[i] !== y[i])
 					return false;
 			return true;
@@ -117,7 +117,7 @@ L.Control.Permalink = L.Control.extend({
 		this.fire('update', {params: this._params});
 	},
 
-	_set_center: function(e)
+	_set_center: function (e)
 	{
 		var params = e.params;
 		if (params.zoom === undefined ||
@@ -128,13 +128,13 @@ L.Control.Permalink = L.Control.extend({
 });
 
 L.UrlUtil = {
-	queryParse: function(s) {
+	queryParse: function (s) {
 		var p = {};
 		var sep = '&';
 		if (s.search('&amp;') !== -1)
 			sep = '&amp;';
 		var params = s.split(sep);
-		for(var i = 0; i < params.length; i++) {
+		for (var i = 0; i < params.length; i++) {
 			var tmp = params[i].split('=');
 			if (tmp.length !== 2) continue;
 			p[tmp[0]] = decodeURI(tmp[1]);
@@ -142,14 +142,14 @@ L.UrlUtil = {
 		return p;
 	},
 
-	query: function() {
+	query: function () {
 		var href = window.location.href.split('#')[0], idx = href.indexOf('?');
 		if (idx < 0)
 			return '';
 		return href.slice(idx+1);
 	},
 
-	hash: function() { return window.location.hash.slice(1); },
+	hash: function () { return window.location.hash.slice(1); },
 
 	updateParamString: function (q, obj) {
 		var p = L.UrlUtil.queryParse(q);

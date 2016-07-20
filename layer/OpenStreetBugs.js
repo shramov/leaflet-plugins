@@ -20,7 +20,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		dblClick: true
 	},
 
-	initialize : function(options)
+	initialize : function (options)
 	{
 		var tmp = L.Util.extend({}, this.options.popupOptions, (options || {}).popupOptions);
 		L.Util.setOptions(this, options);
@@ -38,7 +38,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		L.OpenStreetBugs.setCSS();
 	},
 
-	onAdd : function(map)
+	onAdd : function (map)
 	{
 		L.FeatureGroup.prototype.onAdd.apply(this, [map]);
 
@@ -56,7 +56,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		this.fire('add');
 	},
 
-	onRemove : function(map)
+	onRemove : function (map)
 	{
 		this._map.off('moveend', this.loadBugs, this);
 		this._iterateLayers(map.removeLayer, map);
@@ -73,34 +73,34 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		this.fire('remove');
 	},
 
-	set_cookie : function(name, value)
+	set_cookie : function (name, value)
 	{
 		var expires = (new Date((new Date()).getTime() + 604800000)).toGMTString(); // one week from now
 		document.cookie = name+'='+encodeURIComponent(value)+';';
 	},
 
-	get_cookie : function(name)
+	get_cookie : function (name)
 	{
 		var cookies = (document.cookie || '').split(/;\s*/);
-		for(var i=0; i<cookies.length; i++)
+		for (var i=0; i<cookies.length; i++)
 		{
 			var cookie = cookies[i].split('=');
-			if(cookie[0] === name)
+			if (cookie[0] === name)
 				return decodeURIComponent(cookie[1]);
 		}
 		return null;
 	},
 
-	loadBugs : function()
+	loadBugs : function ()
 	{
 		//if(!this.getVisibility())
 		//	return true;
 
 		var bounds = this._map.getBounds();
-		if(!bounds) return false;
+		if (!bounds) return false;
 		var sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
 
-		function round(number, digits) {
+		function round (number, digits) {
 			var factor = Math.pow(10, digits);
 			return Math.round(number*factor)/factor;
 		}
@@ -112,23 +112,23 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 			+ '&l='+round(sw.lng, 5));
 	},
 
-	apiRequest : function(url, reload)
+	apiRequest : function (url, reload)
 	{
 		var script = document.createElement('script');
 		script.type = 'text/javascript';
 		script.src = this.options.serverURL + url + '&nocache='+(new Date()).getTime();
 		var _this = this;
-		script.onload = function(e) {
+		script.onload = function (e) {
 			document.body.removeChild(this);
 			if (reload) _this.loadBugs();
 		};
 		document.body.appendChild(script);
 	},
 
-	createMarker: function(id, force)
+	createMarker: function (id, force)
 	{
 		var bug = putAJAXMarker.bugs[id];
-		if(this.bugs[id])
+		if (this.bugs[id])
 		{
 			if (force || this.bugs[id].osb.closed !== bug[2])
 				this.removeLayer(this.bugs[id]);
@@ -184,8 +184,8 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		}
 	}),
 
-	setPopupContent: function(id) {
-		if(this.bugs[id]._popup_content)
+	setPopupContent: function (id) {
+		if (this.bugs[id]._popup_content)
 			return;
 
 		var el1,el2,el3;
@@ -205,7 +205,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 
 		var divinfo = L.DomUtil.create('div', 'osb-info', newContent);
 		var table = L.DomUtil.create('table', 'osb-table', divinfo);
-		for(var i=0; i<rawbug[1].length; i++)
+		for (var i=0; i<rawbug[1].length; i++)
 		{
 			var tr = L.DomUtil.create('tr', 'osb-tr-info', table);
 			tr.setAttribute('valign','top');
@@ -219,7 +219,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 			td_comment.textContent = rawbug[4][i];
 		}
 
-		function create_link(ul, text) {
+		function create_link (ul, text) {
 			var a = L.DomUtil.create('a', null,
 					L.DomUtil.create('li', null, ul));
 			a.href = '#';
@@ -231,7 +231,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		var _this = this;
 		var bug = this.bugs[id];
 
-		function showComment(title, add_comment) {
+		function showComment (title, add_comment) {
 			h1.textContent_old = h1.textContent;
 			h1.textContent = L.i18n(title);
 			var form = _this.createCommentForm();
@@ -241,7 +241,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 				newContent.removeChild(form);
 				newContent.appendChild(ul);
 			};
-			form.ok.onclick = function(e) {
+			form.ok.onclick = function (e) {
 				bug.closePopup();
 				if (!add_comment)
 					_this.closeBug(form);
@@ -257,13 +257,13 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		if (!isclosed && !this.options.readonly) {
 			var a;
 			a = create_link(ul, 'Add comment');
-			a.onclick = function(e) { return showComment('Add comment', true); };
+			a.onclick = function (e) { return showComment('Add comment', true); };
 
 			a = create_link(ul, 'Mark as Fixed');
-			a.onclick = function(e) { return showComment('Close bug', false); };
+			a.onclick = function (e) { return showComment('Close bug', false); };
 		}
 		var a_josm = create_link(ul, 'JOSM');
-		a_josm.onclick = function() { _this.remoteEdit(rawbug[0]); };
+		a_josm.onclick = function () { _this.remoteEdit(rawbug[0]); };
 
 		var a_link = create_link(ul, 'Link');
 		var vars = {lat:rawbug[0].lat, lon:rawbug[0].lng, zoom:this.options.permalinkZoom, bugid:id};
@@ -281,7 +281,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		bug.on('mouseover', bug.openTempPopup, bug);
 	},
 
-	submitComment: function(form) {
+	submitComment: function (form) {
 		if (!form.osbcomment.value) return;
 		var nickname = form.osbnickname.value || this.options.username;
 		this.apiRequest('editPOIexec'
@@ -293,7 +293,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		this.options.username=nickname;
 	},
 
-	closeBug: function(form) {
+	closeBug: function (form) {
 		var id = form.osbid.value;
 		this.submitComment(form);
 		this.apiRequest('closePOIexec'
@@ -302,7 +302,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		);
 	},
 
-	createCommentForm: function(elt) {
+	createCommentForm: function (elt) {
 		var form = L.DomUtil.create('form', 'osb-add-comment', elt);
 		var content = '';
 		content += '<input name="osbid" type="hidden"/>';
@@ -318,7 +318,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		return form;
 	},
 
-	addBug: function(e) {
+	addBug: function (e) {
 		var newContent = L.DomUtil.create('div', 'osb-popup');
 
 		newContent.innerHTML += '<h1>'+L.i18n('New bug')+'</h1>';
@@ -330,12 +330,12 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		form.osblat.value = e.latlng.lat;
 		form.osblon.value = e.latlng.lng;
 		form.ok.value = L.i18n('Add comment');
-		form.onsubmit = function(e) {
+		form.onsubmit = function (e) {
 			_this._map.closePopup(popup);
 			_this.createBug(form);
 			return false;
 		};
-		form.cancel.onclick = function(e) { _this._map.closePopup(popup); };
+		form.cancel.onclick = function (e) { _this._map.closePopup(popup); };
 
 		popup.setLatLng(e.latlng);
 		popup.setContent(newContent);
@@ -346,7 +346,7 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		this._map.openPopup(popup);
 	},
 
-	createBug: function(form) {
+	createBug: function (form) {
 		if (!form.osbcomment.value) return;
 		var nickname = form.osbnickname.value || this.options.username;
 		this.apiRequest('addPOIexec'
@@ -359,32 +359,32 @@ L.OpenStreetBugs = L.FeatureGroup.extend({
 		this.options.username=nickname;
 	},
 
-	remoteEdit: function(x) {
+	remoteEdit: function (x) {
 		var ydelta = this.options.editArea || 0.01;
 		var xdelta = ydelta * 2;
-		var p = [ 'left='  + (x.lng - xdelta), 'bottom=' + (x.lat - ydelta), 'right=' + (x.lng + xdelta), 'top='    + (x.lat + ydelta)];
+		var p = ['left='  + (x.lng - xdelta), 'bottom=' + (x.lat - ydelta), 'right=' + (x.lng + xdelta), 'top='    + (x.lat + ydelta)];
 		var url = 'http://localhost:8111/load_and_zoom?' + p.join('&');
 		var frame = L.DomUtil.create('iframe', null);
 		frame.style.display = 'none';
 		frame.src = url;
 		document.body.appendChild(frame);
-		frame.onload = function(e) { document.body.removeChild(frame); };
+		frame.onload = function (e) { document.body.removeChild(frame); };
 		return false;
 	}
 });
 
-L.OpenStreetBugs.setCSS = function() {
-	if(L.OpenStreetBugs.setCSS.done)
+L.OpenStreetBugs.setCSS = function () {
+	if (L.OpenStreetBugs.setCSS.done)
 		return;
 	else
 		L.OpenStreetBugs.setCSS.done = true;
 
 	// See http://www.hunlock.com/blogs/Totally_Pwn_CSS_with_Javascript
 	var idx = 0;
-	var addRule = function(selector, rules) {
+	var addRule = function (selector, rules) {
 		var s = document.styleSheets[0];
 		var rule;
-		if(s.addRule) // M$IE
+		if (s.addRule) // M$IE
 			rule = s.addRule(selector, rules, idx);
 		else
 			rule = s.insertRule(selector + ' { ' + rules + ' }', idx);
@@ -402,7 +402,7 @@ L.OpenStreetBugs.setCSS = function() {
 	addRule('.osb-popup h3', 'font-size:1.2em; margin:.2em 0 .7em 0;');
 };
 
-function putAJAXMarker(id, lon, lat, text, closed)
+function putAJAXMarker (id, lon, lat, text, closed)
 {
 	var comments = text.split(/<hr \/>/);
 	var comments_only = [];
@@ -411,7 +411,7 @@ function putAJAXMarker(id, lon, lat, text, closed)
 	var info = null;
 	var isplit = 0;
 	var i;
-	for(i=0; i<comments.length; i++) {
+	for (i=0; i<comments.length; i++) {
 		info = null;
 		isplit = 0;
 		comments[i] = comments[i].replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
@@ -438,33 +438,33 @@ function putAJAXMarker(id, lon, lat, text, closed)
 		datetime
 	];
 	var force = (old && old[3]) !== text;
-	for(i=0; i<putAJAXMarker.layers.length; i++)
+	for (i=0; i<putAJAXMarker.layers.length; i++)
 		putAJAXMarker.layers[i].createMarker(id, force);
 }
 
-function osbResponse(error)
+function osbResponse (error)
 {
-	if(error)
+	if (error)
 		alert('Error: '+error);
 
 	return;
 }
 
-putAJAXMarker.layers = [ ];
+putAJAXMarker.layers = [];
 putAJAXMarker.bugs = { };
 
 L.Marker.include({
-	openTempPopup: function() {
+	openTempPopup: function () {
 		this.openPopup();
 		this.off('click', this.openPopup, this);
 
-		function onclick() {
+		function onclick () {
 			this.off('mouseout', onout, this);
 			this.off('click', onclick, this);
 			this.on('click', this.openPopup, this);
 		}
 
-		function onout() {
+		function onout () {
 			onclick.call(this);
 			this.closePopup();
 		}
@@ -473,10 +473,10 @@ L.Marker.include({
 	}
 });
 
-L.i18n = function(s) { return (L.i18n.lang[L.i18n.current] || {})[s] || s; };
+L.i18n = function (s) { return (L.i18n.lang[L.i18n.current] || {})[s] || s; };
 L.i18n.current = 'ru';
 L.i18n.lang = {};
-L.i18n.extend = function(lang, args) {
+L.i18n.extend = function (lang, args) {
 	L.i18n.lang[lang] = L.Util.extend(L.i18n.lang[lang] || {}, args);
 };
 
