@@ -1,0 +1,34 @@
+# OS
+# ===========
+.DS_Store
+Thumbs.db
+
+# Project
+# ===========
+dist/ui-leaflet.pre.js
+dist/coverage/
+js/angular-leaflet-directive-webpage.ngmin.js
+
+# Related ecosystem
+# ===========
+node_modules
+bower_components
+coverage
+saucelabs.json
+
+# General
+# ===========
+temp
+*.log
+*.swp
+.*.swp
+*~
+*.iml
+.idea
+.project
+core
+lib
+tags
+.tags
+TAGS
+.TAGS
