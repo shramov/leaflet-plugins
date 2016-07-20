@@ -24,6 +24,7 @@ L.Google = L.Class.extend({
 
 	// Possible types: SATELLITE, ROADMAP, HYBRID, TERRAIN
 	initialize: function (type, options) {
+		var self = this;
 
 		this._ready = L.Google.isGoogleMapsReady();
 
@@ -33,10 +34,10 @@ L.Google = L.Class.extend({
 
 		this._googleApiPromise
 		.then(function (google) {
-			this._ready = true;
-			this._google = google;
-			this._initMapObject();
-			this._update();
+			self._ready = true;
+			self._google = google;
+			self._initMapObject();
+			self._update();
 		});
 
 		this._type = type || 'SATELLITE';
