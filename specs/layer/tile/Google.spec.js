@@ -45,8 +45,11 @@ describe('L.Google', function () {
       it('check instance ready and type', function () {
         window.google = {maps:{Map:{}}}
         instance.initialize('test', {});
-        instance._ready.should.be.ok;
         instance._type.should.be.eql('test');
+        instance._googleApiPromise
+        .then(function () {
+          instance._ready.should.be.ok;
+        });
       });
     });
   });

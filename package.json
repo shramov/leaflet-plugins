@@ -13,10 +13,12 @@
     "lint": "eslint --config .eslintrc control/* layer/*"
   },
   "devDependencies": {
+    "bluebird": "3.4.1",
     "chai": "3.X",
     "eslint": "2.3.0",
     "karma": "1.X",
     "karma-chai": "0.1.X",
+    "karma-chrome-launcher": "1.X",
     "karma-mocha": "1.X",
     "karma-mocha-reporter": "2.X",
     "karma-phantomjs-launcher": "1.X",

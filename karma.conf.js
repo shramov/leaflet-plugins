@@ -4,6 +4,7 @@ module.exports = function (karma) {
         basePath: './',
         // list of files / patterns to load in the browser
         files: [
+            './node_modules/bluebird/js/browser/bluebird.min.js', //shim Promise for PhantomJS
             './node_modules/leaflet/dist/leaflet-src.js',
             './layer/tile/Google.js',
             './specs/**/*.js'
@@ -21,9 +22,7 @@ module.exports = function (karma) {
         // - Opera
         // - Safari
         // - PhantomJS
-        browsers: [
-            'PhantomJS'
-        ],
+        browsers: process.env.KARMA_BROWSERS ?  process.env.KARMA_BROWSERS.split(',') : ['PhantomJS'],
 
         // test results reporter to use
         // possible values: dots || progress

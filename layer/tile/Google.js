@@ -24,10 +24,20 @@ L.Google = L.Class.extend({
 
 	// Possible types: SATELLITE, ROADMAP, HYBRID, TERRAIN
 	initialize: function (type, options) {
-		L.Util.setOptions(this, options);
 
 		this._ready = L.Google.isGoogleMapsReady();
-		if (!this._ready) L.Google.asyncWait.push(this);
+
+		L.Util.setOptions(this, options);
+
+		this._googleApiPromise = L.Google.createGoogleApiPromise();
+
+		this._googleApiPromise
+		.then(function (google) {
+			this._ready = true;
+			this._google = google;
+			this._initMapObject();
+			this._update();
+		});
 
 		this._type = type || 'SATELLITE';
 	},
@@ -183,20 +193,29 @@ L.Google = L.Class.extend({
 	}
 });
 
-L.Google.asyncWait = [];
-L.Google.asyncInitialize = function () {
-	var i;
-	for (i = 0; i < L.Google.asyncWait.length; i++) {
-		var o = L.Google.asyncWait[i];
-		o._ready = true;
-		if (o._container) {
-			o._initMapObject();
-			o._update();
-		}
-	}
-	L.Google.asyncWait = [];
-};
-
 L.Google.isGoogleMapsReady = function () {
 	return !!window.google && !!window.google.maps && !!window.google.maps.Map;
+};
+
+L.Google.maxApiChecks = 10;
+
+L.Google.apiCheckIntervalMilliSecs = 500;
+
+L.Google.createGoogleApiPromise = function () {
+	var checkCounter = 0;
+	var intervalId = null;
+
+	return new Promise(function (resolve, reject) {
+		intervalId = setInterval(function () {
+			if (checkCounter >= L.Google.maxApiChecks && !L.Google.isGoogleMapsReady()) {
+				clearInterval(intervalId);
+				return reject(new Error('window.google not found after max attempts'));
+			}
+			if (L.Google.isGoogleMapsReady()) {
+				clearInterval(intervalId);
+				return resolve(window.google);
+			}
+			checkCounter++;
+		}, L.Google.apiCheckIntervalMilliSecs);
+	});
 };
