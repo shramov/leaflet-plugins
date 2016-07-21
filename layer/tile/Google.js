@@ -110,7 +110,7 @@ L.Google = L.Class.extend({
 	},
 
 	_initMapObject: function () {
-		if (!this._ready) return;
+		if (!this._ready || !this._container) return;
 		this._google_center = new google.maps.LatLng(0, 0);
 		var map = new google.maps.Map(this._container, {
 			center: this._google_center,
