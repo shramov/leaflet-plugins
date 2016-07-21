@@ -206,16 +206,18 @@ L.Google.createGoogleApiPromise = function () {
 	var intervalId = null;
 
 	return new Promise(function (resolve, reject) {
-		intervalId = setInterval(function () {
-			if (checkCounter >= L.Google.maxApiChecks && !L.Google.isGoogleMapsReady()) {
-				clearInterval(intervalId);
-				return reject(new Error('window.google not found after max attempts'));
-			}
-			if (L.Google.isGoogleMapsReady()) {
-				clearInterval(intervalId);
-				return resolve(window.google);
-			}
-			checkCounter++;
-		}, L.Google.apiCheckIntervalMilliSecs);
+		window.addEventListener('load', function load () {
+			intervalId = setInterval(function () {
+				if (checkCounter >= L.Google.maxApiChecks && !L.Google.isGoogleMapsReady()) {
+					clearInterval(intervalId);
+					return reject(new Error('window.google not found after max attempts'));
+				}
+				if (L.Google.isGoogleMapsReady()) {
+					clearInterval(intervalId);
+					return resolve(window.google);
+				}
+				checkCounter++;
+			}, L.Google.apiCheckIntervalMilliSecs);
+		});
 	});
 };
