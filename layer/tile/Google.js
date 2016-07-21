@@ -35,8 +35,6 @@ L.Google = L.Class.extend({
 		this._googleApiPromise
 		.then(function () {
 			_this._ready = true;
-			_this._initMapObject();
-			_this._update();
 		});
 
 		this._type = type || 'SATELLITE';
@@ -110,34 +108,37 @@ L.Google = L.Class.extend({
 	},
 
 	_initMapObject: function () {
-		if (!this._ready || !this._container) return;
-		this._google_center = new google.maps.LatLng(0, 0);
-		var map = new google.maps.Map(this._container, {
-			center: this._google_center,
-			zoom: 0,
-			tilt: 0,
-			mapTypeId: google.maps.MapTypeId[this._type],
-			disableDefaultUI: true,
-			keyboardShortcuts: false,
-			draggable: false,
-			disableDoubleClickZoom: true,
-			scrollwheel: false,
-			streetViewControl: false,
-			styles: this.options.mapOptions.styles,
-			backgroundColor: this.options.mapOptions.backgroundColor
+		this._googleApiPromise
+		.then(function () {
+			if (!this._ready || !this._container) return;
+			this._google_center = new google.maps.LatLng(0, 0);
+			var map = new google.maps.Map(this._container, {
+				center: this._google_center,
+				zoom: 0,
+				tilt: 0,
+				mapTypeId: google.maps.MapTypeId[this._type],
+				disableDefaultUI: true,
+				keyboardShortcuts: false,
+				draggable: false,
+				disableDoubleClickZoom: true,
+				scrollwheel: false,
+				streetViewControl: false,
+				styles: this.options.mapOptions.styles,
+				backgroundColor: this.options.mapOptions.backgroundColor
+			});
+
+			var _this = this;
+			this._reposition = google.maps.event.addListenerOnce(map, 'center_changed',
+				function () { _this.onReposition(); });
+			this._google = map;
+
+			google.maps.event.addListenerOnce(map, 'idle',
+				function () { _this._checkZoomLevels(); });
+			google.maps.event.addListenerOnce(map, 'tilesloaded',
+				function () { _this.fire('load'); });
+			//Reporting that map-object was initialized.
+			this.fire('MapObjectInitialized', {mapObject: map});
 		});
-
-		var _this = this;
-		this._reposition = google.maps.event.addListenerOnce(map, 'center_changed',
-			function () { _this.onReposition(); });
-		this._google = map;
-
-		google.maps.event.addListenerOnce(map, 'idle',
-			function () { _this._checkZoomLevels(); });
-		google.maps.event.addListenerOnce(map, 'tilesloaded',
-			function () { _this.fire('load'); });
-		//Reporting that map-object was initialized.
-		this.fire('MapObjectInitialized', {mapObject: map});
 	},
 
 	_checkZoomLevels: function () {

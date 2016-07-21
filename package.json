@@ -9,7 +9,8 @@
     "url": "git@github.com:shramov/leaflet-plugins.git"
   },
   "scripts": {
-    "test": "./node_modules/.bin/karma start && npm run lint",
+    "karma": "./node_modules/.bin/karma start",
+    "test": "npm run karma && npm run lint",
     "lint": "eslint --config .eslintrc control/* layer/*"
   },
   "devDependencies": {
