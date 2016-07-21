@@ -41,26 +41,31 @@ L.Google = L.Class.extend({
 	},
 
 	onAdd: function (map, insertAtTheBottom) {
-		this._map = map;
-		this._insertAtTheBottom = insertAtTheBottom;
+		var _this = this;
 
-		// create a container div for tiles
-		this._initContainer();
-		this._initMapObject();
+		this._googleApiPromise
+		.then(function () {
+			_this._map = map;
+			_this._insertAtTheBottom = insertAtTheBottom;
 
-		// set up events
-		map.on('viewreset', this._reset, this);
+			// create a container div for tiles
+			_this._initContainer();
+			_this._initMapObject();
 
-		this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
-		map.on('move', this._update, this);
+			// set up events
+			map.on('viewreset', _this._reset, this);
 
-		map.on('zoomanim', this._handleZoomAnim, this);
+			_this._limitedUpdate = L.Util.limitExecByInterval(_this._update, 150, this);
+			map.on('move', _this._update, _this);
 
-		//20px instead of 1em to avoid a slight overlap with google's attribution
-		map._controlCorners.bottomright.style.marginBottom = '20px';
+			map.on('zoomanim', _this._handleZoomAnim, _this);
 
-		this._reset();
-		this._update();
+			//20px instead of 1em to avoid a slight overlap with google's attribution
+			map._controlCorners.bottomright.style.marginBottom = '20px';
+
+			_this._reset();
+			_this._update();
+		});
 	},
 
 	onRemove: function (map) {
