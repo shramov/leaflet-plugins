@@ -26,6 +26,13 @@ Also there are some useful control plugins (`control/`):
    location data in hash part (#lat=...);
  * Distance - simple tool to measure distances on maps
 
+
+Compatibility
+------
+ - Tested with: Leaflet 1.0.x
+ - For use with Leaflet 0.7.x see `master` branch
+
+
 Where ?
 ------
 
