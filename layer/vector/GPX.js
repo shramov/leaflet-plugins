@@ -92,7 +92,7 @@ L.GPX = L.FeatureGroup.extend({
 	},
 
 	parse_name: function (xml, layer) {
-		var i, el, txt='', name, descr='', len=0;
+		var i, el, txt='', name, descr='', link, len=0;
 		el = xml.getElementsByTagName('name');
 		if (el.length)
 			name = el[0].childNodes[0].nodeValue;
@@ -101,12 +101,16 @@ L.GPX = L.FeatureGroup.extend({
 			for (var j = 0; j < el[i].childNodes.length; j++)
 				descr = descr + el[i].childNodes[j].nodeValue;
 		}
+		el = xml.getElementsByTagName('link');
+		if (el.length)
+			link = el[0].childNodes[0].nodeValue;
 
 		if (layer instanceof L.Path)
 			len = this._polylineLen(layer);
 
 		if (name) txt += '<h2>' + name + '</h2>' + descr;
 		if (len) txt += '<p>' + this._humanLen(len) + '</p>';
+		if (link) txt += '<p><a target="_blank" href="'+link+'">[...]</a></p>'; 
 
 		if (layer && layer._popup === undefined) layer.bindPopup(txt);
 		return txt;
