@@ -1,4 +1,4 @@
-L.Icon.Canvas = L.Icon.extend({
+module.exports = L.Icon.Canvas = L.Icon.extend({
 	options: {
 		iconSize: new L.Point(20, 20), // Have to be supplied
 		/*
