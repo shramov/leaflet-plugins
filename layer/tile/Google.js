@@ -24,35 +24,48 @@ L.Google = L.Class.extend({
 
 	// Possible types: SATELLITE, ROADMAP, HYBRID, TERRAIN
 	initialize: function (type, options) {
+		var _this = this;
+
+		this._ready = L.Google.isGoogleMapsReady();
+
 		L.Util.setOptions(this, options);
 
-		this._ready = google.maps.Map !== undefined;
-		if (!this._ready) L.Google.asyncWait.push(this);
+		this._googleApiPromise = L.Google.createGoogleApiPromise();
+
+		this._googleApiPromise
+		.then(function () {
+			_this._ready = true;
+		});
 
 		this._type = type || 'SATELLITE';
 	},
 
 	onAdd: function (map, insertAtTheBottom) {
-		this._map = map;
-		this._insertAtTheBottom = insertAtTheBottom;
+		var _this = this;
 
-		// create a container div for tiles
-		this._initContainer();
-		this._initMapObject();
+		this._googleApiPromise
+		.then(function () {
+			_this._map = map;
+			_this._insertAtTheBottom = insertAtTheBottom;
 
-		// set up events
-		map.on('viewreset', this._reset, this);
+			// create a container div for tiles
+			_this._initContainer();
+			_this._initMapObject();
 
-		this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
-		map.on('move', this._update, this);
+			// set up events
+			map.on('viewreset', _this._reset, this);
 
-		map.on('zoomanim', this._handleZoomAnim, this);
+			_this._limitedUpdate = L.Util.limitExecByInterval(_this._update, 150, this);
+			map.on('move', _this._update, _this);
 
-		//20px instead of 1em to avoid a slight overlap with google's attribution
-		map._controlCorners.bottomright.style.marginBottom = '20px';
+			map.on('zoomanim', _this._handleZoomAnim, _this);
 
-		this._reset();
-		this._update();
+			//20px instead of 1em to avoid a slight overlap with google's attribution
+			map._controlCorners.bottomright.style.marginBottom = '20px';
+
+			_this._reset();
+			_this._update();
+		});
 	},
 
 	onRemove: function (map) {
@@ -100,34 +113,37 @@ L.Google = L.Class.extend({
 	},
 
 	_initMapObject: function () {
-		if (!this._ready) return;
-		this._google_center = new google.maps.LatLng(0, 0);
-		var map = new google.maps.Map(this._container, {
-			center: this._google_center,
-			zoom: 0,
-			tilt: 0,
-			mapTypeId: google.maps.MapTypeId[this._type],
-			disableDefaultUI: true,
-			keyboardShortcuts: false,
-			draggable: false,
-			disableDoubleClickZoom: true,
-			scrollwheel: false,
-			streetViewControl: false,
-			styles: this.options.mapOptions.styles,
-			backgroundColor: this.options.mapOptions.backgroundColor
-		});
-
 		var _this = this;
-		this._reposition = google.maps.event.addListenerOnce(map, 'center_changed',
-			function () { _this.onReposition(); });
-		this._google = map;
+		this._googleApiPromise
+		.then(function () {
+			if (!_this._ready || !_this._container) return;
+			_this._google_center = new google.maps.LatLng(0, 0);
+			var map = new google.maps.Map(_this._container, {
+				center: _this._google_center,
+				zoom: 0,
+				tilt: 0,
+				mapTypeId: google.maps.MapTypeId[_this._type],
+				disableDefaultUI: true,
+				keyboardShortcuts: false,
+				draggable: false,
+				disableDoubleClickZoom: true,
+				scrollwheel: false,
+				streetViewControl: false,
+				styles: _this.options.mapOptions.styles,
+				backgroundColor: _this.options.mapOptions.backgroundColor
+			});
 
-		google.maps.event.addListenerOnce(map, 'idle',
-			function () { _this._checkZoomLevels(); });
-		google.maps.event.addListenerOnce(map, 'tilesloaded',
-			function () { _this.fire('load'); });
-		//Reporting that map-object was initialized.
-		this.fire('MapObjectInitialized', {mapObject: map});
+			_this._reposition = google.maps.event.addListenerOnce(map, 'center_changed',
+				function () { _this.onReposition(); });
+			_this._google = map;
+
+			google.maps.event.addListenerOnce(map, 'idle',
+				function () { _this._checkZoomLevels(); });
+			google.maps.event.addListenerOnce(map, 'tilesloaded',
+				function () { _this.fire('load'); });
+			//Reporting that map-object was initialized.
+			_this.fire('MapObjectInitialized', {mapObject: map});
+		});
 	},
 
 	_checkZoomLevels: function () {
@@ -183,16 +199,31 @@ L.Google = L.Class.extend({
 	}
 });
 
-L.Google.asyncWait = [];
-L.Google.asyncInitialize = function () {
-	var i;
-	for (i = 0; i < L.Google.asyncWait.length; i++) {
-		var o = L.Google.asyncWait[i];
-		o._ready = true;
-		if (o._container) {
-			o._initMapObject();
-			o._update();
-		}
-	}
-	L.Google.asyncWait = [];
+L.Google.isGoogleMapsReady = function () {
+	return !!window.google && !!window.google.maps && !!window.google.maps.Map;
+};
+
+L.Google.maxApiChecks = 10;
+
+L.Google.apiCheckIntervalMilliSecs = 500;
+
+L.Google.createGoogleApiPromise = function () {
+	var checkCounter = 0;
+	var intervalId = null;
+
+	return new Promise(function (resolve, reject) {
+		window.addEventListener('load', function load () {
+			intervalId = setInterval(function () {
+				if (checkCounter >= L.Google.maxApiChecks && !L.Google.isGoogleMapsReady()) {
+					clearInterval(intervalId);
+					return reject(new Error('window.google not found after max attempts'));
+				}
+				if (L.Google.isGoogleMapsReady()) {
+					clearInterval(intervalId);
+					return resolve(window.google);
+				}
+				checkCounter++;
+			}, L.Google.apiCheckIntervalMilliSecs);
+		});
+	});
 };
