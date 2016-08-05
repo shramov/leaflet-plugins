@@ -103,7 +103,7 @@ L.GPX = L.FeatureGroup.extend({
 		}
 		el = xml.getElementsByTagName('link');
 		if (el.length)
-			link = el[0].getAttribute('href')
+			link = el[0].getAttribute('href');
 
 		if (layer instanceof L.Path)
 			len = this._polylineLen(layer);
