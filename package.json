@@ -9,10 +9,11 @@
     "url": "git@github.com:shramov/leaflet-plugins.git"
   },
   "scripts": {
-    "test": "eslint --config .eslintrc control/* layer/*"
+    "test": "tap control/test/*.js && eslint --config .eslintrc control/* layer/*"
   },
   "devDependencies": {
-    "eslint": "2.3.0"
+    "eslint": "2.3.0",
+    "tap": "^6.3.2"
   },
   "contributors": [
     "Bruno Bergot <bruno@eliaz.fr>"
