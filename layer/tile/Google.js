@@ -23,13 +23,17 @@ L.Google = L.Class.extend({
 	},
 
 	// Possible types: SATELLITE, ROADMAP, HYBRID, TERRAIN
-	initialize: function (type, options) {
+	// Possible extra: NONE, BICYCLING, TRANSIT, TRAFFIC
+	initialize: function (type, options, extra) {
 		L.Util.setOptions(this, options);
 
+		extra_layer = extra;
+		
 		this._ready = google.maps.Map !== undefined;
 		if (!this._ready) L.Google.asyncWait.push(this);
 
 		this._type = type || 'SATELLITE';
+
 	},
 
 	onAdd: function (map, insertAtTheBottom) {
@@ -117,6 +121,23 @@ L.Google = L.Class.extend({
 			backgroundColor: this.options.mapOptions.backgroundColor
 		});
 
+		switch(extra_layer){
+			case "NONE":
+				break;
+			case "BICYCLING":
+				var bikeLayer = new google.maps.BicyclingLayer();
+				bikeLayer.setMap(map);
+				break;
+			case "TRANSIT":
+				var transitLayer = new google.maps.TransitLayer();
+				transitLayer.setMap(map);
+				break;
+			case "TRAFFIC":
+				var trafficLayer = new google.maps.TrafficLayer();
+				trafficLayer.setMap(map);
+				break;
+		}
+
 		var _this = this;
 		this._reposition = google.maps.event.addListenerOnce(map, 'center_changed',
 			function () { _this.onReposition(); });
@@ -182,6 +203,8 @@ L.Google = L.Class.extend({
 		google.maps.event.trigger(this._google, 'resize');
 	}
 });
+
+extra_layer = "NONE";
 
 L.Google.asyncWait = [];
 L.Google.asyncInitialize = function () {
