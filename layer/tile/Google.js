@@ -24,35 +24,49 @@ L.Google = L.Class.extend({
 
 	// Possible types: SATELLITE, ROADMAP, HYBRID, TERRAIN
 	initialize: function (type, options) {
+		var _this = this;
+
+		this._ready = L.Google.isGoogleMapsReady();
+
 		L.Util.setOptions(this, options);
 
-		this._ready = google.maps.Map !== undefined;
-		if (!this._ready) L.Google.asyncWait.push(this);
+		this._googleApiPromise = L.Google.createGoogleApiPromise();
+
+		this._googleApiPromise
+		.then(function () {
+			_this._ready = true;
+			_this._initMapObject();
+			_this._update();
+		});
 
 		this._type = type || 'SATELLITE';
 	},
 
 	onAdd: function (map, insertAtTheBottom) {
-		this._map = map;
-		this._insertAtTheBottom = insertAtTheBottom;
+		var _this = this;
+		this._googleApiPromise
+		.then(function () {
+			_this._map = map;
+			_this._insertAtTheBottom = insertAtTheBottom;
 
-		// create a container div for tiles
-		this._initContainer();
-		this._initMapObject();
+			// create a container div for tiles
+			_this._initContainer();
+			_this._initMapObject();
 
-		// set up events
-		map.on('viewreset', this._reset, this);
+			// set up events
+			map.on('viewreset', _this._reset, _this);
 
-		this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
-		map.on('move', this._update, this);
+			_this._limitedUpdate = L.Util.limitExecByInterval(_this._update, 150, _this);
+			map.on('move', _this._update, _this);
 
-		map.on('zoomanim', this._handleZoomAnim, this);
+			map.on('zoomanim', _this._handleZoomAnim, _this);
 
-		//20px instead of 1em to avoid a slight overlap with google's attribution
-		map._controlCorners.bottomright.style.marginBottom = '20px';
+			//20px instead of 1em to avoid a slight overlap with google's attribution
+			map._controlCorners.bottomright.style.marginBottom = '20px';
 
-		this._reset();
-		this._update();
+			_this._reset();
+			_this._update();
+		});
 	},
 
 	onRemove: function (map) {
@@ -100,7 +114,7 @@ L.Google = L.Class.extend({
 	},
 
 	_initMapObject: function () {
-		if (!this._ready) return;
+		if (!this._ready || !this._container) return;
 		this._google_center = new google.maps.LatLng(0, 0);
 		var map = new google.maps.Map(this._container, {
 			center: this._google_center,
@@ -183,16 +197,29 @@ L.Google = L.Class.extend({
 	}
 });
 
-L.Google.asyncWait = [];
-L.Google.asyncInitialize = function () {
-	var i;
-	for (i = 0; i < L.Google.asyncWait.length; i++) {
-		var o = L.Google.asyncWait[i];
-		o._ready = true;
-		if (o._container) {
-			o._initMapObject();
-			o._update();
-		}
-	}
-	L.Google.asyncWait = [];
+L.Google.isGoogleMapsReady = function () {
+	return !!window.google && !!window.google.maps && !!window.google.maps.Map;
+};
+
+L.Google.maxApiChecks = 10;
+
+L.Google.apiCheckIntervalMilliSecs = 500;
+
+L.Google.createGoogleApiPromise = function () {
+	var checkCounter = 0;
+	var intervalId = null;
+
+	return new Promise(function (resolve, reject) {
+		intervalId = setInterval(function () {
+			if (checkCounter >= L.Google.maxApiChecks && !L.Google.isGoogleMapsReady()) {
+				clearInterval(intervalId);
+				return reject(new Error('window.google not found after max attempts'));
+			}
+			if (L.Google.isGoogleMapsReady()) {
+				clearInterval(intervalId);
+				return resolve(window.google);
+			}
+			checkCounter++;
+		}, L.Google.apiCheckIntervalMilliSecs);
+	});
 };
