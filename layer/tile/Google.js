@@ -30,7 +30,7 @@ L.Google = L.Class.extend({
 
 		L.Util.setOptions(this, options);
 
-		this._googleApiPromise = L.Google.createGoogleApiPromise();
+		this._googleApiPromise = this._ready ? Promise.resolve(window.google) : L.Google.createGoogleApiPromise();
 
 		this._googleApiPromise
 		.then(function () {
@@ -200,6 +200,9 @@ L.Google = L.Class.extend({
 L.Google.isGoogleMapsReady = function () {
 	return !!window.google && !!window.google.maps && !!window.google.maps.Map;
 };
+
+// backwards compat
+L.Google.asyncInitialize = L.Google.isGoogleMapsReady;
 
 L.Google.maxApiChecks = 10;
 
