@@ -26,7 +26,7 @@ L.Google = L.Class.extend({
 	initialize: function (type, options) {
 		L.Util.setOptions(this, options);
 
-		this._ready = google.maps.Map !== undefined;
+		this._ready = L.Google.isGoogleMapsReady();
 		if (!this._ready) L.Google.asyncWait.push(this);
 
 		this._type = type || 'SATELLITE';
@@ -195,4 +195,7 @@ L.Google.asyncInitialize = function () {
 		}
 	}
 	L.Google.asyncWait = [];
+};
+L.Google.isGoogleMapsReady = function () {
+	return !!window.google && !!window.google.maps && !!window.google.maps.Map;
 };
