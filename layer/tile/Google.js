@@ -30,14 +30,8 @@ L.Google = L.Class.extend({
 
 		L.Util.setOptions(this, options);
 
-		this._googleApiPromise = this._ready ? Promise.resolve(window.google) : L.Google.createGoogleApiPromise();
-
-		this._googleApiPromise
-		.then(function () {
-			_this._ready = true;
-			_this._initMapObject();
-			_this._update();
-		});
+		this._ready = L.Google.isGoogleMapsReady();
+		if (!this._ready) L.Google.asyncWait.push(this);
 
 		this._type = type || 'SATELLITE';
 	},
@@ -225,4 +219,7 @@ L.Google.createGoogleApiPromise = function () {
 			checkCounter++;
 		}, L.Google.apiCheckIntervalMilliSecs);
 	});
+};
+L.Google.isGoogleMapsReady = function () {
+	return !!window.google && !!window.google.maps && !!window.google.maps.Map;
 };
