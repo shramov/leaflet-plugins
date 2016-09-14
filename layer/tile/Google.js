@@ -5,221 +5,197 @@
 /* global google: true */
 
 L.Google = L.Class.extend({
-	includes: L.Mixin.Events,
+    includes: L.Mixin.Events,
 
-	options: {
-		minZoom: 0,
-		maxZoom: 18,
-		tileSize: 256,
-		subdomains: 'abc',
-		errorTileUrl: '',
-		attribution: '',
-		opacity: 1,
-		continuousWorld: false,
-		noWrap: false,
-		mapOptions: {
-			backgroundColor: '#dddddd'
-		}
-	},
+    options: {
+        minZoom: 0,
+        maxZoom: 18,
+        tileSize: 256,
+        subdomains: 'abc',
+        errorTileUrl: '',
+        attribution: '',
+        opacity: 1,
+        continuousWorld: false,
+        noWrap: false,
+        mapOptions: {
+            backgroundColor: '#dddddd'
+        }
+    },
 
-	// Possible types: SATELLITE, ROADMAP, HYBRID, TERRAIN
-	initialize: function (type, options) {
-		var _this = this;
+    // Possible types: SATELLITE, ROADMAP, HYBRID, TERRAIN
+    initialize: function (type, options) {
+        L.Util.setOptions(this, options);
 
-		this._ready = L.Google.isGoogleMapsReady();
+        this._ready = L.Google.isGoogleMapsReady();
+        if (!this._ready) L.Google.asyncWait.push(this);
 
-		L.Util.setOptions(this, options);
+        this._type = type || 'SATELLITE';
+    },
 
-		this._ready = L.Google.isGoogleMapsReady();
-		if (!this._ready) L.Google.asyncWait.push(this);
+    onAdd: function (map, insertAtTheBottom) {
+        this._map = map;
+        this._insertAtTheBottom = insertAtTheBottom;
 
-		this._type = type || 'SATELLITE';
-	},
+        // create a container div for tiles
+        this._initContainer();
+        this._initMapObject();
 
-	onAdd: function (map, insertAtTheBottom) {
-		var _this = this;
-		this._googleApiPromise
-		.then(function () {
-			_this._map = map;
-			_this._insertAtTheBottom = insertAtTheBottom;
+        // set up events
+        map.on('viewreset', this._reset, this);
 
-			// create a container div for tiles
-			_this._initContainer();
-			_this._initMapObject();
+        this._limitedUpdate = L.Util.limitExecByInterval(this._update, 150, this);
+        map.on('move', this._update, this);
 
-			// set up events
-			map.on('viewreset', _this._reset, _this);
+        map.on('zoomanim', this._handleZoomAnim, this);
 
-			_this._limitedUpdate = L.Util.limitExecByInterval(_this._update, 150, _this);
-			map.on('move', _this._update, _this);
+        //20px instead of 1em to avoid a slight overlap with google's attribution
+        map._controlCorners.bottomright.style.marginBottom = '20px';
 
-			map.on('zoomanim', _this._handleZoomAnim, _this);
+        this._reset();
+        this._update();
+    },
 
-			//20px instead of 1em to avoid a slight overlap with google's attribution
-			map._controlCorners.bottomright.style.marginBottom = '20px';
+    onRemove: function (map) {
+        map._container.removeChild(this._container);
 
-			_this._reset();
-			_this._update();
-		});
-	},
+        map.off('viewreset', this._reset, this);
 
-	onRemove: function (map) {
-		map._container.removeChild(this._container);
+        map.off('move', this._update, this);
 
-		map.off('viewreset', this._reset, this);
+        map.off('zoomanim', this._handleZoomAnim, this);
 
-		map.off('move', this._update, this);
+        map._controlCorners.bottomright.style.marginBottom = '0em';
+    },
 
-		map.off('zoomanim', this._handleZoomAnim, this);
+    getAttribution: function () {
+        return this.options.attribution;
+    },
 
-		map._controlCorners.bottomright.style.marginBottom = '0em';
-	},
+    setOpacity: function (opacity) {
+        this.options.opacity = opacity;
+        if (opacity < 1) {
+            L.DomUtil.setOpacity(this._container, opacity);
+        }
+    },
 
-	getAttribution: function () {
-		return this.options.attribution;
-	},
+    setElementSize: function (e, size) {
+        e.style.width = size.x + 'px';
+        e.style.height = size.y + 'px';
+    },
 
-	setOpacity: function (opacity) {
-		this.options.opacity = opacity;
-		if (opacity < 1) {
-			L.DomUtil.setOpacity(this._container, opacity);
-		}
-	},
+    _initContainer: function () {
+        var tilePane = this._map._container,
+            first = tilePane.firstChild;
 
-	setElementSize: function (e, size) {
-		e.style.width = size.x + 'px';
-		e.style.height = size.y + 'px';
-	},
+        if (!this._container) {
+            this._container = L.DomUtil.create('div', 'leaflet-google-layer leaflet-top leaflet-left');
+            this._container.id = '_GMapContainer_' + L.Util.stamp(this);
+            this._container.style.zIndex = 'auto';
+        }
 
-	_initContainer: function () {
-		var tilePane = this._map._container,
-			first = tilePane.firstChild;
+        tilePane.insertBefore(this._container, first);
 
-		if (!this._container) {
-			this._container = L.DomUtil.create('div', 'leaflet-google-layer leaflet-top leaflet-left');
-			this._container.id = '_GMapContainer_' + L.Util.stamp(this);
-			this._container.style.zIndex = 'auto';
-		}
+        this.setOpacity(this.options.opacity);
+        this.setElementSize(this._container, this._map.getSize());
+    },
 
-		tilePane.insertBefore(this._container, first);
+    _initMapObject: function () {
+        if (!this._ready) return;
+        this._google_center = new google.maps.LatLng(0, 0);
+        var map = new google.maps.Map(this._container, {
+            center: this._google_center,
+            zoom: 0,
+            tilt: 0,
+            mapTypeId: google.maps.MapTypeId[this._type],
+            disableDefaultUI: true,
+            keyboardShortcuts: false,
+            draggable: false,
+            disableDoubleClickZoom: true,
+            scrollwheel: false,
+            streetViewControl: false,
+            styles: this.options.mapOptions.styles,
+            backgroundColor: this.options.mapOptions.backgroundColor
+        });
 
-		this.setOpacity(this.options.opacity);
-		this.setElementSize(this._container, this._map.getSize());
-	},
+        var _this = this;
+        this._reposition = google.maps.event.addListenerOnce(map, 'center_changed',
+            function () { _this.onReposition(); });
+        this._google = map;
 
-	_initMapObject: function () {
-		if (!this._ready || !this._container) return;
-		this._google_center = new google.maps.LatLng(0, 0);
-		var map = new google.maps.Map(this._container, {
-			center: this._google_center,
-			zoom: 0,
-			tilt: 0,
-			mapTypeId: google.maps.MapTypeId[this._type],
-			disableDefaultUI: true,
-			keyboardShortcuts: false,
-			draggable: false,
-			disableDoubleClickZoom: true,
-			scrollwheel: false,
-			streetViewControl: false,
-			styles: this.options.mapOptions.styles,
-			backgroundColor: this.options.mapOptions.backgroundColor
-		});
+        google.maps.event.addListenerOnce(map, 'idle',
+            function () { _this._checkZoomLevels(); });
+        google.maps.event.addListenerOnce(map, 'tilesloaded',
+            function () { _this.fire('load'); });
+        //Reporting that map-object was initialized.
+        this.fire('MapObjectInitialized', {mapObject: map});
+    },
 
-		var _this = this;
-		this._reposition = google.maps.event.addListenerOnce(map, 'center_changed',
-			function () { _this.onReposition(); });
-		this._google = map;
+    _checkZoomLevels: function () {
+        //setting the zoom level on the Google map may result in a different zoom level than the one requested
+        //(it won't go beyond the level for which they have data).
+        // verify and make sure the zoom levels on both Leaflet and Google maps are consistent
+        if ((this._map.getZoom() !== undefined) && (this._google.getZoom() !== this._map.getZoom())) {
+            //zoom levels are out of sync. Set the leaflet zoom level to match the google one
+            this._map.setZoom(this._google.getZoom());
+        }
+    },
 
-		google.maps.event.addListenerOnce(map, 'idle',
-			function () { _this._checkZoomLevels(); });
-		google.maps.event.addListenerOnce(map, 'tilesloaded',
-			function () { _this.fire('load'); });
-		//Reporting that map-object was initialized.
-		this.fire('MapObjectInitialized', {mapObject: map});
-	},
+    _reset: function () {
+        this._initContainer();
+    },
 
-	_checkZoomLevels: function () {
-		//setting the zoom level on the Google map may result in a different zoom level than the one requested
-		//(it won't go beyond the level for which they have data).
-		// verify and make sure the zoom levels on both Leaflet and Google maps are consistent
-		if ((this._map.getZoom() !== undefined) && (this._google.getZoom() !== this._map.getZoom())) {
-			//zoom levels are out of sync. Set the leaflet zoom level to match the google one
-			this._map.setZoom(this._google.getZoom());
-		}
-	},
+    _update: function () {
+        if (!this._google) return;
+        this._resize();
 
-	_reset: function () {
-		this._initContainer();
-	},
+        var center = this._map.getCenter();
+        var _center = new google.maps.LatLng(center.lat, center.lng);
 
-	_update: function () {
-		if (!this._google) return;
-		this._resize();
+        this._google.setCenter(_center);
+        if (this._map.getZoom() !== undefined)
+            this._google.setZoom(Math.round(this._map.getZoom()));
 
-		var center = this._map.getCenter();
-		var _center = new google.maps.LatLng(center.lat, center.lng);
+        this._checkZoomLevels();
+    },
 
-		this._google.setCenter(_center);
-		if (this._map.getZoom() !== undefined)
-			this._google.setZoom(Math.round(this._map.getZoom()));
-
-		this._checkZoomLevels();
-	},
-
-	_resize: function () {
-		var size = this._map.getSize();
-		if (this._container.style.width === size.x &&
-				this._container.style.height === size.y)
-			return;
-		this.setElementSize(this._container, size);
-		this.onReposition();
-	},
+    _resize: function () {
+        var size = this._map.getSize();
+        if (this._container.style.width === size.x &&
+            this._container.style.height === size.y)
+            return;
+        this.setElementSize(this._container, size);
+        this.onReposition();
+    },
 
 
-	_handleZoomAnim: function (e) {
-		var center = e.center;
-		var _center = new google.maps.LatLng(center.lat, center.lng);
+    _handleZoomAnim: function (e) {
+        var center = e.center;
+        var _center = new google.maps.LatLng(center.lat, center.lng);
 
-		this._google.setCenter(_center);
-		this._google.setZoom(Math.round(e.zoom));
-	},
+        this._google.setCenter(_center);
+        this._google.setZoom(Math.round(e.zoom));
+    },
 
 
-	onReposition: function () {
-		if (!this._google) return;
-		google.maps.event.trigger(this._google, 'resize');
-	}
+    onReposition: function () {
+        if (!this._google) return;
+        google.maps.event.trigger(this._google, 'resize');
+    }
 });
 
-L.Google.isGoogleMapsReady = function () {
-	return !!window.google && !!window.google.maps && !!window.google.maps.Map;
-};
-
-// backwards compat
-L.Google.asyncInitialize = L.Google.isGoogleMapsReady;
-
-L.Google.maxApiChecks = 10;
-
-L.Google.apiCheckIntervalMilliSecs = 500;
-
-L.Google.createGoogleApiPromise = function () {
-	var checkCounter = 0;
-	var intervalId = null;
-
-	return new Promise(function (resolve, reject) {
-		intervalId = setInterval(function () {
-			if (checkCounter >= L.Google.maxApiChecks && !L.Google.isGoogleMapsReady()) {
-				clearInterval(intervalId);
-				return reject(new Error('window.google not found after max attempts'));
-			}
-			if (L.Google.isGoogleMapsReady()) {
-				clearInterval(intervalId);
-				return resolve(window.google);
-			}
-			checkCounter++;
-		}, L.Google.apiCheckIntervalMilliSecs);
-	});
+L.Google.asyncWait = [];
+L.Google.asyncInitialize = function () {
+    var i;
+    for (i = 0; i < L.Google.asyncWait.length; i++) {
+        var o = L.Google.asyncWait[i];
+        o._ready = true;
+        if (o._container) {
+            o._initMapObject();
+            o._update();
+        }
+    }
+    L.Google.asyncWait = [];
 };
 L.Google.isGoogleMapsReady = function () {
-	return !!window.google && !!window.google.maps && !!window.google.maps.Map;
+    return !!window.google && !!window.google.maps && !!window.google.maps.Map;
 };
