@@ -5,6 +5,7 @@ L.Control.Permalink = L.Control.extend({
 		position: 'bottomleft',
 		useAnchor: true,
 		useLocation: false,
+		useLocalStorage: false,
 		text: 'Permalink'
 	},
 
@@ -58,6 +59,8 @@ L.Control.Permalink = L.Control.extend({
 		if (this._href) this._href.setAttribute('href', url);
 		if (this.options.useLocation)
 			location.replace('#' + params.slice(1));
+		if (this.options.useLocalStorage)
+			window.localStorage.setItem('paramsTemp', params.slice(1));
 		return url;
 	},
 
@@ -102,6 +105,14 @@ L.Control.Permalink = L.Control.extend({
 			p = L.UrlUtil.queryParse(L.UrlUtil.query());
 			this._url_base = window.location.href.split('#')[0].split('?')[0];
 		}
+		if (this.options.useLocalStorage) {
+			p = window.localStorage.getItem('paramsTemp');
+			if (p !== null) {
+				p = L.UrlUtil.queryParse(p);
+			} else {
+				p = {};
+			}
+		}
 		
 		function eq (x, y) {
 			for (var i in x)
@@ -137,7 +148,7 @@ L.UrlUtil = {
 		for (var i = 0; i < params.length; i++) {
 			var tmp = params[i].split('=');
 			if (tmp.length !== 2) continue;
-			p[tmp[0]] = decodeURI(tmp[1]);
+			p[tmp[0]] = decodeURIComponent(tmp[1]);
 		}
 		return p;
 	},
