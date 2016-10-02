@@ -29,7 +29,7 @@ Also there are some useful control plugins (`control/`):
 Compatibility
 ------
  - Tested with: Leaflet 1.0.x
- - For use with Leaflet 0.7.x see `v0` branch
+ - For use with Leaflet 0.7.x see `v2` branch
 
 
 Where ?
