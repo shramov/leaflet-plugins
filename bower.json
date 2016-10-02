@@ -27,7 +27,6 @@
     "layer/vector/OSM.js",
     "layer/vector/TOPOJSON.js",
     "layer/tile/Bing.js",
-    "layer/tile/Google.js",
     "layer/tile/Yandex.js"
   ],
   "devDependencies": {
@@ -37,7 +36,6 @@
     "leaflet",
     "plugins",
     "map",
-    "google",
     "bing",
     "yandex",
     "kml",
