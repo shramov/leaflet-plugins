@@ -14,7 +14,6 @@ Currently it consists of:
    * TOPOJSON
 
  - Providers (`layer/tile`):
-   * Google - using Google Maps API v3;
    * Yandex - using Yandex Maps API v2;
    * Bing - with proper attribution.
 
@@ -29,8 +28,8 @@ Also there are some useful control plugins (`control/`):
 
 Compatibility
 ------
- - Tested with: Leaflet 0.7.x
- - For use with Leaflet 1.0.x see branch `leaflet_one`
+ - Tested with: Leaflet 1.0.x
+ - For use with Leaflet 0.7.x see `v0` branch
 
 
 Where ?
