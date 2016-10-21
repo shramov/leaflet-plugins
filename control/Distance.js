@@ -28,9 +28,6 @@ L.Control.Distance = L.Control.extend({
 		this._link_delete = this._createButton('Delete', 'leaflet-control-distance leaflet-control-distance-delete', container, this._reset, this);
 		this._text = L.DomUtil.create('div', 'leaflet-control-distance-text', container);
 
-		//text.style.display = 'inline';
-		//text.style.float = 'right';
-
 		this._map.addLayer(this._line);
 		this._calc_disable();
 		return container;
@@ -57,7 +54,6 @@ L.Control.Distance = L.Control.extend({
 		this._map.on('click', this._add_point, this);
 
 		this._map.getContainer().style.cursor = 'crosshair';
-		//this._map.addLayer(this._line);
 		L.DomUtil.addClass(this._link, 'leaflet-control-distance-active');
 		this._container.appendChild(this._link_delete);
 		this._container.appendChild(this._text);
@@ -70,7 +66,6 @@ L.Control.Distance = L.Control.extend({
 
 	_calc_disable: function () {
 		this._map.off('click', this._add_point, this);
-		//this._map.removeLayer(this._line);
 		this._map.getContainer().style.cursor = 'default';
 		this._container.removeChild(this._link_delete);
 		this._container.removeChild(this._text);
