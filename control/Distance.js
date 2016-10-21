@@ -122,3 +122,7 @@ L.Control.Distance = L.Control.extend({
 		return d;
 	}
 });
+
+L.control.distance = function (options) {
+	return new L.Control.Distance(options);
+};
