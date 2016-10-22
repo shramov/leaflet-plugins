@@ -6,10 +6,6 @@
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.0/leaflet.draw.css" />
 	<script src="http://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.0/leaflet.draw.js"></script>
-    <script src="../layer/vector/GPX.js"></script>
-    <script src="../control/Scale.js"></script>
-    <script src="../control/Permalink.js"></script>
-    <script src="../control/Permalink.Line.js"></script>
     <script src="../control/Distance.js"></script>
 </head>
 <body>
@@ -19,7 +15,6 @@
 		L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 		var d = L.control.distance().addTo(map);
 		L.control.scale().addTo(map);
-		map.addControl(new L.Control.Permalink({line: d.getLine(), useLocation: true}));
 	</script>
 </body>
 </html>
