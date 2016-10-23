@@ -13,17 +13,12 @@ Currently it consists of:
    * KML
    * TOPOJSON
 
- - Providers (`layer/tile`):
+ - Providers implemented with respect to terms of use (`layer/tile`):
    * Yandex - using Yandex Maps API v2;
    * Bing - with proper attribution.
 
-All these providers are implemented with respect to terms of use.
-
-Also there are some useful control plugins (`control/`):
-
- * Permalink - OpenLayers compatible permanent link with support for storing
-   location data in hash part (#lat=...);
- * Distance - simple tool to measure distances on maps
+ - Control (`control/`):
+   * Permalink - OpenLayers compatible permanent link with support for storing location data in hash part (#lat=...);
 
 
 Compatibility
