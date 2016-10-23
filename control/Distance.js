@@ -52,15 +52,15 @@ L.Control.Distance = L.Control.extend({
 	
 	_calc_enable: function () {
 		this._map.on('click', this._add_point, this);
-
 		this._map.getContainer().style.cursor = 'crosshair';
 		L.DomUtil.addClass(this._link, 'leaflet-control-distance-active');
 		this._container.appendChild(this._link_delete);
 		this._container.appendChild(this._text);
 		this._active = true;
 		this._line.editing.enable();
-		if (!this._map.hasLayer(this._line))
+		if (!this._map.hasLayer(this._line)) {
 			this._map.addLayer(this._line);
+		}
 		this._update();
 	},
 
@@ -102,16 +102,17 @@ L.Control.Distance = L.Control.extend({
 		var ll = this._line.getLatLngs();
 		var d = 0, p = null;
 		for (var i = 0; i < ll.length; i++) {
-			if (i)
+			if (i) {
 				d += p.distanceTo(ll[i]);
+			}
 			if (this.options.popups) {
-				var m = this._line.editing._markers[i];
+				var m = this._line.editing._verticesHandlers[0]._markers[i];
 				if (m) {
 					m.bindPopup(this._d2txt(d));
-					m.on('mouseover', m.openPopup, m);
-					m.on('mouseout', m.closePopup, m);
+					m.on('mouseover', function(e) { e.target.openPopup() });
+					m.on('mouseout', function(e) { e.target.closePopup() });
 				}
-				}
+			}
 			p = ll[i];
 		}
 		return d;
