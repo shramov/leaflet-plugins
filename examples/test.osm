@@ -1,0 +1,518 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='-638' action='modify' visible='true' lat='53.97457427063642' lon='58.42229228635642'>
+    <tag k='addr:housenumber' v='110' />
+    <tag k='addr:street' v='улица Карла Маркса' />
+    <tag k='source:addr' v='extrapolation' />
+  </node>
+  <node id='-633' action='modify' visible='true' lat='53.97746211393457' lon='58.4235326840818'>
+    <tag k='addr:housenumber' v='107' />
+    <tag k='addr:street' v='улица Ленина' />
+    <tag k='source:addr' v='extrapolation' />
+  </node>
+  <node id='-630' action='modify' visible='true' lat='53.97455917685295' lon='58.419640401564216'>
+    <tag k='addr:housenumber' v='17' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='extrapolation' />
+  </node>
+  <node id='-625' action='modify' visible='true' lat='53.975288703465914' lon='58.419948362378804'>
+    <tag k='addr:housenumber' v='16' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='extrapolation' />
+  </node>
+  <node id='-623' action='modify' visible='true' lat='53.97514279916518' lon='58.420239214259226'>
+    <tag k='addr:housenumber' v='18' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='extrapolation' />
+  </node>
+  <node id='-620' action='modify' visible='true' lat='53.975565417115654' lon='58.419469312222795'>
+    <tag k='addr:housenumber' v='12' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='extrapolation' />
+  </node>
+  <node id='-611' action='modify' visible='true' lat='53.9742120183242' lon='58.420204996390964'>
+    <tag k='addr:housenumber' v='21' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='extrapolation' />
+  </node>
+  <node id='-607' action='modify' visible='true' lat='53.9746950207073' lon='58.41940087648624'>
+    <tag k='addr:housenumber' v='15' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='extrapolation' />
+  </node>
+  <node id='-605' action='modify' visible='true' lat='53.97589384288913' lon='58.41694010845963'>
+    <tag k='addr:housenumber' v='93' />
+    <tag k='addr:street' v='улица Ленина' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-603' action='modify' visible='true' lat='53.97605687494371' lon='58.41728991615893'>
+    <tag k='addr:housenumber' v='95' />
+    <tag k='addr:street' v='улица Ленина' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-601' action='modify' visible='true' lat='53.97522100071186' lon='58.4168593733863'>
+    <tag k='addr:housenumber' v='16' />
+    <tag k='addr:street' v='улица Крупской' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-599' action='modify' visible='true' lat='53.975551148353105' lon='58.41799429516045'>
+    <tag k='addr:housenumber' v='3' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-597' action='modify' visible='true' lat='53.97480797328408' lon='58.41751900499705'>
+    <tag k='addr:housenumber' v='24' />
+    <tag k='addr:street' v='улица Крупской' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-595' action='modify' visible='true' lat='53.97760885982362' lon='58.42377110493086'>
+    <tag k='addr:housenumber' v='109' />
+    <tag k='addr:street' v='улица Ленина' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-593' action='modify' visible='true' lat='53.97439319274232' lon='58.419908755274434'>
+    <tag k='addr:housenumber' v='19' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-591' action='modify' visible='true' lat='53.97390055653927' lon='58.41896818547377'>
+    <tag k='addr:housenumber' v='36' />
+    <tag k='addr:street' v='улица Крупской' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-589' action='modify' visible='true' lat='53.97683920829169' lon='58.425041110772874'>
+    <tag k='addr:housenumber' v='9' />
+    <tag k='addr:street' v='Кооперативная улица' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-587' action='modify' visible='true' lat='53.97405720148785' lon='58.420428871655325'>
+    <tag k='addr:housenumber' v='23' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-585' action='modify' visible='true' lat='53.97359853207158' lon='58.41945052350913'>
+    <tag k='addr:housenumber' v='40' />
+    <tag k='addr:street' v='улица Крупской' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-583' action='modify' visible='true' lat='53.973473765869485' lon='58.419649776162586'>
+    <tag k='addr:housenumber' v='42' />
+    <tag k='addr:street' v='улица Крупской' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-581' action='modify' visible='true' lat='53.973548314425315' lon='58.42033867996988'>
+    <tag k='addr:housenumber' v='102' />
+    <tag k='addr:street' v='улица Карла Маркса' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-579' action='modify' visible='true' lat='53.9744657456174' lon='58.42202485669254'>
+    <tag k='addr:housenumber' v='108' />
+    <tag k='addr:street' v='улица Карла Маркса' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-577' action='modify' visible='true' lat='53.97470600558978' lon='58.42245287466258'>
+    <tag k='addr:housenumber' v='112' />
+    <tag k='addr:street' v='улица Карла Маркса' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-575' action='modify' visible='true' lat='53.97502915893774' lon='58.42194552386521'>
+    <tag k='addr:housenumber' v='23' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-573' action='modify' visible='true' lat='53.974690463132255' lon='58.420943706174576'>
+    <tag k='addr:housenumber' v='24' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-571' action='modify' visible='true' lat='53.974961887017514' lon='58.42048682245521'>
+    <tag k='addr:housenumber' v='20' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-569' action='modify' visible='true' lat='53.975754357449254' lon='58.42076114194038'>
+    <tag k='addr:housenumber' v='13' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-567' action='modify' visible='true' lat='53.97540565700766' lon='58.41973982473407'>
+    <tag k='addr:housenumber' v='14' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-565' action='modify' visible='true' lat='53.97617692723762' lon='58.420070998614136'>
+    <tag k='addr:housenumber' v='7' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-563' action='modify' visible='true' lat='53.97584985943758' lon='58.41899209111958'>
+    <tag k='addr:housenumber' v='8' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-561' action='modify' visible='true' lat='53.97598998486164' lon='58.41875621392154'>
+    <tag k='addr:housenumber' v='6' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-559' action='modify' visible='true' lat='53.976123525721555' lon='58.41853141997336'>
+    <tag k='addr:housenumber' v='4' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-557' action='modify' visible='true' lat='53.97671331033789' lon='58.421043917427326'>
+    <tag k='addr:housenumber' v='2' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-555' action='modify' visible='true' lat='53.97615492209121' lon='58.421933514296455'>
+    <tag k='addr:housenumber' v='10' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-553' action='modify' visible='true' lat='53.97600216561641' lon='58.42339651259624'>
+    <tag k='addr:housenumber' v='15' />
+    <tag k='addr:street' v='улица Дзержинского' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-551' action='modify' visible='true' lat='53.97546244959517' lon='58.42303671107927'>
+    <tag k='addr:housenumber' v='20' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-549' action='modify' visible='true' lat='53.97535681971057' lon='58.423204991311984'>
+    <tag k='addr:housenumber' v='22' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-547' action='modify' visible='true' lat='53.97607407176052' lon='58.42467063017959'>
+    <tag k='addr:housenumber' v='120' />
+    <tag k='addr:street' v='улица Карла Маркса' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-545' action='modify' visible='true' lat='53.976691890025286' lon='58.42528419870593'>
+    <tag k='addr:housenumber' v='11' />
+    <tag k='addr:street' v='Кооперативная улица' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-541' action='modify' visible='true' lat='53.9773105359524' lon='58.423232306195516'>
+    <tag k='addr:housenumber' v='105' />
+    <tag k='addr:street' v='улица Ленина' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-539' action='modify' visible='true' lat='53.97516907828648' lon='58.42171701155993'>
+    <tag k='addr:housenumber' v='21' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-537' action='modify' visible='true' lat='53.975381619830486' lon='58.416602852462574'>
+    <tag k='addr:housenumber' v='14/а' />
+    <tag k='addr:street' v='улица Крупской' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-535' action='modify' visible='true' lat='53.974862395999644' lon='58.42065429452581'>
+    <tag k='addr:housenumber' v='20а' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-533' action='modify' visible='true' lat='53.976647038217145' lon='58.422346637112085'>
+    <tag k='addr:housenumber' v='7' />
+    <tag k='addr:street' v='улица Дзержинского' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-531' action='modify' visible='true' lat='53.97646243843631' lon='58.418183669062586'>
+    <tag k='addr:housenumber' v='2б' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-529' action='modify' visible='true' lat='53.97480875964128' lon='58.41920412293308'>
+    <tag k='addr:housenumber' v='13' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-527' action='modify' visible='true' lat='53.97380268168014' lon='58.42084363536258'>
+    <tag k='addr:housenumber' v='106' />
+    <tag k='addr:street' v='улица Карла Маркса' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-525' action='modify' visible='true' lat='53.97395475574385' lon='58.42059581683141'>
+    <tag k='addr:housenumber' v='25' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-523' action='modify' visible='true' lat='53.97479170464607' lon='58.420773288214185'>
+    <tag k='addr:housenumber' v='22' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-521' action='modify' visible='true' lat='53.97455513634307' lon='58.42117149859942'>
+    <tag k='addr:housenumber' v='26' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-519' action='modify' visible='true' lat='53.975606554611346' lon='58.42100253270419'>
+    <tag k='addr:housenumber' v='15' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-517' action='modify' visible='true' lat='53.97450959867179' lon='58.417995524551635'>
+    <tag k='addr:housenumber' v='28' />
+    <tag k='addr:street' v='улица Крупской' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-515' action='modify' visible='true' lat='53.973749802634025' lon='58.419208942373444'>
+    <tag k='addr:housenumber' v='38' />
+    <tag k='addr:street' v='улица Крупской' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-513' action='modify' visible='true' lat='53.976781006866105' lon='58.41866226165893'>
+    <tag k='addr:housenumber' v='99' />
+    <tag k='addr:street' v='улица Ленина' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-511' action='modify' visible='true' lat='53.97576508630747' lon='58.416663844469674'>
+    <tag k='addr:housenumber' v='91' />
+    <tag k='addr:street' v='улица Ленина' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-509' action='modify' visible='true' lat='53.97521592138079' lon='58.423429457462575'>
+    <tag k='addr:housenumber' v='114' />
+    <tag k='addr:street' v='улица Карла Маркса' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-507' action='modify' visible='true' lat='53.9758630042496' lon='58.422398578791544'>
+    <tag k='addr:housenumber' v='14' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-505' action='modify' visible='true' lat='53.974885907675144' lon='58.42217947696258'>
+    <tag k='addr:housenumber' v='25' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-503' action='modify' visible='true' lat='53.977276115619325' lon='58.42432017068545'>
+    <tag k='addr:housenumber' v='3' />
+    <tag k='addr:street' v='Кооперативная улица' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-501' action='modify' visible='true' lat='53.977129433061165' lon='58.42456221218473'>
+    <tag k='addr:housenumber' v='5' />
+    <tag k='addr:street' v='Кооперативная улица' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-499' action='modify' visible='true' lat='53.976987776580465' lon='58.424795959323845'>
+    <tag k='addr:housenumber' v='7' />
+    <tag k='addr:street' v='Кооперативная улица' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-497' action='modify' visible='true' lat='53.97709849365609' lon='58.42161164196259'>
+    <tag k='addr:housenumber' v='1' />
+    <tag k='addr:street' v='улица Дзержинского' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-495' action='modify' visible='true' lat='53.97693767912233' lon='58.4218734580896'>
+    <tag k='addr:housenumber' v='3' />
+    <tag k='addr:street' v='улица Дзержинского' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-493' action='modify' visible='true' lat='53.97679462291104' lon='58.422106361706774'>
+    <tag k='addr:housenumber' v='5' />
+    <tag k='addr:street' v='улица Дзержинского' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-491' action='modify' visible='true' lat='53.97650714155866' lon='58.42257439521804'>
+    <tag k='addr:housenumber' v='9' />
+    <tag k='addr:street' v='улица Дзержинского' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-489' action='modify' visible='true' lat='53.9763666696059' lon='58.42280308915972'>
+    <tag k='addr:housenumber' v='11' />
+    <tag k='addr:street' v='улица Дзержинского' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-487' action='modify' visible='true' lat='53.97622568739016' lon='58.423032613054595'>
+    <tag k='addr:housenumber' v='13' />
+    <tag k='addr:street' v='улица Дзержинского' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-485' action='modify' visible='true' lat='53.975697678444924' lon='58.41775550103164'>
+    <tag k='addr:housenumber' v='1' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-483' action='modify' visible='true' lat='53.97626793931702' lon='58.41828832276258'>
+    <tag k='addr:housenumber' v='2в' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-481' action='modify' visible='true' lat='53.975412116233656' lon='58.41822086937231'>
+    <tag k='addr:housenumber' v='5' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-479' action='modify' visible='true' lat='53.975265581613186' lon='58.418459669244605'>
+    <tag k='addr:housenumber' v='7' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-477' action='modify' visible='true' lat='53.9751001558265' lon='58.4187292540616'>
+    <tag k='addr:housenumber' v='9' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-475' action='modify' visible='true' lat='53.9757041058548' lon='58.419237441519'>
+    <tag k='addr:housenumber' v='10' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-473' action='modify' visible='true' lat='53.974957848348254' lon='58.41896116345482'>
+    <tag k='addr:housenumber' v='11' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-471' action='modify' visible='true' lat='53.97511809771895' lon='58.4187000152511'>
+    <tag k='addr:housenumber' v='12' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-469' action='modify' visible='true' lat='53.97429868877794' lon='58.42172724998295'>
+    <tag k='addr:housenumber' v='28' />
+    <tag k='addr:street' v='улица Димитрова' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-467' action='modify' visible='true' lat='53.97507961223899' lon='58.41708518069071'>
+    <tag k='addr:housenumber' v='18' />
+    <tag k='addr:street' v='улица Крупской' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-465' action='modify' visible='true' lat='53.974944380086036' lon='58.41730115520365'>
+    <tag k='addr:housenumber' v='22' />
+    <tag k='addr:street' v='улица Крупской' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-463' action='modify' visible='true' lat='53.97437280197353' lon='58.41821399475197'>
+    <tag k='addr:housenumber' v='30' />
+    <tag k='addr:street' v='улица Крупской' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-461' action='modify' visible='true' lat='53.97422230088757' lon='58.418454350619164'>
+    <tag k='addr:housenumber' v='32' />
+    <tag k='addr:street' v='улица Крупской' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-459' action='modify' visible='true' lat='53.974059497641925' lon='58.41871435251834'>
+    <tag k='addr:housenumber' v='34' />
+    <tag k='addr:street' v='улица Крупской' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-457' action='modify' visible='true' lat='53.976653591312306' lon='58.41839146725895'>
+    <tag k='addr:housenumber' v='97' />
+    <tag k='addr:street' v='улица Ленина' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-455' action='modify' visible='true' lat='53.976931220250535' lon='58.41895927885895'>
+    <tag k='addr:housenumber' v='101' />
+    <tag k='addr:street' v='улица Ленина' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-453' action='modify' visible='true' lat='53.97690110406299' lon='58.42074257389429'>
+    <tag k='addr:housenumber' v='103' />
+    <tag k='addr:street' v='улица Ленина' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-451' action='modify' visible='true' lat='53.977089739717684' lon='58.4210714587943'>
+    <tag k='addr:housenumber' v='103а' />
+    <tag k='addr:street' v='улица Ленина' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-449' action='modify' visible='true' lat='53.97660243699244' lon='58.419376046645475'>
+    <tag k='addr:housenumber' v='1' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-447' action='modify' visible='true' lat='53.97657401651793' lon='58.42126583465086'>
+    <tag k='addr:housenumber' v='4' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-445' action='modify' visible='true' lat='53.976316632864204' lon='58.41984282906895'>
+    <tag k='addr:housenumber' v='5' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-443' action='modify' visible='true' lat='53.976434258034466' lon='58.42148849141167'>
+    <tag k='addr:housenumber' v='6' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-441' action='modify' visible='true' lat='53.97603950793042' lon='58.42029543335817'>
+    <tag k='addr:housenumber' v='9' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-439' action='modify' visible='true' lat='53.97589978041945' lon='58.420523637127374'>
+    <tag k='addr:housenumber' v='11' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-437' action='modify' visible='true' lat='53.97600773831061' lon='58.42216799831814'>
+    <tag k='addr:housenumber' v='12' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-435' action='modify' visible='true' lat='53.97571992354502' lon='58.42262652446251'>
+    <tag k='addr:housenumber' v='16' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-433' action='modify' visible='true' lat='53.97546775356539' lon='58.42122922101233'>
+    <tag k='addr:housenumber' v='17' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-431' action='modify' visible='true' lat='53.97557754561105' lon='58.4228533497539'>
+    <tag k='addr:housenumber' v='18' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-429' action='modify' visible='true' lat='53.975318255367' lon='58.421473378944896'>
+    <tag k='addr:housenumber' v='19' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-427' action='modify' visible='true' lat='53.97367412807081' lon='58.4205858082699'>
+    <tag k='addr:housenumber' v='104' />
+    <tag k='addr:street' v='улица Карла Маркса' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-425' action='modify' visible='true' lat='53.97545544516154' lon='58.4239164684713'>
+    <tag k='addr:housenumber' v='116' />
+    <tag k='addr:street' v='улица Карла Маркса' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-423' action='modify' visible='true' lat='53.97555681484945' lon='58.424142802924955'>
+    <tag k='addr:housenumber' v='118' />
+    <tag k='addr:street' v='улица Карла Маркса' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-421' action='modify' visible='true' lat='53.97632016184918' lon='58.425379498565015'>
+    <tag k='addr:housenumber' v='124' />
+    <tag k='addr:street' v='улица Карла Маркса' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-419' action='modify' visible='true' lat='53.976477793319525' lon='58.42563747533085'>
+    <tag k='addr:housenumber' v='13' />
+    <tag k='addr:street' v='Кооперативная улица' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-417' action='modify' visible='true' lat='53.97630807954319' lon='58.42168951251457'>
+    <tag k='addr:housenumber' v='8' />
+    <tag k='addr:street' v='улица Гафури' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+  <node id='-415' action='modify' visible='true' lat='53.97467833570392' lon='58.4177260432788'>
+    <tag k='addr:housenumber' v='26' />
+    <tag k='addr:street' v='улица Крупской' />
+    <tag k='source:addr' v='rosreestr.ru' />
+  </node>
+</osm>

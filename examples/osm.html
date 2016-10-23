@@ -10,7 +10,7 @@
 	<script type='text/javascript'>
 		var map = new L.Map('map', { center: new L.LatLng(55.7, 37.6), zoom: 9, zoomAnimation: false});
 		map.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'));
-		var layer = new L.OSM('ulugo.osm').on("loaded", function(e) {
+		var layer = new L.OSM('test.osm').on("loaded", function(e) {
 			map.fitBounds(e.target.getBounds());
 		});
 		map.addLayer(layer);
