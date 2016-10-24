@@ -14,8 +14,9 @@
 			transform += ' rotate(' + this.options.iconAngle + 'deg)';
 			transform += ' translate(' + a.x + 'px, ' + a.y + 'px)';
 			i.style[L.DomUtil.TRANSFORM] += transform;
+			i.style[L.DomUtil.TRANSFORM + 'Origin'] = '50% 50%';
 		},
-		
+
 		_getShortestEndDegree: function (startDegrees, endDegrees) {
 			var turnAngle = Math.abs(endDegrees - startDegrees);
 			var turnAnglePositive = (endDegrees - startDegrees) >= 0;

@@ -1,8 +1,8 @@
 <html>
   <head>
   	<title>Leaflet</title>
-  	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
-  	<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+	<link rel="stylesheet" href="http://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+	<script src="http://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
   	<script src="../layer/tile/Bing.js"></script>
   </head>
   <body>
@@ -14,7 +14,7 @@
         // for all possible values and explanations see "Template Parameters" in https://msdn.microsoft.com/en-us/library/ff701716.aspx
         var imagerySet = "Aerial"; // AerialWithLabels | Birdseye | BirdseyeWithLabels | Road
 
-        var bing = new L.BingLayer("LfO3DMI9S6GnXD7d0WGs~bq2DRVkmIAzSOFdodzZLvw~Arx8dclDxmZA0Y38tHIJlJfnMbGq5GXeYmrGOUIbS2VLFzRKCK0Yv_bAl6oe-DOc", {type: imagerySet});
+        var bing = new L.BingLayer("AkErn6IFlYKIm4Mp34p-ayPl_zTVk6LoUyp4J9HftaB_KJdDkBV6MmOV4eWKciNF", {type: imagerySet});
 
         map.addLayer(bing);
         map.addControl(new L.Control.Layers({'OSM':osm, "Bing":bing}, {}));

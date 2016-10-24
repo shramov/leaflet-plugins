@@ -1,41 +1,38 @@
 <html>
 <head>
 	<title>Leaflet</title>
-	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
-	<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+	<link rel="stylesheet" href="http://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+	<script src="http://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
 	<script src="../layer/vector/GPX.js"></script>
 </head>
 <body>
-	<!-- define a DIV into which the map will appear. Make it take up the whole window -->
 	<div style="width:100%; height:100%" id="map"></div>
-<script type='text/javascript'>
-var map = new L.Map('map', {center: new L.LatLng(58.4, 43.0), zoom: 11});
-var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-
-var greenIcon = L.icon({
-	// from http://leafletjs.com/examples/custom-icons.html
-	iconUrl: 'http://leafletjs.com/docs/images/leaf-green.png',
-	shadowUrl: 'http://leafletjs.com/docs/images/leaf-shadow.png',
-	iconSize:     [38, 95],
-	shadowSize:   [50, 64],
-	iconAnchor:   [22, 94],
-	shadowAnchor: [4, 62],
-	popupAnchor:  [-3, -76]
-});
-
-var track = new L.GPX("fells_loop.gpx", {async: true})
-			.on("loaded", function(e) { map.fitBounds(e.target.getBounds()); })
-			.on("addpoint", function(args) {
-				// set greemIcon for all point with 'Gate' in description
-				if (args.attributes.desc.indexOf("Gate") !== -1) {
-					args.point.setIcon(greenIcon);
-				}
-			});
-
-map.addLayer(track);
-map.addLayer(osm);
-map.addControl(new L.Control.Layers({}, {'GPX':track}));
-</script>
- 
+	<script type='text/javascript'>
+		var map = new L.Map('map', {center: new L.LatLng(58.4, 43.0), zoom: 11});
+		var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+		var greenIcon = L.icon({
+			// from http://leafletjs.com/examples/custom-icons.html
+			iconUrl: 'http://leafletjs.com/examples/custom-icons/leaf-green.png',
+			shadowUrl: 'http://leafletjs.com/examples/custom-icons/leaf-shadow.png',
+			iconSize: [38, 95],
+			shadowSize: [50, 64],
+			iconAnchor: [22, 94],
+			shadowAnchor: [4, 62],
+			popupAnchor: [-3, -76]
+		});
+		var track = new L.GPX("fells_loop.gpx", {
+			async: true
+		}).on("loaded", function(e) {
+			map.fitBounds(e.target.getBounds());
+		}).on("addpoint", function(args) {
+			// set greemIcon for all point with 'Gate' in description
+			if (args.attributes.desc.indexOf("Gate") !== -1) {
+				args.point.setIcon(greenIcon);
+			}
+		});
+		map.addLayer(track);
+		map.addLayer(osm);
+		map.addControl(new L.Control.Layers({}, {'GPX':track}));
+	</script>
 </body>
 </html>

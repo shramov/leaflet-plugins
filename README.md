@@ -13,24 +13,18 @@ Currently it consists of:
    * KML
    * TOPOJSON
 
- - Providers (`layer/tile`):
-   * Google - using Google Maps API v3;
+ - Providers implemented with respect to terms of use (`layer/tile`):
    * Yandex - using Yandex Maps API v2;
    * Bing - with proper attribution.
 
-All these providers are implemented with respect to terms of use.
-
-Also there are some useful control plugins (`control/`):
-
- * Permalink - OpenLayers compatible permanent link with support for storing
-   location data in hash part (#lat=...);
- * Distance - simple tool to measure distances on maps
+ - Control (`control/`):
+   * Permalink - OpenLayers compatible permanent link with support for storing location data in hash part (#lat=...);
 
 
 Compatibility
 ------
- - Tested with: Leaflet 0.7.x
- - For use with Leaflet 1.0.x see branch `leaflet_one`
+ - Tested with: Leaflet 1.0.x
+ - For use with Leaflet 0.7.x see `v2` branch
 
 
 Where ?

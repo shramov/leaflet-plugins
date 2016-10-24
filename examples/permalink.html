@@ -1,8 +1,8 @@
 <html>
 <head>
 	<title>Leaflet</title>
-	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
-	<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+	<link rel="stylesheet" href="http://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+	<script src="http://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
 	<script src="../control/Permalink.js"></script>
 	<script src="../control/Permalink.Marker.js"></script>
 	<script src="../control/Permalink.Layer.js"></script>
@@ -10,22 +10,21 @@
 </head>
 <body>
 	<div style="width:100%; height:100%" id="map"></div>
-<script type='text/javascript'>
-var map = new L.Map('map', {center: new L.LatLng(47.93, -3.44), zoom: 7});
-var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-var pressure = L.tileLayer('http://{s}.tile.openweathermap.org/map/pressure_cntr/{z}/{x}/{y}.png', {
-	maxZoom: 19,
-	attribution: 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>',
-	opacity: 0.5
-});
-map.addLayer(osm);
-var hydda = L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
-	attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-});
-var layers = new L.Control.Layers({'OSM':osm, "Hydda":hydda},{'Pressure':pressure});
-map.addControl(layers);
-map.addControl(new L.Control.Permalink({text: 'Permalink', layers: layers}));
-</script>
- 
+	<script type='text/javascript'>
+		var map = new L.Map('map', {center: new L.LatLng(47.93, -3.44), zoom: 7});
+		var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+		var pressure = L.tileLayer('http://{s}.tile.openweathermap.org/map/pressure_cntr/{z}/{x}/{y}.png', {
+			maxZoom: 19,
+			attribution: 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>',
+			opacity: 0.5
+		});
+		map.addLayer(osm);
+		var hydda = L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
+			attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+		});
+		var layers = new L.Control.Layers({'OSM':osm, "Hydda":hydda},{'Pressure':pressure});
+		map.addControl(layers);
+		map.addControl(new L.Control.Permalink({text: 'Permalink', layers: layers}));
+	</script>
 </body>
 </html>

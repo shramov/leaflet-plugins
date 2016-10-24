@@ -2,8 +2,8 @@
 <head>
 	<title>Leaflet</title>
 	<meta charset="utf-8" />
-	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
-	<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+	<link rel="stylesheet" href="http://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+	<script src="http://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
 	<!--<script src="http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU" type="text/javascript"></script>-->
 	<script src="../layer/Layer.Deferred.js"></script>
 	<!--<script src="../layer/tile/Yandex.js"></script>-->
@@ -14,29 +14,9 @@
 var map = new L.Map('map', {center: new L.LatLng(67.6755, 33.936), zoom: 10, zoomAnimation: false });
 var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-function getYourOwnKey (key) {
-	if (!key)
-		console.error(`
-			GOOGLE MAPS NO LONGER WORKS WITHOUT AN API KEY (w ASYNC LOADING). You must supply!
-			Since your loading it async, they must think your a business.
-
-			Add a key and see that it works :)
-			`
-		);
-
-	return key;
-}
-
 var layerdefs = {
 	mapnik: { name: "Mapnik", js: [],
 		init: function() {return new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');}},
-	kosmo: { name: "Космоснимки", js: [],
-		init: function() {return new L.TileLayer('http://{s}.tile.osmosnimki.ru/kosmo/{z}/{x}/{y}.png', {attribution:'Tiles Courtesy of <a href="http://kosmosnimki.ru/" target="_blank">kosmosnimki.ru</a>'});}},
-	gsat: { name: "Google", js: ["../layer/tile/Google.js", "http://maps.google.com/maps/api/js?v=3&key=" + getYourOwnKey() + "callback=L.Google.isGoogleMapsReady"],
-		init: function() {
-			return new L.Google();
-		}
-	},
 	ysat: { name: "Yandex", js: ["../layer/tile/Yandex.js", "http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU"],
 		init: function() {return new L.Yandex("satellite"); }},
 	nyak: { name: "НЯК", js: ["../layer/tile/Yandex.js", "http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU"],
@@ -44,20 +24,16 @@ var layerdefs = {
 	traffic: { name: "Пробки", js: ["../layer/tile/Yandex.js", "http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU"],
 		init: function() {return new L.Yandex("null", {traffic: true, opacity: 0.8, overlay: true}); }, overlay: true},
 	mso: { name: "Mapsurfer", js: [], overlay: true,
-		init: function() {return new L.TileLayer('http://129.206.74.245:8003/tms_h.ashx?x={x}&y={y}&z={z}');}}
+		init: function() {return new L.TileLayer('http://korona.geog.uni-heidelberg.de/tiles/hybrid/x={x}&y={y}&z={z}');}}
 };
 
 var yndx = new L.DeferredLayer(layerdefs.ysat);
-var kosmo = new L.DeferredLayer(layerdefs.kosmo);
-var google = new L.DeferredLayer(layerdefs.gsat);
 var ytraffic = new L.DeferredLayer(layerdefs.traffic);
 var mso = new L.DeferredLayer(layerdefs.mso);
 
 L.control.layers(
 	{
 		'OSM':osm,
-		"Kosmo":kosmo,
-		"Google":google,
 		"Yandex":yndx
 	},{
 		"Пробки":ytraffic,

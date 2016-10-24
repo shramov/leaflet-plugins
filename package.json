@@ -9,22 +9,10 @@
     "url": "git@github.com:shramov/leaflet-plugins.git"
   },
   "scripts": {
-    "test": "tap control/test/*.js && eslint --config .eslintrc control/* layer/*",
-    "specs": "./node_modules/.bin/karma start",
-    "lint": "eslint --config .eslintrc control/* layer/*"
+    "test": "tap control/test/*.js && eslint --config .eslintrc control/* layer/*"
   },
   "devDependencies": {
-    "bluebird": "3.4.1",
-    "chai": "3.X",
     "eslint": "2.3.0",
-    "karma": "1.X",
-    "karma-chai": "0.1.X",
-    "karma-chrome-launcher": "1.X",
-    "karma-mocha": "1.X",
-    "karma-mocha-reporter": "2.X",
-    "karma-phantomjs-launcher": "1.X",
-    "leaflet": "0.7.X",
-    "mocha": "2.X",
     "tap": "^6.3.2"
   },
   "contributors": [
@@ -34,7 +22,6 @@
     "leaflet",
     "plugins",
     "map",
-    "google",
     "bing",
     "yandex",
     "kml",
