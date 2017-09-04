@@ -148,7 +148,11 @@ L.UrlUtil = {
 		for (var i = 0; i < params.length; i++) {
 			var tmp = params[i].split('=');
 			if (tmp.length !== 2) continue;
-			p[tmp[0]] = decodeURIComponent(tmp[1]);
+			try {
+				p[tmp[0]] = decodeURIComponent(tmp[1]);
+			} catch (e) {
+				p[tmp[0]] = tmp[1];
+			}
 		}
 		return p;
 	},
