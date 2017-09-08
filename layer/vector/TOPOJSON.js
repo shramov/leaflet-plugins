@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 -/**
 - * Embed of the topojson library from Mike Bostock v1.6.26
 - * https://github.com/mbostock/topojson
@@ -549,6 +551,8 @@
   exports.presimplify = presimplify;
 
 }));
+
+/* eslint-disable */
 
 L.TOPOJSON = L.FeatureGroup.extend({
 	options: {
