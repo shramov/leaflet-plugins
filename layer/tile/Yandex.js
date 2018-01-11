@@ -5,7 +5,7 @@
 /* global ymaps: true */
 
 L.Yandex = L.Layer.extend({
-	includes: L.Mixin.Events,
+	includes: L.Evented ? L.Evented.prototype : L.Mixin.Events,
 
 	options: {
 		minZoom: 0,
