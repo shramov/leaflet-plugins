@@ -14,7 +14,7 @@
         // for all possible values and explanations see "Template Parameters" in https://msdn.microsoft.com/en-us/library/ff701716.aspx
         var imagerySet = "Aerial"; // AerialWithLabels | Birdseye | BirdseyeWithLabels | Road
 
-        var bing = new L.BingLayer("AkErn6IFlYKIm4Mp34p-ayPl_zTVk6LoUyp4J9HftaB_KJdDkBV6MmOV4eWKciNF", {type: imagerySet});
+        var bing = new L.BingLayer("YOUR_API_KEY", {type: imagerySet});
 
         map.addLayer(bing);
         map.addControl(new L.Control.Layers({'OSM':osm, "Bing":bing}, {}));
