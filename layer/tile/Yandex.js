@@ -75,7 +75,9 @@ L.Yandex = L.Layer.extend({
 
 		this._map.off('move', this._update, this);
 
-		map._controlCorners.bottomright.style.marginBottom = '0em';
+		if (map._controlCorners) {
+			map._controlCorners.bottomright.style.marginBottom = '0em';
+		}
 	},
 
 	getAttribution: function () {
