@@ -1,0 +1,10 @@
+require('./control/Layers.Load');
+require('./control/Permalink');
+require('./control/Permalink.Layer');
+require('./control/Permalink.Line');
+require('./control/Permalink.Marker');
+require('./control/Permalink.Overlay');
+require('./layer/Icon.Canvas');
+require('./layer/Layer.Deferred');
+require('./layer/Marker.Rotate');
+require('./layer/Marker.Text');
