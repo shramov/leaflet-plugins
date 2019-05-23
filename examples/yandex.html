@@ -9,7 +9,7 @@
 <body>
 	<div style="width:100%; height:100%" id="map"></div>
 <script type='text/javascript'>
-var map = new L.Map('map', {center: new L.LatLng(67.6755, 33.936), zoom: 10, zoomAnimation: false });
+var map = new L.Map('map', {center: new L.LatLng(67.6755, 33.936), zoom: 10, zoomAnimation: true });
 var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 var yndx = new L.Yandex();
 var ytraffic = new L.Yandex("null", {traffic:true, opacity:0.8, overlay:true});
