@@ -63,6 +63,8 @@ L.Yandex = L.Layer.extend({
 		this._limitedUpdate = L.Util.throttle(this._updateCallback, 150, this);
 		map.on('move', this._updateCallback, this);
 
+		map.on('zoomanim', this._zoomAnim, this);
+
 		map._controlCorners.bottomright.style.marginBottom = '3em';
 
 		this._reset();
@@ -75,6 +77,8 @@ L.Yandex = L.Layer.extend({
 		this._map.off('viewreset', this._reset, this);
 
 		this._map.off('move', this._updateCallback, this);
+
+		this._map.off('zoomanim', this._zoomAnim, this);
 
 		if (map._controlCorners) {
 			map._controlCorners.bottomright.style.marginBottom = '0em';
@@ -171,10 +175,20 @@ L.Yandex = L.Layer.extend({
 		var zoom = this._map.getZoom();
 		var zoomSpeed = (this._map.options.zoomAnimation) ? this.options.zoomSpeed : 0;
 
-		if (force || this._yandex.getZoom() !== zoom)
+		if (force || this._yandex.getZoom() !== zoom) {
 			this._yandex.setCenter(_center, zoom, {duration: zoomSpeed});
-		else
+		} else {
 			this._yandex.panTo(_center, {duration: 0, delay: 0});
+		}
+	},
+
+	_zoomAnim: function(e) {
+		if (!this._yandex) return;
+		var center = e.center;
+		var _center = [center.lat, center.lng];
+		var zoom = e.zoom;
+
+		this._yandex.setCenter(_center, zoom, {duration: this.options.zoomSpeed});
 	},
 
 	_resize: function (force) {
