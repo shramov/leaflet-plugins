@@ -165,7 +165,7 @@ L.Yandex = L.Layer.extend({
 		var _center = [center.lat, center.lng];
 		var zoom = this._map.getZoom();
 
-		if (force || this._yandex.getZoom() !== zoom)
+		if (force === true || this._yandex.getZoom() !== zoom)
 			this._yandex.setZoom(zoom);
 		this._yandex.panTo(_center, {duration: 0, delay: 0});
 	},
