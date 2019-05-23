@@ -44,7 +44,6 @@ L.Marker.Text = L.Marker.extend({
 		this._icon.style.marginLeft = -w / 2 + 'px';
 		//this._icon.style.backgroundColor = "red";
 		var off = new L.Point(w/2, 0);
-		if (L.Browser.webkit) off.y = -h;
 		L.DomUtil.setPosition(i, off);
 		if (s) L.DomUtil.setPosition(s, off);
 	}
