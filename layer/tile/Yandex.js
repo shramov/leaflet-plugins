@@ -44,9 +44,13 @@ L.Yandex = L.Layer.extend({
 	// Possible types: yandex#map, yandex#satellite, yandex#hybrid, yandex#publicMap, yandex#publicMapHybrid
 	// Or their short names: map, satellite, hybrid, publicMap, publicMapHybrid
 	initialize: function (type, options) {
+		if (typeof type === 'object') {
+			options = type;
+			type = options.type;
+		}
 		L.Util.setOptions(this, options);
 		//Assigning an initial map type for the Yandex layer
-		this._type = this._getPossibleMapType(type);
+		this._type = this._getPossibleMapType(type || this.options.type);
 	},
 
 	onAdd: function (map, insertAtTheBottom) {
@@ -164,3 +168,7 @@ L.Yandex = L.Layer.extend({
 		this._yandex.container.fitToViewport();
 	}
 });
+
+L.yandex = function (type, options) {
+	return new L.Yandex(type, options);
+};
