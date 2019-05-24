@@ -20,7 +20,8 @@ L.Yandex = L.Layer.extend({
 		satelliteMap: 'satellite',
 		hybridMap: 'hybrid',
 		publicMap: 'publicMap',
-		publicMapInHybridView: 'publicMapHybrid'
+		publicMapInHybridView: 'publicMapHybrid',
+		overlay: 'overlay'
 	},
 	
 	_getPossibleMapType: function (mapType) {
@@ -69,7 +70,7 @@ L.Yandex = L.Layer.extend({
 	},
 
 	onRemove: function (map) {
-		this._map._container.removeChild(this._container);
+		this._container.remove();
 
 		this._map.off('viewreset', this._reset, this);
 
@@ -97,25 +98,14 @@ L.Yandex = L.Layer.extend({
 	},
 
 	_initContainer: function () {
-		var tilePane = this._map._container,
-			first = tilePane.firstChild;
-
 		if (!this._container) {
-			this._container = L.DomUtil.create('div', 'leaflet-yandex-layer');
+			var className = 'leaflet-yandex-layer leaflet-map-pane leaflet-pane '
+				+ (this.options.overlay ? 'leaflet-overlay-pane' : 'leaflet-tile-pane');
+			this._container = L.DomUtil.create('div', className);
 			this._container.id = '_YMapContainer_' + L.Util.stamp(this);
-			this._container.style.zIndex = 'auto';
+			this.setOpacity(this.options.opacity);
 		}
-
-		if (this.options.overlay) {
-			first = this._map._container.getElementsByClassName('leaflet-map-pane')[0];
-			first = first.nextSibling;
-			// XXX: Bug with layer order
-			if (L.Browser.opera)
-				this._container.className += ' leaflet-objects-pane';
-		}
-		tilePane.insertBefore(this._container, first);
-
-		this.setOpacity(this.options.opacity);
+		this._map.getContainer().appendChild(this._container);
 		this.setElementSize(this._container, this._map.getSize());
 	},
 
@@ -140,8 +130,8 @@ L.Yandex = L.Layer.extend({
 		if (this.options.traffic)
 			map.controls.add(new ymaps.control.TrafficControl({shown: true}));
 
-		if (this._type === 'yandex#null') {
-			this._type = new ymaps.MapType('null', []);
+		if (this.options.overlay) {
+			this._type = new ymaps.MapType('overlay', []);
 			map.container.getElement().style.background = 'transparent';
 		}
 		map.setType(this._type);
