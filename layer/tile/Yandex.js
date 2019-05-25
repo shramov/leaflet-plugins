@@ -113,7 +113,7 @@ L.Yandex = L.Layer.extend({
 		map.setType(this._type);
 
 		this._yandex = map;
-		this._update();
+		if (this._map) { this._update(); }
 
 		//Reporting that map-object was initialized
 		this.fire('MapObjectInitialized', { mapObject: map });
