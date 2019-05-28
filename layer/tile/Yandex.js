@@ -49,7 +49,6 @@ L.Yandex = L.Layer.extend({
 	onAdd: function () {
 		this._initContainer();
 		this._initMapObject();
-		map.on('move', this._update, this);
 		map._controlCorners.bottomright.style.marginBottom = '3em';
 	},
 
@@ -60,10 +59,21 @@ L.Yandex = L.Layer.extend({
 	onRemove: function (map) {
 		this._container.remove();
 		map._removeZoomLimit(this);
-		this._map.off('move', this._update, this);
 		if (map._controlCorners) {
 			map._controlCorners.bottomright.style.marginBottom = '0em';
 		}
+	},
+
+	getEvents: function () {
+		return {
+			move: this._update
+		};
+	},
+
+	_update: function () {
+		if (!this._yandex) { return; }
+		var center = this._map.getCenter();
+		this._yandex.setCenter([center.lat, center.lng], this._map.getZoom());
 	},
 
 	_initContainer: function () {
@@ -117,12 +127,6 @@ L.Yandex = L.Layer.extend({
 
 		//Reporting that map-object was initialized
 		this.fire('MapObjectInitialized', { mapObject: map });
-	},
-
-	_update: function () {
-		if (!this._yandex) { return; }
-		var center = this._map.getCenter();
-		this._yandex.setCenter([center.lat, center.lng], this._map.getZoom());
 	}
 });
 
