@@ -29,7 +29,6 @@ L.Yandex = L.Layer.extend({
 
 	onAdd: function () {
 		this._initContainer();
-		map._controlCorners.bottomright.style.marginBottom = '3em';
 		if (this._yandex) {
 			return this._update();
 		}
@@ -43,9 +42,6 @@ L.Yandex = L.Layer.extend({
 	onRemove: function (map) {
 		this._container.remove();
 		map._removeZoomLimit(this);
-		if (map._controlCorners) {
-			map._controlCorners.bottomright.style.marginBottom = '0em';
-		}
 	},
 
 	getEvents: function () {

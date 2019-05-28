@@ -5,6 +5,10 @@
 	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
 	<script src="https://api-maps.yandex.ru/2.1/?lang=en_RU&amp;apikey=<your API-key>" type="text/javascript"></script>
 	<script src="../layer/tile/Yandex.js"></script>
+	<style>
+		.leaflet-bottom { bottom: 20px }
+		.leaflet-control-attribution { margin-bottom: -10px !important }
+	</style>
 </head>
 <body>
 
@@ -19,6 +23,10 @@
 		zoomAnimation: false
 	});
 
+	map.attributionControl
+		.setPosition('bottomleft')
+		.setPrefix('');
+
 	var overlays = {
 		'Traffic overlay': L.yandex('overlay', { trafficControl: true })
 	};
@@ -29,7 +37,9 @@
 		'Yandex satellite': L.yandex('satellite'),
 		'Yandex hybrid': L.yandex('hybrid'),
 		'Yandex + Traffic': L.yandex('map', { trafficControl: true }),
-		'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+		'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+		})
 	};
 
 	L.control.layers(baseLayers, overlays).addTo(map);
