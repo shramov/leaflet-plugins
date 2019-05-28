@@ -53,8 +53,13 @@ L.Yandex = L.Layer.extend({
 		map._controlCorners.bottomright.style.marginBottom = '3em';
 	},
 
+	beforeAdd: function (map) {
+		map._addZoomLimit(this);
+	},
+
 	onRemove: function (map) {
 		this._container.remove();
+		map._removeZoomLimit(this);
 		this._map.off('move', this._update, this);
 		if (map._controlCorners) {
 			map._controlCorners.bottomright.style.marginBottom = '0em';
