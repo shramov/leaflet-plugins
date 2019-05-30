@@ -45,9 +45,13 @@ L.Yandex = L.Layer.extend({
 	},
 
 	getEvents: function () {
-		return {
+		var events = {
 			move: this._update
 		};
+		if (this._zoomAnimated) {
+			events.zoomanim = this._animateZoom;
+		}
+		return events;
 	},
 
 	_update: function () {
@@ -57,6 +61,13 @@ L.Yandex = L.Layer.extend({
 		this._yandex.setCenter([center.lat, center.lng], map.getZoom());
 		var offset = L.point(0,0).subtract(L.DomUtil.getPosition(map.getPane('mapPane')));
 		L.DomUtil.setPosition(this._container, offset); // move to visible part of pane
+	},
+
+	_animateZoom: function (e) {
+		var map = this._map;
+		var topLeft = map._getNewPixelOrigin(e.center, e.zoom);
+                var offset = map.project(map.getBounds().getNorthWest(), e.zoom)._subtract(topLeft);
+		L.DomUtil.setTransform(this._container, offset, map.getZoomScale(e.zoom));
 	},
 
 	_setStyle: function (el, style) {
@@ -70,6 +81,7 @@ L.Yandex = L.Layer.extend({
 		if (!this._container) {
 			var className = 'leaflet-yandex-layer leaflet-map-pane leaflet-pane '
 				+ (this._isOverlay ? 'leaflet-overlay-pane' : 'leaflet-tile-pane');
+			if (this._zoomAnimated) { className += ' leaflet-zoom-animated'; }
 			this._container = L.DomUtil.create('div', className);
 			this._container.id = '_YMapContainer_' + L.Util.stamp(this);
 			var opacity = this.options.opacity || this._isOverlay && this.options.overlayOpacity;
