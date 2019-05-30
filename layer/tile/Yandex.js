@@ -64,10 +64,19 @@ L.Yandex = L.Layer.extend({
 	},
 
 	_animateZoom: function (e) {
+		if (!this._yandex) { return; }
 		var map = this._map;
-		var topLeft = map._getNewPixelOrigin(e.center, e.zoom);
+		var viewHalf = map.getSize()._divideBy(2);
+		var topLeft = map.project(e.center, e.zoom)._subtract(viewHalf)._round();
                 var offset = map.project(map.getBounds().getNorthWest(), e.zoom)._subtract(topLeft);
-		L.DomUtil.setTransform(this._container, offset, map.getZoomScale(e.zoom));
+		var scale = map.getZoomScale(e.zoom);
+		this._yandex.panes._array.forEach(function (el) {
+			if (el.pane instanceof ymaps.pane.MovablePane) {
+				var element = el.pane.getElement();
+				L.DomUtil.addClass(element, 'leaflet-zoom-animated');
+				L.DomUtil.setTransform(element, offset, scale);
+			}
+		});
 	},
 
 	_setStyle: function (el, style) {
@@ -81,7 +90,6 @@ L.Yandex = L.Layer.extend({
 		if (!this._container) {
 			var className = 'leaflet-yandex-layer leaflet-map-pane leaflet-pane '
 				+ (this._isOverlay ? 'leaflet-overlay-pane' : 'leaflet-tile-pane');
-			if (this._zoomAnimated) { className += ' leaflet-zoom-animated'; }
 			this._container = L.DomUtil.create('div', className);
 			this._container.id = '_YMapContainer_' + L.Util.stamp(this);
 			var opacity = this.options.opacity || this._isOverlay && this.options.overlayOpacity;
