@@ -3,7 +3,7 @@
 	<title>L.Yandex example</title>
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
 	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
-	<script src="https://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU" type="text/javascript"></script>
+	<script src="https://api-maps.yandex.ru/2.1/?lang=en_RU&amp;apikey=<your API-key>" type="text/javascript"></script>
 	<script src="../layer/tile/Yandex.js"></script>
 </head>
 <body>
@@ -20,7 +20,7 @@
 	});
 
 	var overlays = {
-		'Traffic overlay': L.yandex('overlay', { traffic: true })
+		'Traffic overlay': L.yandex('overlay', { trafficControl: true })
 	};
 
 	var baseLayers = {
@@ -28,7 +28,7 @@
 			.addTo(map),
 		'Yandex satellite': L.yandex('satellite'),
 		'Yandex hybrid': L.yandex('hybrid'),
-		'Yandex + Traffic': L.yandex('map', { traffic: true }),
+		'Yandex + Traffic': L.yandex('map', { trafficControl: true }),
 		'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 	};
 

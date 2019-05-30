@@ -1,13 +1,17 @@
+// https://tech.yandex.com/maps/doc/jsapi/2.1/quick-start/index-docpage/
+
 /* global ymaps: true */
 
 L.Yandex = L.Layer.extend({
 
 	options: {
-		type: 'yandex#map', // 'map', 'satellite', 'hybrid' || 'overlay'
-		maxZoom: 19,
+		type: 'yandex#map', // 'map', 'satellite', 'hybrid', 'map~vector' | 'overlay', 'skeleton'
+		mapOptions: { // https://tech.yandex.com/maps/doc/jsapi/2.1/ref/reference/Map-docpage/#Map__param-options
+			// yandexMapDisablePoiInteractivity: true,
+			balloonAutoPan: false,
+			suppressMapOpenBlock: true
+		},
 		overlayOpacity: 0.8,
-		background: 'transparent',
-		traffic: false,
 		minZoom: 0,
 		maxZoom: 19
 	},
@@ -17,15 +21,19 @@ L.Yandex = L.Layer.extend({
 			options = type;
 			type = false;
 		}
-		L.Util.setOptions(this, options);
-		if (type) { this.options.type = type; }
-		this._isOverlay = this.options.type.indexOf('overlay') !== -1;
+		options = L.Util.setOptions(this, options);
+		if (type) { options.type = type; }
+		this._isOverlay = options.type.indexOf('overlay') !== -1 ||
+		                  options.type.indexOf('skeleton') !== -1;
 	},
 
 	onAdd: function () {
 		this._initContainer();
-		this._initMapObject();
 		map._controlCorners.bottomright.style.marginBottom = '3em';
+		if (this._yandex) {
+			return this._update();
+		}
+		ymaps.ready(this._initMapObject, this);
 	},
 
 	beforeAdd: function (map) {
@@ -52,6 +60,12 @@ L.Yandex = L.Layer.extend({
 		this._yandex.setCenter([center.lat, center.lng], this._map.getZoom());
 	},
 
+	_setStyle: function (el, style) {
+		for (var prop in style) {
+			el.style[prop] = style[prop];
+		}
+	},
+
 	_initContainer: function () {
 		if (!this._container) {
 			var className = 'leaflet-yandex-layer leaflet-map-pane leaflet-pane '
@@ -62,8 +76,8 @@ L.Yandex = L.Layer.extend({
 			if (opacity) {
 				L.DomUtil.setOpacity(this._container, opacity);
 			}
-			this._container.style.width = '100%';
-			this._container.style.height = '100%';
+			var auto = { width: '100%', height: '100%' };
+			this._setStyle(this._container, auto);
 		}
 		this._map.getContainer().appendChild(this._container);
 	},
@@ -73,49 +87,30 @@ L.Yandex = L.Layer.extend({
 		if (!shortType || shortType.indexOf('#') !== -1) {
 			return shortType;
 		}
-		if (shortType === 'overlay') {
-			return new ymaps.MapType('overlay', []);
-		}
 		return 'yandex#' + shortType;
 	},
 
 	_initMapObject: function () {
-		if (this._yandex) {
-			this._update();
-			return;
+		ymaps.mapType.storage.add('yandex#overlay', new ymaps.MapType('overlay', []));
+		ymaps.mapType.storage.add('yandex#skeleton', new ymaps.MapType('skeleton', ['yandex#skeleton']));
+		ymaps.mapType.storage.add('yandex#map~vector', new ymaps.MapType('map~vector', ['yandex#map~vector']));
+		var ymap = new ymaps.Map(this._container, {
+			center: [0, 0], zoom: 0, behaviors: [], controls: [],
+			type: this._mapType()
+		}, this.options.mapOptions);
+
+		if (this._isOverlay) {
+			ymap.container.getElement().style.background = 'transparent';
 		}
-
-		// Check that ymaps.Map is ready
-		if (!ymaps.Map) {
-			return ymaps.load(['package.map'], this._initMapObject, this);
+		if (this.options.trafficControl) {
+			ymap.controls.add('trafficControl', { size: 'small' });
+			ymap.controls.get('trafficControl').state.set({ trafficShown: true });
 		}
-
-		// If traffic layer is requested check if control.TrafficControl is ready
-		if (this.options.traffic) {
-			if (!ymaps.control || !ymaps.control.TrafficControl) {
-				return ymaps.load(['package.traffic', 'package.controls'],
-					this._initMapObject, this);
-			}
-		}
-
-		//Creating ymaps map-object without any default controls on it
-		var map = new ymaps.Map(this._container, {center: [0, 0], zoom: 0, behaviors: [], controls: []});
-
-		var background = this._isOverlay ? 'transparent' : this.options.background;
-		if (background) {
-			map.container.getElement().style.background = background;
-		}
-
-		if (this.options.traffic) {
-			map.controls.add(new ymaps.control.TrafficControl({shown: true}));
-		}
-		map.setType(this._mapType());
-
-		this._yandex = map;
+		this._yandex = ymap;
 		if (this._map) { this._update(); }
 
 		//Reporting that map-object was initialized
-		this.fire('MapObjectInitialized', { mapObject: map });
+		this.fire('MapObjectInitialized', { mapObject: ymap });
 	}
 });
 
