@@ -3,47 +3,23 @@
 L.Yandex = L.Layer.extend({
 
 	options: {
+		type: 'yandex#map', // 'map', 'satellite', 'hybrid' || 'overlay'
+		maxZoom: 19,
+		overlayOpacity: 0.8,
+		background: 'transparent',
 		traffic: false,
 		minZoom: 0,
 		maxZoom: 19
 	},
 
-	possibleShortMapTypes: {
-		schemaMap: 'map',
-		satelliteMap: 'satellite',
-		hybridMap: 'hybrid',
-		publicMap: 'publicMap',
-		publicMapInHybridView: 'publicMapHybrid',
-		overlay: 'overlay'
-	},
-
-	_getPossibleMapType: function (mapType) {
-		var result = 'yandex#map';
-		if (typeof mapType !== 'string') {
-			return result;
-		}
-		for (var key in this.possibleShortMapTypes) {
-			if (mapType === this.possibleShortMapTypes[key]) {
-				result = 'yandex#' + mapType;
-				break;
-			}
-			if (mapType === ('yandex#' + this.possibleShortMapTypes[key])) {
-				result = mapType;
-			}
-		}
-		return result;
-	},
-
-	// Possible types: yandex#map, yandex#satellite, yandex#hybrid, yandex#publicMap, yandex#publicMapHybrid
-	// Or their short names: map, satellite, hybrid, publicMap, publicMapHybrid
 	initialize: function (type, options) {
 		if (typeof type === 'object') {
 			options = type;
-			type = options.type;
+			type = false;
 		}
 		L.Util.setOptions(this, options);
-		//Assigning an initial map type for the Yandex layer
-		this._type = this._getPossibleMapType(type || this.options.type);
+		if (type) { this.options.type = type; }
+		this._isOverlay = this.options.type.indexOf('overlay') !== -1;
 	},
 
 	onAdd: function () {
@@ -79,16 +55,28 @@ L.Yandex = L.Layer.extend({
 	_initContainer: function () {
 		if (!this._container) {
 			var className = 'leaflet-yandex-layer leaflet-map-pane leaflet-pane '
-				+ (this.options.overlay ? 'leaflet-overlay-pane' : 'leaflet-tile-pane');
+				+ (this._isOverlay ? 'leaflet-overlay-pane' : 'leaflet-tile-pane');
 			this._container = L.DomUtil.create('div', className);
 			this._container.id = '_YMapContainer_' + L.Util.stamp(this);
-			if (this.options.opacity < 1) {
-				L.DomUtil.setOpacity(this._container, this.options.opacity);
+			var opacity = this.options.opacity || this._isOverlay && this.options.overlayOpacity;
+			if (opacity) {
+				L.DomUtil.setOpacity(this._container, opacity);
 			}
 			this._container.style.width = '100%';
 			this._container.style.height = '100%';
 		}
 		this._map.getContainer().appendChild(this._container);
+	},
+
+	_mapType: function () {
+		var shortType = this.options.type;
+		if (!shortType || shortType.indexOf('#') !== -1) {
+			return shortType;
+		}
+		if (shortType === 'overlay') {
+			return new ymaps.MapType('overlay', []);
+		}
+		return 'yandex#' + shortType;
 	},
 
 	_initMapObject: function () {
@@ -113,14 +101,15 @@ L.Yandex = L.Layer.extend({
 		//Creating ymaps map-object without any default controls on it
 		var map = new ymaps.Map(this._container, {center: [0, 0], zoom: 0, behaviors: [], controls: []});
 
+		var background = this._isOverlay ? 'transparent' : this.options.background;
+		if (background) {
+			map.container.getElement().style.background = background;
+		}
+
 		if (this.options.traffic) {
 			map.controls.add(new ymaps.control.TrafficControl({shown: true}));
 		}
-		if (this.options.overlay) {
-			this._type = new ymaps.MapType('overlay', []);
-			map.container.getElement().style.background = 'transparent';
-		}
-		map.setType(this._type);
+		map.setType(this._mapType());
 
 		this._yandex = map;
 		if (this._map) { this._update(); }
