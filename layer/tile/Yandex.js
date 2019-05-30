@@ -52,8 +52,11 @@ L.Yandex = L.Layer.extend({
 
 	_update: function () {
 		if (!this._yandex) { return; }
-		var center = this._map.getCenter();
-		this._yandex.setCenter([center.lat, center.lng], this._map.getZoom());
+		var map = this._map;
+		var center = map.getCenter();
+		this._yandex.setCenter([center.lat, center.lng], map.getZoom());
+		var offset = L.point(0,0).subtract(L.DomUtil.getPosition(map.getPane('mapPane')));
+		L.DomUtil.setPosition(this._container, offset); // move to visible part of pane
 	},
 
 	_setStyle: function (el, style) {
@@ -63,6 +66,7 @@ L.Yandex = L.Layer.extend({
 	},
 
 	_initContainer: function () {
+		var mapPane = this._map.getPane('mapPane');
 		if (!this._container) {
 			var className = 'leaflet-yandex-layer leaflet-map-pane leaflet-pane '
 				+ (this._isOverlay ? 'leaflet-overlay-pane' : 'leaflet-tile-pane');
@@ -73,9 +77,10 @@ L.Yandex = L.Layer.extend({
 				L.DomUtil.setOpacity(this._container, opacity);
 			}
 			var auto = { width: '100%', height: '100%' };
-			this._setStyle(this._container, auto);
+			this._setStyle(mapPane, auto);         // need to set this explicitly,
+			this._setStyle(this._container, auto); // otherwise ymaps fails to follow container size changes
 		}
-		this._map.getContainer().appendChild(this._container);
+		mapPane.appendChild(this._container);
 	},
 
 	_mapType: function () {
