@@ -13,6 +13,9 @@ L.BingLayer = L.TileLayer.extend({
 		// https://docs.microsoft.com/en-us/bingmaps/rest-services/common-parameters-and-types/supported-culture-codes
 		culture: '',
 
+		// https://docs.microsoft.com/en-us/bingmaps/articles/custom-map-styles-in-bing-maps#custom-map-styles-in-the-rest-and-tile-services
+		style: '',
+
 		attribution: 'Bing',
 		minZoom: 1,
 		maxZoom: 21
@@ -75,7 +78,8 @@ L.BingLayer = L.TileLayer.extend({
 			UriScheme: urlScheme,
 			include: 'ImageryProviders',
 			key: this.options.key,
-			culture: this.options.culture
+			culture: this.options.culture,
+			style: this.options.style
 		});
 		var script = document.createElement('script');
 		script.type = 'text/javascript';
