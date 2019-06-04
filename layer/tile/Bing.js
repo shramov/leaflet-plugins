@@ -22,9 +22,13 @@ L.BingLayer = L.TileLayer.extend({
 	},
 
 	initialize: function (key, options) {
+		if (typeof key === 'object') {
+			options = key;
+			key = false;
+		}
 		L.Util.setOptions(this, options);
 
-		this._key = key;
+		if (key) { this.options.key = key; }
 		this._url = null;
 	},
 
@@ -70,7 +74,7 @@ L.BingLayer = L.TileLayer.extend({
 			jsonp: cbid,
 			UriScheme: urlScheme,
 			include: 'ImageryProviders',
-			key: this._key,
+			key: this.options.key,
 			culture: this.options.culture
 		});
 		var script = document.createElement('script');
