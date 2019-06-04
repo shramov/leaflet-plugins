@@ -1,9 +1,24 @@
+// Bing maps API: https://docs.microsoft.com/en-us/bingmaps/rest-services/
+
 L.BingLayer = L.TileLayer.extend({
 	options: {
-		subdomains: [0, 1, 2, 3],
-		type: 'Aerial',
+		// imagerySet: https://docs.microsoft.com/en-us/bingmaps/rest-services/imagery/get-imagery-metadata#template-parameters
+		// supported:
+		// - Aerial, AerialWithLabels (Deprecated), AerialWithLabelsOnDemand
+		// - Road (Deprecated), RoadOnDemand
+		// - CanvasDark, CanvasLight, CanvasGray
+		// not supported: Birdseye*, Streetside
+		type: 'RoadOnDemand',
+
+		// https://docs.microsoft.com/en-us/bingmaps/rest-services/common-parameters-and-types/supported-culture-codes
+		culture: '',
+
 		attribution: 'Bing',
-		culture: ''
+		minZoom: 1,
+		maxZoom: 21
+		// Actual `maxZoom` value may be less, depending on imagery set / coverage area
+		// - 19~20 for all 'Aerial*'
+		// - 20 for 'Road' (Deprecated)
 	},
 
 	initialize: function (key, options) {
@@ -11,33 +26,31 @@ L.BingLayer = L.TileLayer.extend({
 
 		this._key = key;
 		this._url = null;
-		this._providers = [];
-		this.metaRequested = false;
 	},
 
 	tile2quad: function (x, y, z) {
 		var quad = '';
 		for (var i = z; i > 0; i--) {
 			var digit = 0;
-			var mask = 1 << (i - 1);
-			if ((x & mask) !== 0) digit += 1;
-			if ((y & mask) !== 0) digit += 2;
+			var mask = 1 << i - 1;
+			if ((x & mask) !== 0) { digit += 1; }
+			if ((y & mask) !== 0) { digit += 2; }
 			quad = quad + digit;
 		}
 		return quad;
 	},
 
-	getTileUrl: function (tilePoint) {
-		var zoom = this._getZoomForUrl();
-		var subdomains = this.options.subdomains,
-			s = this.options.subdomains[Math.abs((tilePoint.x + tilePoint.y) % subdomains.length)];
-		return this._url.replace('{subdomain}', s)
-				.replace('{quadkey}', this.tile2quad(tilePoint.x, tilePoint.y, zoom))
-				.replace('{culture}', this.options.culture);
+	getTileUrl: function (coords) {
+		var data = {
+			subdomain: this._getSubdomain(coords),
+			quadkey: this.tile2quad(coords.x, coords.y, this._getZoomForUrl()),
+			culture: this.options.culture // compatibility for deprecated imagery sets ('Road' etc)
+		};
+		return L.Util.template(this._url, data);
 	},
 
 	loadMetadata: function () {
-		if (this.metaRequested) return;
+		if (this.metaRequested) { return; }
 		this.metaRequested = true;
 		var _this = this;
 		var cbid = '_bing_metadata_' + L.Util.stamp(this);
@@ -47,14 +60,19 @@ L.BingLayer = L.TileLayer.extend({
 			e.parentNode.removeChild(e);
 			if (meta.errorDetails) {
 				throw new Error(meta.errorDetails);
-				return;
 			}
 			_this.initMetadata(meta);
 		};
-		var urlScheme = (document.location.protocol === 'file:') ? 'http' : document.location.protocol.slice(0, -1);
-		var url = urlScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/'
-					+ this.options.type + '?include=ImageryProviders&jsonp=' + cbid +
-					'&key=' + this._key + '&UriScheme=' + urlScheme;
+		var urlScheme = document.location.protocol === 'file:' ? 'http' :
+			document.location.protocol.slice(0, -1);
+		var url = urlScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/' + this.options.type;
+		url += L.Util.getParamString({
+			jsonp: cbid,
+			UriScheme: urlScheme,
+			include: 'ImageryProviders',
+			key: this._key,
+			culture: this.options.culture
+		});
 		var script = document.createElement('script');
 		script.type = 'text/javascript';
 		script.src = url;
@@ -66,15 +84,16 @@ L.BingLayer = L.TileLayer.extend({
 		var r = meta.resourceSets[0].resources[0];
 		this.options.subdomains = r.imageUrlSubdomains;
 		this._url = r.imageUrl;
+		this._providers = [];
 		if (r.imageryProviders) {
 			for (var i = 0; i < r.imageryProviders.length; i++) {
 				var p = r.imageryProviders[i];
 				for (var j = 0; j < p.coverageAreas.length; j++) {
 					var c = p.coverageAreas[j];
 					var coverage = {zoomMin: c.zoomMin, zoomMax: c.zoomMax, active: false};
-					var bounds = new L.LatLngBounds(
-							new L.LatLng(c.bbox[0]+0.01, c.bbox[1]+0.01),
-							new L.LatLng(c.bbox[2]-0.01, c.bbox[3]-0.01)
+					var bounds = L.latLngBounds(
+							[c.bbox[0]+0.01, c.bbox[1]+0.01],
+							[c.bbox[2]-0.01, c.bbox[3]-0.01]
 					);
 					coverage.bounds = bounds;
 					coverage.attrib = p.attribution;
@@ -85,15 +104,16 @@ L.BingLayer = L.TileLayer.extend({
 		this._update();
 	},
 
-	_update: function () {
-		if (this._url === null || !this._map) return;
+	_update: function (center) {
+		if (!this._url || !this._map) { return; }
 		this._update_attribution();
-		L.TileLayer.prototype._update.apply(this, []);
+		L.GridLayer.prototype._update.call(this, center);
 	},
 
 	_update_attribution: function () {
-		var bounds = L.latLngBounds(this._map.getBounds().getSouthWest().wrap(),this._map.getBounds().getNorthEast().wrap());
-		var zoom = this._map.getZoom();
+		var bounds = this._map.getBounds();
+		bounds = L.latLngBounds(bounds.getSouthWest().wrap(), bounds.getNorthEast().wrap());
+		var zoom = this._getZoomForUrl();
 		for (var i = 0; i < this._providers.length; i++) {
 			var p = this._providers[i];
 			if ((zoom <= p.zoomMax && zoom >= p.zoomMin) &&
@@ -111,7 +131,7 @@ L.BingLayer = L.TileLayer.extend({
 
 	onAdd: function (map) {
 		this.loadMetadata();
-		L.TileLayer.prototype.onAdd.apply(this, [map]);
+		L.GridLayer.prototype.onAdd.call(this, map);
 	},
 
 	onRemove: function (map) {
@@ -122,10 +142,10 @@ L.BingLayer = L.TileLayer.extend({
 				p.active = false;
 			}
 		}
-		L.TileLayer.prototype.onRemove.apply(this, [map]);
+		L.GridLayer.prototype.onRemove.call(this, map);
 	}
 });
 
 L.bingLayer = function (key, options) {
-    return new L.BingLayer(key, options);
+	return new L.BingLayer(key, options);
 };
