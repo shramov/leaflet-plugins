@@ -16,6 +16,11 @@ L.BingLayer = L.TileLayer.extend({
 		// https://docs.microsoft.com/en-us/bingmaps/articles/custom-map-styles-in-bing-maps#custom-map-styles-in-the-rest-and-tile-services
 		style: '',
 
+		// https://blogs.bing.com/maps/2015/02/12/high-ppi-maps-now-available-in-the-bing-maps-ajax-control
+		// not documented in REST API docs, but working
+		// warning: deprecated imagery sets may not support some values (depending also on zoom level)
+		retinaDpi: 'd2',
+
 		attribution: 'Bing',
 		minZoom: 1,
 		maxZoom: 21
@@ -29,10 +34,9 @@ L.BingLayer = L.TileLayer.extend({
 			options = key;
 			key = false;
 		}
-		L.Util.setOptions(this, options);
+		L.TileLayer.prototype.initialize.call(this, null, options);
 
 		if (key) { this.options.key = key; }
-		this._url = null;
 	},
 
 	tile2quad: function (x, y, z) {
@@ -89,9 +93,10 @@ L.BingLayer = L.TileLayer.extend({
 	},
 
 	initMetadata: function (meta) {
+		var options = this.options;
 		var r = meta.resourceSets[0].resources[0];
 		if (!r.imageUrl) { throw new Error('imageUrl not found in response'); }
-		if (r.imageUrlSubdomains) { this.options.subdomains = r.imageUrlSubdomains; }
+		if (r.imageUrlSubdomains) { options.subdomains = r.imageUrlSubdomains; }
 		this._url = r.imageUrl;
 		this._providers = [];
 		if (r.imageryProviders) {
@@ -109,6 +114,9 @@ L.BingLayer = L.TileLayer.extend({
 					this._providers.push(coverage);
 				}
 			}
+		}
+		if (options.retinaDpi && options.detectRetina && options.zoomOffset) {
+			this._url += '&dpi=' + options.retinaDpi;
 		}
 		this._update();
 	},
