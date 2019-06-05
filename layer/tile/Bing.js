@@ -111,20 +111,16 @@ L.BingLayer = L.TileLayer.extend({
 	_prepAttrBounds: function (providers) {
 		var _providers = [];
 		if (providers) {
-			for (var i = 0; i < providers.length; i++) {
-				var p = providers[i];
-				for (var j = 0; j < p.coverageAreas.length; j++) {
-					var c = p.coverageAreas[j];
-					var coverage = {zoomMin: c.zoomMin, zoomMax: c.zoomMax, active: false};
-					var bounds = L.latLngBounds(
-							[c.bbox[0]+0.01, c.bbox[1]+0.01],
-							[c.bbox[2]-0.01, c.bbox[3]-0.01]
+			providers.forEach(function (provider) {
+				provider.coverageAreas.forEach(function (area) {
+					area.bounds = L.latLngBounds(
+						[area.bbox[0]+0.01, area.bbox[1]+0.01],
+						[area.bbox[2]-0.01, area.bbox[3]-0.01]
 					);
-					coverage.bounds = bounds;
-					coverage.attrib = p.attribution;
-					_providers.push(coverage);
-				}
-			}
+					area.attrib = provider.attribution;
+					_providers.push(area);
+				});
+			});
 		}
 		return _providers;
 	},
@@ -139,19 +135,19 @@ L.BingLayer = L.TileLayer.extend({
 		var bounds = this._map.getBounds();
 		bounds = L.latLngBounds(bounds.getSouthWest().wrap(), bounds.getNorthEast().wrap());
 		var zoom = this._getZoomForUrl();
-		for (var i = 0; i < this._providers.length; i++) {
-			var p = this._providers[i];
-			if ((zoom <= p.zoomMax && zoom >= p.zoomMin) &&
-					bounds.intersects(p.bounds)) {
-				if (!p.active && this._map.attributionControl)
-					this._map.attributionControl.addAttribution(p.attrib);
-				p.active = true;
+		var attributionControl = this._map.attributionControl;
+		this._providers.forEach(function (p) {
+			if (!attributionControl) { p.active = false; return; }
+			var active = (zoom <= p.zoomMax && zoom >= p.zoomMin) && bounds.intersects(p.bounds);
+			if (active === p.active) {
+				return;
+			} else if (active) {
+				attributionControl.addAttribution(p.attrib);
 			} else {
-				if (p.active && this._map.attributionControl)
-					this._map.attributionControl.removeAttribution(p.attrib);
-				p.active = false;
+				attributionControl.removeAttribution(p.attrib);
 			}
-		}
+			p.active = active;
+		});
 	},
 
 	onAdd: function (map) {
@@ -164,12 +160,14 @@ L.BingLayer = L.TileLayer.extend({
 	},
 
 	onRemove: function (map) {
-		for (var i = 0; i < this._providers.length; i++) {
-			var p = this._providers[i];
-			if (p.active && this._map.attributionControl) {
-				this._map.attributionControl.removeAttribution(p.attrib);
-				p.active = false;
-			}
+		var attributionControl = this._map.attributionControl;
+		if (attributionControl) {
+			this._providers.forEach(function (p) {
+				if (p.active) {
+					attributionControl.removeAttribution(p.attrib);
+					p.active = false;
+				}
+			});
 		}
 		L.GridLayer.prototype.onRemove.call(this, map);
 	}
