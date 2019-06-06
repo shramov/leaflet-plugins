@@ -100,7 +100,7 @@ L.BingLayer = L.TileLayer.extend({
 			if (!r.imageUrl) { throw new Error('imageUrl not found in response'); }
 			if (r.imageUrlSubdomains) { options.subdomains = r.imageUrlSubdomains; }
 			this._providers = r.imageryProviders ? this._prepAttrBounds(r.imageryProviders) : [];
-			this._attributions = {};
+			this._attributions = [];
 			this._url = r.imageUrl;
 			if (options.retinaDpi && options.detectRetina && options.zoomOffset) {
 				this._url += '&dpi=' + options.retinaDpi;
@@ -135,26 +135,21 @@ L.BingLayer = L.TileLayer.extend({
 		var bounds = this._map.getBounds();
 		bounds = L.latLngBounds(bounds.getSouthWest().wrap(), bounds.getNorthEast().wrap());
 		var zoom = this._getZoomForUrl();
-		var attributions = {};
-		this._providers.forEach(function (provider) {
-			var attr = provider.attribution;
-			attributions[attr] = remove ? false : provider.coverageAreas.some(function (area) {
+		var attributions = this._providers.map(function (provider) {
+			return remove ? false : provider.coverageAreas.some(function (area) {
 				return zoom <= area.zoomMax && zoom >= area.zoomMin &&
 					bounds.intersects(area.bounds);
 			});
-			if (!attributions[attr]) { delete attributions[attr]; }
 		});
-		var attr;
-		for (attr in attributions) {
-			if (!this._attributions[attr]) {
-				attributionControl.addAttribution(attr);
+		attributions.forEach(function (a,i) {
+			if (a == this._attributions[i]) {
+				return;
+			} else if (a) {
+				attributionControl.addAttribution(this._providers[i].attribution);
+			} else {
+				attributionControl.removeAttribution(this._providers[i].attribution);
 			}
-		}
-		for (attr in this._attributions) {
-			if (!attributions[attr]) {
-				attributionControl.removeAttribution(attr);
-			}
-		}
+		}, this);
 		this._attributions = attributions;
 	},
 
