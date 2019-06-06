@@ -105,7 +105,7 @@ L.BingLayer = L.TileLayer.extend({
 			if (options.retinaDpi && options.detectRetina && options.zoomOffset) {
 				this._url += '&dpi=' + options.retinaDpi;
 			}
-			this._update();
+			if (this._map) { this._update(); }
 		});
 	},
 
@@ -122,9 +122,9 @@ L.BingLayer = L.TileLayer.extend({
 	},
 
 	_update: function (center) {
-		if (!this._url || !this._map) { return; }
-		this._update_attribution();
+		if (!this._url) { return; }
 		L.GridLayer.prototype._update.call(this, center);
+		this._update_attribution();
 	},
 
 	_update_attribution: function (remove) {
