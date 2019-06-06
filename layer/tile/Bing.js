@@ -60,36 +60,40 @@ L.BingLayer = L.TileLayer.extend({
 		return L.Util.template(this._url, data);
 	},
 
+
+	callRestService: function (request, callback, context) {
+		context = context || this;
+		var uniqueName = '_bing_metadata_' + L.Util.stamp(this);
+		while (window[uniqueName]) { uniqueName += '_'; }
+		request += '&jsonp=' + uniqueName;
+		var script = document.createElement('script');
+		script.setAttribute('type', 'text/javascript');
+		script.setAttribute('src', request);
+		window[uniqueName] = function (response) {
+			delete window[uniqueName];
+			script.remove();
+			if (response.errorDetails) {
+				throw new Error(response.errorDetails);
+			}
+			callback.call(context, response);
+		};
+		document.body.appendChild(script);
+	},
+
 	loadMetadata: function () {
 		if (this.metaRequested) { return; }
 		this.metaRequested = true;
-		var _this = this;
-		var cbid = '_bing_metadata_' + L.Util.stamp(this);
-		window[cbid] = function (meta) {
-			window[cbid] = undefined;
-			var e = document.getElementById(cbid);
-			e.parentNode.removeChild(e);
-			if (meta.errorDetails) {
-				throw new Error(meta.errorDetails);
-			}
-			_this.initMetadata(meta);
-		};
 		var urlScheme = document.location.protocol === 'file:' ? 'http' :
 			document.location.protocol.slice(0, -1);
 		var url = urlScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/' + this.options.type;
 		url += L.Util.getParamString({
-			jsonp: cbid,
 			UriScheme: urlScheme,
 			include: 'ImageryProviders',
 			key: this.options.key,
 			culture: this.options.culture,
 			style: this.options.style
 		});
-		var script = document.createElement('script');
-		script.type = 'text/javascript';
-		script.src = url;
-		script.id = cbid;
-		document.getElementsByTagName('head')[0].appendChild(script);
+		this.callRestService(url, this.initMetadata);
 	},
 
 	initMetadata: function (meta) {
