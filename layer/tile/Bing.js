@@ -99,7 +99,8 @@ L.BingLayer = L.TileLayer.extend({
 			var r = meta.resourceSets[0].resources[0];
 			if (!r.imageUrl) { throw new Error('imageUrl not found in response'); }
 			if (r.imageUrlSubdomains) { options.subdomains = r.imageUrlSubdomains; }
-			this._providers = this._prepAttrBounds(r.imageryProviders);
+			this._providers = r.imageryProviders ? this._prepAttrBounds(r.imageryProviders) : [];
+			this._attributions = {};
 			this._url = r.imageUrl;
 			if (options.retinaDpi && options.detectRetina && options.zoomOffset) {
 				this._url += '&dpi=' + options.retinaDpi;
@@ -109,20 +110,15 @@ L.BingLayer = L.TileLayer.extend({
 	},
 
 	_prepAttrBounds: function (providers) {
-		var _providers = [];
-		if (providers) {
-			providers.forEach(function (provider) {
-				provider.coverageAreas.forEach(function (area) {
-					area.bounds = L.latLngBounds(
-						[area.bbox[0]+0.01, area.bbox[1]+0.01],
-						[area.bbox[2]-0.01, area.bbox[3]-0.01]
-					);
-					area.attrib = provider.attribution;
-					_providers.push(area);
-				});
+		providers.forEach(function (provider) {
+			provider.coverageAreas.forEach(function (area) {
+				area.bounds = L.latLngBounds(
+					[area.bbox[0], area.bbox[1]],
+					[area.bbox[2], area.bbox[3]]
+				);
 			});
-		}
-		return _providers;
+		});
+		return providers;
 	},
 
 	_update: function (center) {
@@ -131,23 +127,35 @@ L.BingLayer = L.TileLayer.extend({
 		L.GridLayer.prototype._update.call(this, center);
 	},
 
-	_update_attribution: function () {
+	_update_attribution: function (remove) {
+		var attributionControl = this._map.attributionControl;
+		if (!attributionControl) {
+			this._attributions = {}; return;
+		}
 		var bounds = this._map.getBounds();
 		bounds = L.latLngBounds(bounds.getSouthWest().wrap(), bounds.getNorthEast().wrap());
 		var zoom = this._getZoomForUrl();
-		var attributionControl = this._map.attributionControl;
-		this._providers.forEach(function (p) {
-			if (!attributionControl) { p.active = false; return; }
-			var active = (zoom <= p.zoomMax && zoom >= p.zoomMin) && bounds.intersects(p.bounds);
-			if (active === p.active) {
-				return;
-			} else if (active) {
-				attributionControl.addAttribution(p.attrib);
-			} else {
-				attributionControl.removeAttribution(p.attrib);
-			}
-			p.active = active;
+		var attributions = {};
+		this._providers.forEach(function (provider) {
+			var attr = provider.attribution;
+			attributions[attr] = remove ? false : provider.coverageAreas.some(function (area) {
+				return zoom <= area.zoomMax && zoom >= area.zoomMin &&
+					bounds.intersects(area.bounds);
+			});
+			if (!attributions[attr]) { delete attributions[attr]; }
 		});
+		var attr;
+		for (attr in attributions) {
+			if (!this._attributions[attr]) {
+				attributionControl.addAttribution(attr);
+			}
+		}
+		for (attr in this._attributions) {
+			if (!attributions[attr]) {
+				attributionControl.removeAttribution(attr);
+			}
+		}
+		this._attributions = attributions;
 	},
 
 	onAdd: function (map) {
@@ -160,15 +168,7 @@ L.BingLayer = L.TileLayer.extend({
 	},
 
 	onRemove: function (map) {
-		var attributionControl = this._map.attributionControl;
-		if (attributionControl) {
-			this._providers.forEach(function (p) {
-				if (p.active) {
-					attributionControl.removeAttribution(p.attrib);
-					p.active = false;
-				}
-			});
-		}
+		this._update_attribution(true);
 		L.GridLayer.prototype.onRemove.call(this, map);
 	}
 });
