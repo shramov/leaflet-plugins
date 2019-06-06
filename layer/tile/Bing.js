@@ -82,7 +82,8 @@ L.BingLayer = L.TileLayer.extend({
 
 	initMetadata: function (meta) {
 		var r = meta.resourceSets[0].resources[0];
-		this.options.subdomains = r.imageUrlSubdomains;
+		if (!r.imageUrl) { throw new Error('imageUrl not found in response'); }
+		if (r.imageUrlSubdomains) { this.options.subdomains = r.imageUrlSubdomains; }
 		this._url = r.imageUrl;
 		this._providers = [];
 		if (r.imageryProviders) {
