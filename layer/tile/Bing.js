@@ -85,27 +85,34 @@ L.BingLayer = L.TileLayer.extend({
 		this.metaRequested = true;
 		var urlScheme = document.location.protocol === 'file:' ? 'http' :
 			document.location.protocol.slice(0, -1);
-		var url = urlScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/' + this.options.type;
-		url += L.Util.getParamString({
+		var options = this.options;
+		// https://docs.microsoft.com/en-us/bingmaps/rest-services/imagery/get-imagery-metadata#complete-metadata-urls
+		var request = urlScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/' + options.type;
+		request += L.Util.getParamString({
 			UriScheme: urlScheme,
 			include: 'ImageryProviders',
-			key: this.options.key,
-			culture: this.options.culture,
-			style: this.options.style
+			key: options.key,
+			culture: options.culture,
+			style: options.style
 		});
-		this.callRestService(url, this.initMetadata);
+		this.callRestService(request, function (meta) {
+			var r = meta.resourceSets[0].resources[0];
+			if (!r.imageUrl) { throw new Error('imageUrl not found in response'); }
+			if (r.imageUrlSubdomains) { options.subdomains = r.imageUrlSubdomains; }
+			this._providers = this._prepAttrBounds(r.imageryProviders);
+			this._url = r.imageUrl;
+			if (options.retinaDpi && options.detectRetina && options.zoomOffset) {
+				this._url += '&dpi=' + options.retinaDpi;
+			}
+			this._update();
+		});
 	},
 
-	initMetadata: function (meta) {
-		var options = this.options;
-		var r = meta.resourceSets[0].resources[0];
-		if (!r.imageUrl) { throw new Error('imageUrl not found in response'); }
-		if (r.imageUrlSubdomains) { options.subdomains = r.imageUrlSubdomains; }
-		this._url = r.imageUrl;
-		this._providers = [];
-		if (r.imageryProviders) {
-			for (var i = 0; i < r.imageryProviders.length; i++) {
-				var p = r.imageryProviders[i];
+	_prepAttrBounds: function (providers) {
+		var _providers = [];
+		if (providers) {
+			for (var i = 0; i < providers.length; i++) {
+				var p = providers[i];
 				for (var j = 0; j < p.coverageAreas.length; j++) {
 					var c = p.coverageAreas[j];
 					var coverage = {zoomMin: c.zoomMin, zoomMax: c.zoomMax, active: false};
@@ -115,14 +122,11 @@ L.BingLayer = L.TileLayer.extend({
 					);
 					coverage.bounds = bounds;
 					coverage.attrib = p.attribution;
-					this._providers.push(coverage);
+					_providers.push(coverage);
 				}
 			}
 		}
-		if (options.retinaDpi && options.detectRetina && options.zoomOffset) {
-			this._url += '&dpi=' + options.retinaDpi;
-		}
-		this._update();
+		return _providers;
 	},
 
 	_update: function (center) {
