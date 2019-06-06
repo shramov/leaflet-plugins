@@ -131,6 +131,10 @@ L.BingLayer = L.TileLayer.extend({
 	},
 
 	onAdd: function (map) {
+		// Note: Metadata could be loaded earlier, on layer initialize,
+		//       but according to docs even such request is billable:
+		//       https://docs.microsoft.com/en-us/bingmaps/getting-started/bing-maps-dev-center-help/understanding-bing-maps-transactions#rest-services
+		//       That's why it's important to defer it till BingLayer is actually added to map
 		this.loadMetadata();
 		L.GridLayer.prototype.onAdd.call(this, map);
 	},
