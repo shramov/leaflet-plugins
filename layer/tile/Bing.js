@@ -103,6 +103,7 @@ L.BingLayer = L.TileLayer.extend({
 			if (options.retinaDpi && options.detectRetina && options.zoomOffset) {
 				this._url += '&dpi=' + options.retinaDpi;
 			}
+			this.fire('load', {meta: meta});
 			if (this._map) { this._update(); }
 		});
 	},
