@@ -83,13 +83,11 @@ L.BingLayer = L.TileLayer.extend({
 	loadMetadata: function () {
 		if (this.metaRequested) { return; }
 		this.metaRequested = true;
-		var urlScheme = document.location.protocol === 'file:' ? 'http' :
-			document.location.protocol.slice(0, -1);
 		var options = this.options;
 		// https://docs.microsoft.com/en-us/bingmaps/rest-services/imagery/get-imagery-metadata#complete-metadata-urls
-		var request = urlScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/' + options.type;
+		var request = 'https://dev.virtualearth.net/REST/v1/Imagery/Metadata/' + options.type;
 		request += L.Util.getParamString({
-			UriScheme: urlScheme,
+			UriScheme: 'https',
 			include: 'ImageryProviders',
 			key: options.key,
 			culture: options.culture,
