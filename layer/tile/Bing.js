@@ -8,7 +8,7 @@ L.BingLayer = L.TileLayer.extend({
 		// - Road (Deprecated), RoadOnDemand
 		// - CanvasDark, CanvasLight, CanvasGray
 		// not supported: Birdseye*, Streetside
-		type: 'RoadOnDemand',
+		type: 'Aerial', // to be changed on next major version!!
 
 		// https://docs.microsoft.com/en-us/bingmaps/rest-services/common-parameters-and-types/supported-culture-codes
 		culture: '',
