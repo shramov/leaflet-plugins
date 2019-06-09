@@ -80,16 +80,30 @@ L.BingLayer = L.TileLayer.extend({
 		document.body.appendChild(script);
 	},
 
+	_makeApiUrl: function (restApi, resourcePath, query) {
+		var baseAPIparams = {
+			version: 'v1',
+			restApi: restApi,
+			resourcePath: resourcePath
+		};
+		query = L.extend({
+			// errorDetail: true, // seems no effect
+			key: this.options.key
+		}, query);
+
+		// https://docs.microsoft.com/en-us/bingmaps/rest-services/common-parameters-and-types/base-url-structure
+		var template = 'https://dev.virtualearth.net/REST/{version}/{restApi}/{resourcePath}'; // ?queryParameters&key=BingMapsKey
+		return L.Util.template(template, baseAPIparams) + L.Util.getParamString(query);
+	},
+
 	loadMetadata: function () {
 		if (this.metaRequested) { return; }
 		this.metaRequested = true;
 		var options = this.options;
 		// https://docs.microsoft.com/en-us/bingmaps/rest-services/imagery/get-imagery-metadata#complete-metadata-urls
-		var request = 'https://dev.virtualearth.net/REST/v1/Imagery/Metadata/' + options.type;
-		request += L.Util.getParamString({
+		var request = this._makeApiUrl('Imagery/Metadata', options.type, {
 			UriScheme: 'https',
 			include: 'ImageryProviders',
-			key: options.key,
 			culture: options.culture,
 			style: options.style
 		});
