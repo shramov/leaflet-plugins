@@ -8,7 +8,7 @@ L.BingLayer = L.TileLayer.extend({
 		// - Road (Deprecated), RoadOnDemand
 		// - CanvasDark, CanvasLight, CanvasGray
 		// not supported: Birdseye*, Streetside
-		type: 'Aerial', // to be changed on next major version!!
+		imagerySet: 'Aerial', // to be changed on next major version!!
 
 		// https://docs.microsoft.com/en-us/bingmaps/rest-services/common-parameters-and-types/supported-culture-codes
 		culture: '',
@@ -41,10 +41,12 @@ L.BingLayer = L.TileLayer.extend({
 		L.TileLayer.prototype.initialize.call(this, null, options);
 
 		options = this.options;
+		options.key = options.key || options.bingMapsKey;
+		options.imagerySet = options.imagerySet || options.type;
 		if (key) { options.key = key; }
 		if (options.applyMaxNativeZoom === 'auto' && !options.maxNativeZoom) {
-			options.applyMaxNativeZoom = options.type==='Road' ||
-				options.type.substring(0,6)==='Aerial';
+			options.applyMaxNativeZoom = options.imagerySet==='Road' ||
+				options.imagerySet.substring(0,6)==='Aerial';
 		}
 	},
 
@@ -109,7 +111,7 @@ L.BingLayer = L.TileLayer.extend({
 		this.metaRequested = true;
 		var options = this.options;
 		// https://docs.microsoft.com/en-us/bingmaps/rest-services/imagery/get-imagery-metadata#complete-metadata-urls
-		var request = this._makeApiUrl('Imagery/Metadata', options.type, {
+		var request = this._makeApiUrl('Imagery/Metadata', options.imagerySet, {
 			UriScheme: 'https',
 			include: 'ImageryProviders',
 			culture: options.culture,
@@ -146,7 +148,7 @@ L.BingLayer = L.TileLayer.extend({
 		var options = this.options;
 		// https://docs.microsoft.com/en-us/bingmaps/rest-services/imagery/get-imagery-metadata#basic-metadata-url
 		var request = this._makeApiUrl('Imagery/BasicMetadata', L.Util.template('{imagerySet}/{centerPoint}', {
-			imagerySet: options.type,
+			imagerySet: options.imagerySet,
 			centerPoint: L.Util.template('{lat},{lng}', latlng)
 		}));
 		var zoomOffset = options.zoomOffset || 0;  // detectRetina sideeffects on maxZoom / maxNativeZoom
