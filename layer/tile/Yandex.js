@@ -27,12 +27,36 @@ L.Yandex = L.Layer.extend({
 		                  options.type.indexOf('skeleton') !== -1;
 	},
 
-	onAdd: function () {
-		this._initContainer();
-		if (this._yandex) {
-			return this._update();
+	_setStyle: function (el, style) {
+		for (var prop in style) {
+			el.style[prop] = style[prop];
 		}
-		ymaps.ready(this._initMapObject, this);
+	},
+
+	_initContainer: function (parentEl) {
+		var className = 'leaflet-yandex-layer leaflet-map-pane leaflet-pane '
+			+ (this._isOverlay ? 'leaflet-overlay-pane' : 'leaflet-tile-pane');
+		var _container = L.DomUtil.create('div', className);
+		_container.id = '_YMapContainer_' + L.Util.stamp(this);
+		var opacity = this.options.opacity || this._isOverlay && this.options.overlayOpacity;
+		if (opacity) {
+			L.DomUtil.setOpacity(_container, opacity);
+		}
+		var auto = { width: '100%', height: '100%' };
+		this._setStyle(parentEl, auto);   // need to set this explicitly,
+		this._setStyle(_container, auto); // otherwise ymaps fails to follow container size changes
+		return _container;
+	},
+
+	onAdd: function (map) {
+		var mapPane = map.getPane('mapPane');
+		if (!this._container) {
+			this._container = this._initContainer(mapPane);
+			ymaps.ready(this._initMapObject, this);
+		}
+		mapPane.appendChild(this._container);
+		if (!this._yandex) { return; }
+		this._update();
 	},
 
 	beforeAdd: function (map) {
@@ -40,7 +64,10 @@ L.Yandex = L.Layer.extend({
 	},
 
 	onRemove: function (map) {
-		this._container.remove();
+		// do not remove container until api is initialized (ymaps API expects DOM element)
+		if (this._yandex) {
+			this._container.remove();
+		}
 		map._removeZoomLimit(this);
 	},
 
@@ -79,30 +106,6 @@ L.Yandex = L.Layer.extend({
 		});
 	},
 
-	_setStyle: function (el, style) {
-		for (var prop in style) {
-			el.style[prop] = style[prop];
-		}
-	},
-
-	_initContainer: function () {
-		var mapPane = this._map.getPane('mapPane');
-		if (!this._container) {
-			var className = 'leaflet-yandex-layer leaflet-map-pane leaflet-pane '
-				+ (this._isOverlay ? 'leaflet-overlay-pane' : 'leaflet-tile-pane');
-			this._container = L.DomUtil.create('div', className);
-			this._container.id = '_YMapContainer_' + L.Util.stamp(this);
-			var opacity = this.options.opacity || this._isOverlay && this.options.overlayOpacity;
-			if (opacity) {
-				L.DomUtil.setOpacity(this._container, opacity);
-			}
-			var auto = { width: '100%', height: '100%' };
-			this._setStyle(mapPane, auto);         // need to set this explicitly,
-			this._setStyle(this._container, auto); // otherwise ymaps fails to follow container size changes
-		}
-		mapPane.appendChild(this._container);
-	},
-
 	_mapType: function () {
 		var shortType = this.options.type;
 		if (!shortType || shortType.indexOf('#') !== -1) {
@@ -127,8 +130,9 @@ L.Yandex = L.Layer.extend({
 			ymap.controls.add('trafficControl', { size: 'small' });
 			ymap.controls.get('trafficControl').state.set({ trafficShown: true });
 		}
+		this._container.remove(); // see onRemove comments
 		this._yandex = ymap;
-		if (this._map) { this._update(); }
+		if (this._map) { this.onAdd(this._map); }
 
 		//Reporting that map-object was initialized
 		this.fire('MapObjectInitialized', { mapObject: ymap });
