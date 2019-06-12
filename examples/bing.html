@@ -1,23 +1,54 @@
 <html>
-  <head>
-  	<title>Leaflet</title>
-	<link rel="stylesheet" href="http://unpkg.com/leaflet@1.3.1/dist/leaflet.css" />
-	<script src="http://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
-  	<script src="../layer/tile/Bing.js"></script>
-  </head>
-  <body>
-  	<div style="width:100%; height:100%" id="map"></div>
-      <script type='text/javascript'>
-        var map = new L.Map('map', {center: new L.LatLng(67.6755, 33.936), zoom: 10 });
-        var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+<head>
+	<title>Leaflet</title>
+	<link rel="stylesheet" href="http://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
+	<script src="http://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+	<script src="../layer/tile/Bing.js"></script>
+</head>
+<body>
 
-        // for all possible values and explanations see "Template Parameters" in https://msdn.microsoft.com/en-us/library/ff701716.aspx
-        var imagerySet = "Aerial"; // AerialWithLabels | Birdseye | BirdseyeWithLabels | Road
+<div style="width:100%; height:100%" id="map"></div>
 
-        var bing = new L.BingLayer("YOUR_API_KEY", {type: imagerySet});
+<script type='text/javascript'>
+	var map = L.map('map', {
+		center: [67.6755, 33.936],
+		zoom: 10
+	});
+	var apiKey = '[YOUR_BING_MAPS_KEY]';
 
-        map.addLayer(bing);
-        map.addControl(new L.Control.Layers({'OSM':osm, "Bing":bing}, {}));
-      </script>
-  </body>
+	var defaults = {
+		key: apiKey,
+		detectRetina: true
+	};
+	var baseLayers = {};
+	[	'Aerial', 'AerialWithLabelsOnDemand',
+		'RoadOnDemand',
+		'CanvasDark', 'CanvasLight', 'CanvasGray'
+	].forEach(function (imagerySet) {
+		baseLayers[imagerySet] = L.bingLayer(L.extend({imagerySet: imagerySet}, defaults));
+	});
+
+	// https://docs.microsoft.com/en-us/bingmaps/articles/custom-map-styles-in-bing-maps#midnight-commander-style
+	var styleMidnightCommander = 'me|lbc:ffffff;loc:000000_pl|bsc:144b53;boc:00000000_pt|ic:0c4152;fc:000000;sc:0c4152_trs|sc:000000;fc:000000_hg|sc:158399;fc:000000_cah|sc:158399;fc:000000_ard|sc:157399;fc:000000_mr|sc:157399;fc:000000_rl|sc:146474;fc:000000_str|fc:115166_wt|fc:021019_ar|fc:115166_g|lc:0b334d';
+	baseLayers['Custom style + "ru" culture'] = L.bingLayer(L.extend({}, defaults, {
+		imagerySet: 'RoadOnDemand',
+		style: styleMidnightCommander,
+		culture: 'ru'
+	}));
+
+	baseLayers['[deprecated] Road'] = L.bingLayer(L.extend({}, defaults, {
+		imagerySet: 'Road',
+		retinaDpi: false
+	}));
+	baseLayers['[deprecated] AerialWithLabels'] = L.bingLayer(L.extend({}, defaults, {
+		imagerySet: 'AerialWithLabels',
+		retinaDpi: false
+	}));
+
+	baseLayers['RoadOnDemand'].addTo(map);
+	L.control.layers(baseLayers).addTo(map);
+	map.locate({ setView: true, maxZoom: 14 });
+ </script>
+
+</body>
 </html>
