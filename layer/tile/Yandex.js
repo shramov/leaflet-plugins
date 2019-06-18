@@ -34,10 +34,8 @@ L.Yandex = L.Layer.extend({
 	},
 
 	_initContainer: function (parentEl) {
-		var className = 'leaflet-yandex-layer leaflet-map-pane leaflet-pane '
-			+ (this._isOverlay ? 'leaflet-overlay-pane' : 'leaflet-tile-pane');
-		var _container = L.DomUtil.create('div', className);
-		_container.id = '_YMapContainer_' + L.Util.stamp(this);
+		var zIndexClass = this._isOverlay ? 'leaflet-overlay-pane' : 'leaflet-tile-pane';
+		var _container = L.DomUtil.create('div', 'leaflet-yandex-container leaflet-pane ' + zIndexClass);
 		var opacity = this.options.opacity || this._isOverlay && this.options.overlayOpacity;
 		if (opacity) {
 			L.DomUtil.setOpacity(_container, opacity);
@@ -145,8 +143,7 @@ L.Yandex = L.Layer.extend({
 		this._yandex = ymap;
 		if (this._map) { this.onAdd(this._map); }
 
-		//Reporting that map-object was initialized
-		this.fire('MapObjectInitialized', { mapObject: ymap });
+		this.fire('load');
 	}
 });
 
