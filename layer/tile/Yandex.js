@@ -52,6 +52,7 @@ L.Yandex = L.Layer.extend({
 		var mapPane = map.getPane('mapPane');
 		if (!this._container) {
 			this._container = this._initContainer(mapPane);
+			map.once('unload', this._destroy, this);
 			ymaps.ready(this._initMapObject, this);
 		}
 		mapPane.appendChild(this._container);
@@ -69,6 +70,16 @@ L.Yandex = L.Layer.extend({
 			this._container.remove();
 		}
 		map._removeZoomLimit(this);
+	},
+
+	_destroy: function (e) {
+		if (!this._map || this._map === e.target) {
+			if (this._yandex) {
+				this._yandex.destroy();
+				delete this._yandex;
+			}
+			delete this._container;
+		}
 	},
 
 	getEvents: function () {
