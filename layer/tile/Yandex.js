@@ -99,6 +99,12 @@ L.Yandex = L.Layer.extend({
 		L.DomUtil.setPosition(this._container, offset); // move to visible part of pane
 	},
 
+	_resyncView: function () { // for use in addons
+		if (!this._map) { return; }
+		var ymap = this._yandex;
+		this._map.setView(ymap.getCenter(), ymap.getZoom(), { animate: false });
+	},
+
 	_animateZoom: function (e) {
 		if (!this._yandex) { return; }
 		var map = this._map;
