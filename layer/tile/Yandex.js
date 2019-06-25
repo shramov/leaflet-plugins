@@ -135,10 +135,6 @@ L.Yandex = L.Layer.extend({
 		if (this._isOverlay) {
 			ymap.container.getElement().style.background = 'transparent';
 		}
-		if (this.options.trafficControl) {
-			ymap.controls.add('trafficControl', { size: 'small' });
-			ymap.controls.get('trafficControl').state.set({ trafficShown: true });
-		}
 		this._container.remove(); // see onRemove comments
 		this._yandex = ymap;
 		if (this._map) { this.onAdd(this._map); }
