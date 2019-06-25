@@ -1,0 +1,54 @@
+<html>
+<head>
+	<title>L.Yandex panorama (addon) example</title>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
+	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+	<script src="https://api-maps.yandex.ru/2.1/?lang=en_RU&amp;apikey=<your API-key>" type="text/javascript"></script>
+	<script src="../layer/tile/Yandex.js"></script>
+	<script src="../layer/tile/Yandex.addon.Controls.js"></script>
+	<script src="../layer/tile/Yandex.addon.Panorama.js"></script>
+	<style>
+		.leaflet-bottom { bottom: 20px }
+		.leaflet-control-attribution { margin-bottom: -10px !important }
+	</style>
+</head>
+<body>
+
+<div style="width:80%; height:80%" id="map"></div>
+
+<p>Special handler used to open panorama player in fullscreen (in order to avoid conflicts with leaflet controls/keyboard).</p>
+
+<script>
+	var center = [67.6755, 33.936];
+
+	var map = L.map('map', {
+		center: center,
+		zoom: 10
+	});
+
+	map.attributionControl
+		.setPosition('bottomleft')
+		.setPrefix('');
+
+	var baseLayers = {
+		'Yandex + Controls': L.yandex('map', {
+			trafficControl: { options: { size: 'medium' }, state: { trafficShown: false } },
+			typeSelector: true,
+			routeEditor: true,
+			panorama: true
+		}).addTo(map),
+		'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+		})
+	};
+
+	var overlays = {
+		'Panoramas': L.yandex('overlay', { panorama: 'enableLookup' })
+        };
+
+	L.control.layers(baseLayers,overlays).addTo(map);
+	map.locate({ setView: true, maxZoom: 14 });
+</script>
+ 
+</body>
+</html>
