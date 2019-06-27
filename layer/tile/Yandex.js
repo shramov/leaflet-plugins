@@ -55,6 +55,7 @@ L.Yandex = L.Layer.extend({
 		}
 		mapPane.appendChild(this._container);
 		if (!this._yandex) { return; }
+		this._setEvents(map);
 		this._update();
 	},
 
@@ -63,10 +64,6 @@ L.Yandex = L.Layer.extend({
 	},
 
 	onRemove: function (map) {
-		// do not remove container until api is initialized (ymaps API expects DOM element)
-		if (this._yandex) {
-			this._container.remove();
-		}
 		map._removeZoomLimit(this);
 	},
 
@@ -80,18 +77,21 @@ L.Yandex = L.Layer.extend({
 		}
 	},
 
-	getEvents: function () {
+	_setEvents: function (map) {
 		var events = {
 			move: this._update
 		};
 		if (this._zoomAnimated) {
 			events.zoomanim = this._animateZoom;
 		}
-		return events;
+		map.on(events, this);
+		this.once('remove', function () {
+			map.off(events, this);
+			this._container.remove(); // we do not call this until api is initialized (ymaps API expects DOM element)
+		}, this);
 	},
 
 	_update: function () {
-		if (!this._yandex) { return; }
 		var map = this._map;
 		var center = map.getCenter();
 		this._yandex.setCenter([center.lat, center.lng], map.getZoom());
@@ -106,7 +106,6 @@ L.Yandex = L.Layer.extend({
 	},
 
 	_animateZoom: function (e) {
-		if (!this._yandex) { return; }
 		var map = this._map;
 		var viewHalf = map.getSize()._divideBy(2);
 		var topLeft = map.project(e.center, e.zoom)._subtract(viewHalf)._round();
@@ -141,7 +140,7 @@ L.Yandex = L.Layer.extend({
 		if (this._isOverlay) {
 			ymap.container.getElement().style.background = 'transparent';
 		}
-		this._container.remove(); // see onRemove comments
+		this._container.remove();
 		this._yandex = ymap;
 		if (this._map) { this.onAdd(this._map); }
 
