@@ -51,7 +51,7 @@ L.Yandex = L.Layer.extend({
 		if (!this._container) {
 			this._container = this._initContainer(mapPane);
 			map.once('unload', this._destroy, this);
-			ymaps.ready(this._initMapObject, this);
+			this._initApi();
 		}
 		mapPane.appendChild(this._container);
 		if (!this._yandex) { return; }
@@ -118,6 +118,10 @@ L.Yandex = L.Layer.extend({
 				L.DomUtil.setTransform(element, offset, scale);
 			}
 		});
+	},
+
+	_initApi: function () { // to be extended in addons
+		ymaps.ready(this._initMapObject, this);
 	},
 
 	_mapType: function () {
