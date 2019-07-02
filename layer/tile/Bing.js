@@ -211,7 +211,7 @@ L.BingLayer = L.TileLayer.extend({
 			});
 		});
 		attributions.forEach(function (a,i) {
-			if (a == this._attributions[i]) {
+			if (a == this._attributions[i]) { // eslint-disable-line eqeqeq
 				return;
 			} else if (a) {
 				attributionControl.addAttribution(this._providers[i].attribution);
