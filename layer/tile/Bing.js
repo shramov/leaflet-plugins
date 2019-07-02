@@ -28,9 +28,14 @@ L.BingLayer = L.TileLayer.extend({
 		// - 19~20 for all 'Aerial*'
 		// - 20 for 'Road' (Deprecated)
 
-		applyMaxNativeZoom: 'auto'
+		applyMaxNativeZoom: 'auto',
 		// try to determine maximum available zoom (for current location) on layer add.
 		// makes sense only for 'Aerial*' and 'Road' imagery sets.
+
+		applyMaxNativeZoom_validityRadius: 10000000
+		// requests are asynchronous, so when result is ready actual map position can be already changed.
+		// if distance between old and new locations is longer than defined by this option,
+		// then maxNativeZoom will be recalculated for new position.
 	},
 
 	initialize: function (key, options) {
@@ -153,16 +158,24 @@ L.BingLayer = L.TileLayer.extend({
 		}));
 		var zoomOffset = options.zoomOffset || 0;  // detectRetina sideeffects on maxZoom / maxNativeZoom
 		this._findVintage(request, options.maxZoom + zoomOffset, function (zoom) {
-			if (zoom) {
-				zoom -= zoomOffset;
-				var oldValue = options.maxNativeZoom || options.maxZoom;
-				options.maxNativeZoom = zoom;
-				var mapZoom = this._map && this._map.getZoom();
-				if (mapZoom &&
-					(zoom<oldValue && zoom<mapZoom || zoom>oldValue && mapZoom>oldValue)) {
-					this._resetView();
-				}
+			if (!zoom || !this._map) { return; }
+			var newLatlng = this._map.getCenter();
+			var validityRadius = this.options.applyMaxNativeZoom_validityRadius;
+			if (newLatlng.distanceTo(latlng) > validityRadius) {
+				this.applyMaxNativeZoom(newLatlng); return;
 			}
+			zoom -= zoomOffset;
+			var oldValue = options.maxNativeZoom || options.maxZoom;
+			options.maxNativeZoom = zoom;
+			var mapZoom = this._map.getZoom();
+			if (zoom<oldValue && zoom<mapZoom || zoom>oldValue && mapZoom>oldValue) {
+				this._resetView();
+			}
+			this.fire('maxNativeZoomApplied',{
+				latlng: latlng,
+				value: zoom,
+				oldValue: oldValue
+			});
 		});
 		return this;
 	},
