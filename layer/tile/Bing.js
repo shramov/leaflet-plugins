@@ -223,7 +223,7 @@ L.BingLayer = L.TileLayer.extend({
 	},
 
 	onRemove: function (map) {
-		this._update_attribution(true);
+		if (this._providers) { this._update_attribution(true); }
 		L.GridLayer.prototype.onRemove.call(this, map);
 	}
 });
