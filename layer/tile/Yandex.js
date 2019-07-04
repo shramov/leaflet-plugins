@@ -22,7 +22,7 @@ L.Yandex = L.Layer.extend({
 		publicMap: 'publicMap',
 		publicMapInHybridView: 'publicMapHybrid'
 	},
-	
+
 	_getPossibleMapType: function (mapType) {
 		var result = 'yandex#map';
 		if (typeof mapType !== 'string') {
@@ -39,7 +39,7 @@ L.Yandex = L.Layer.extend({
 		}
 		return result;
 	},
-	
+
 	// Possible types: yandex#map, yandex#satellite, yandex#hybrid, yandex#publicMap, yandex#publicMapHybrid
 	// Or their short names: map, satellite, hybrid, publicMap, publicMapHybrid
 	initialize: function (type, options) {
@@ -62,6 +62,8 @@ L.Yandex = L.Layer.extend({
 		this._limitedUpdate = L.Util.throttle(this._update, 150, this);
 		map.on('move', this._update, this);
 
+		map.on('zoomanim', this._zoomAnimate, this);
+
 		map._controlCorners.bottomright.style.marginBottom = '3em';
 
 		this._reset();
@@ -74,6 +76,8 @@ L.Yandex = L.Layer.extend({
 		this._map.off('viewreset', this._reset, this);
 
 		this._map.off('move', this._update, this);
+
+		this._map.off('zoomanim', this._zoomAnimate, this);
 
 		if (map._controlCorners) {
 			map._controlCorners.bottomright.style.marginBottom = '0em';
@@ -148,13 +152,25 @@ L.Yandex = L.Layer.extend({
 
 		this._yandex = map;
 		this._update(true);
-		
+
 		//Reporting that map-object was initialized
 		this.fire('MapObjectInitialized', {mapObject: map});
 	},
 
 	_reset: function () {
 		this._initContainer();
+	},
+
+	_zoomAnimate: function(event){
+		if (!this._yandex) return;
+
+		var center = event.center;
+		var _center = [center.lat, center.lng];
+		var zoom = event.zoom;
+
+		if (this._yandex.getZoom() !== zoom) {
+			this._yandex.setCenter(_center, zoom);
+		}
 	},
 
 	_update: function (force) {
@@ -165,9 +181,7 @@ L.Yandex = L.Layer.extend({
 		var _center = [center.lat, center.lng];
 		var zoom = this._map.getZoom();
 
-		if (force || this._yandex.getZoom() !== zoom)
-			this._yandex.setZoom(zoom);
-		this._yandex.panTo(_center, {duration: 0, delay: 0});
+		this._yandex.setCenter(_center, zoom);
 	},
 
 	_resize: function (force) {
