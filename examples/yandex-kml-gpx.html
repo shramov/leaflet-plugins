@@ -1,0 +1,118 @@
+<html>
+<head>
+	<title>L.Yandex kml/gpx example</title>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
+	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+	<script src="https://api-maps.yandex.ru/2.1/?lang=en_RU&amp;apikey=<your API-key>" type="text/javascript"></script>
+	<script src="../layer/tile/Yandex.js"></script>
+	<style>
+		.leaflet-bottom { bottom: 20px }
+		.leaflet-control-attribution { margin-bottom: -10px !important }
+	</style>
+</head>
+<body>
+
+<div style="width:100%; height:80%" id="map"></div>
+
+<div id="kml" style="display:none">
+<p/>
+<label for="kml-input">KML/GPX url:</label>
+
+<input type="url" id="kml-input" name="kml" 
+       list="defaultURLs">
+
+<datalist id="defaultURLs">
+  <option value="https://raw.githubusercontent.com/shramov/leaflet-plugins/master/examples/KML_Samples.kml" label="KML_Samples.kml">
+  <option value="https://raw.githubusercontent.com/shramov/leaflet-plugins/master/examples/fells_loop.gpx" label="fells_loop.gpx">
+</datalist>
+</div>
+
+<script>
+	var center = [67.6755, 33.936];
+
+	var map = L.map('map', {
+		center: center,
+		zoom: 10
+	});
+
+	map.attributionControl
+		.setPosition('bottomleft')
+		.setPrefix('');
+
+	// https://tech.yandex.ru/maps/jsapi/doc/2.1/dg/concepts/geoxml-docpage/
+	// https://tech.yandex.ru/maps/jsapi/doc/2.1/ref/reference/geoXml.load-docpage/
+	// https://tech.yandex.ru/maps/jsbox/2.1/geoxml_display
+	// https://tech.yandex.ru/maps/jsapi/doc/2.1/dg/concepts/geoobjects-docpage/
+	function loadGeoXml (e) {
+		ymaps.geoXml.load(e.target.value)
+			.done(function (res) {
+				if (!this._map) { return; };
+				onGeoXmlLoad(res,this._yandex);
+				this._resyncView();
+			},this);
+	}
+
+	function onGeoXmlLoad (res,myMap) {
+		applyStyle(res.geoObjects);
+		myMap.geoObjects.add(res.geoObjects);
+		if (res.mapState) {
+			res.mapState.applyToMap(myMap);
+		} else {
+			myMap.setBounds(res.geoObjects.getBounds());
+		}
+	}
+
+	function applyStyle (geoObjects) {
+		geoObjects.each(function (obj) {
+			obj.options.set({preset: 'islands#blackCircleIcon'});
+			if (!obj.geometry) {
+				obj.each(function (obj) {
+					obj.options.set({strokeColor: "9090e8"});
+					obj.options.set({iconImageSize: [16, 0]});
+				});
+			}
+		});
+		return geoObjects;
+	}
+
+	var kmldiv = document.querySelector('div#kml');
+	var kmlinput = kmldiv.querySelector('input#kml-input');
+	var active = 0;
+
+	function onload () {
+		var onChange = loadGeoXml.bind(this);
+		var events = {
+			add: function () {
+				kmlinput.addEventListener('change',onChange);
+				if (!active) { kmldiv.style.display = 'block'; }
+				active++;
+			},
+			remove: function () {
+				kmlinput.removeEventListener('change',onChange);
+				active--;
+				if (!active) { kmldiv.style.display = 'none'; }
+			}
+		};
+		this.on(events);
+		if (this._map) { events.add.call(this); };
+	};
+
+	var baseLayers = {
+		'Yandex map': L.yandex()
+			.on('load',onload)
+			.addTo(map),
+		'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+		})
+	};
+
+	var overlays = {
+		'geoxml': L.yandex('overlay')
+			.on('load',onload)
+        };
+
+	L.control.layers(baseLayers,overlays).addTo(map);
+</script>
+ 
+</body>
+</html>

@@ -1,0 +1,80 @@
+<html>
+<head>
+	<title>L.Yandex controls example</title>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
+	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+	<script src="https://api-maps.yandex.ru/2.1/?lang=en_RU&amp;apikey=<your API-key>" type="text/javascript"></script>
+	<script src="../layer/tile/Yandex.js"></script>
+	<style>
+		.leaflet-bottom { bottom: 20px }
+		.leaflet-control-attribution { margin-bottom: -10px !important }
+	</style>
+</head>
+<body>
+
+<div style="width:100%; height:100%" id="map"></div>
+
+<script>
+	var center = [67.6755, 33.936];
+
+	var map = L.map('map', {
+		center: center,
+		zoom: 10
+	});
+
+	map.attributionControl
+		.setPosition('bottomleft')
+		.setPrefix('');
+
+	L.Yandex.addInitHook('on', 'load', function () {
+		this._setStyle(this._yandex.controls.getContainer(), {
+			left: '45px',
+			right: '57px',
+			top: '3px',
+			width: 'auto'
+		});
+		console.log(this._yandex.controls.getContainer().style.width);
+	});
+
+	var baseLayers = {
+		'Yandex map + Traffic': L.yandex('map')
+			.on('load',function () {
+				this._yandex.controls
+					.add('trafficControl', { visible: false })
+					.get('trafficControl').state.set('trafficShown', true);
+				/* alternative:
+				this._yandex.controls.add(new ymaps.control.TrafficControl({
+					options: { visible: false },
+					state: { trafficShown: true }
+				}));
+				*/
+			}),
+		'Yandex + Controls': L.yandex('map')
+			.on('load',function () {
+				this._yandex.controls
+					.add('trafficControl')
+					.add('typeSelector', { size: 'small', panoramasItemMode: 'off' })
+					.add('routeEditor', { float: 'right' });
+			})
+			.addTo(map),
+		'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+		})
+	};
+
+	var overlays = {
+		'Overlays': L.yandex('overlay')
+			.on('load',function () {
+				this._yandex.controls
+					.add('routeEditor', { float: 'right' })
+					.add('trafficControl', { size: 'small' })
+					.get('trafficControl').state.set('trafficShown', true);
+			})
+        };
+
+	L.control.layers(baseLayers,overlays).addTo(map);
+	map.locate({ setView: true, maxZoom: 14 });
+</script>
+ 
+</body>
+</html>
