@@ -23,14 +23,10 @@ L.BingLayer = L.TileLayer.extend({
 
 		attribution: 'Bing',
 		minZoom: 1,
-		maxZoom: 21,
+		maxZoom: 21
 		// Actual `maxZoom` value may be less, depending on imagery set / coverage area
 		// - 19~20 for all 'Aerial*'
 		// - 20 for 'Road' (Deprecated)
-
-		applyMaxNativeZoom: 'auto'
-		// try to determine maximum available zoom (for current location) on layer add.
-		// makes sense only for 'Aerial*' and 'Road' imagery sets.
 	},
 
 	initialize: function (key, options) {
@@ -44,10 +40,6 @@ L.BingLayer = L.TileLayer.extend({
 		options.key = options.key || options.bingMapsKey;
 		options.imagerySet = options.imagerySet || options.type;
 		if (key) { options.key = key; }
-		if (options.applyMaxNativeZoom === 'auto' && !options.maxNativeZoom) {
-			options.applyMaxNativeZoom = options.imagerySet==='Road' ||
-				options.imagerySet.substring(0,6)==='Aerial';
-		}
 	},
 
 	tile2quad: function (x, y, z) {
@@ -144,39 +136,6 @@ L.BingLayer = L.TileLayer.extend({
 		return providers;
 	},
 
-	applyMaxNativeZoom: function (latlng) {
-		var options = this.options;
-		// https://docs.microsoft.com/en-us/bingmaps/rest-services/imagery/get-imagery-metadata#basic-metadata-url
-		var request = this._makeApiUrl('Imagery/BasicMetadata', L.Util.template('{imagerySet}/{centerPoint}', {
-			imagerySet: options.imagerySet,
-			centerPoint: L.Util.template('{lat},{lng}', latlng)
-		}));
-		var zoomOffset = options.zoomOffset || 0;  // detectRetina sideeffects on maxZoom / maxNativeZoom
-		this._findVintage(request, options.maxZoom + zoomOffset, function (zoom) {
-			if (zoom) {
-				zoom -= zoomOffset;
-				var oldValue = options.maxNativeZoom || options.maxZoom;
-				options.maxNativeZoom = zoom;
-				var mapZoom = this._map && this._map.getZoom();
-				if (mapZoom &&
-					(zoom<oldValue && zoom<mapZoom || zoom>oldValue && mapZoom>oldValue)) {
-					this._resetView();
-				}
-			}
-		});
-		return this;
-	},
-
-	_findVintage: function (request, zoomLevel, callback, context) {
-		// there is no official way, so use heuristic: check `vintageStart` in metadata response
-		this.callRestService(request + '&zoomLevel='+zoomLevel, function (meta) {
-			if (meta.resourceSets[0].resources[0].vintageStart || zoomLevel === 0) {
-				return callback.call(context || this, zoomLevel);
-			}
-			this._findVintage(request, zoomLevel-1, callback, context);
-		});
-	},
-
 	_update: function (center) {
 		if (!this._url) { return; }
 		L.GridLayer.prototype._update.call(this, center);
@@ -198,7 +157,7 @@ L.BingLayer = L.TileLayer.extend({
 			});
 		});
 		attributions.forEach(function (a,i) {
-			if (a == this._attributions[i]) {
+			if (a == this._attributions[i]) { // eslint-disable-line eqeqeq
 				return;
 			} else if (a) {
 				attributionControl.addAttribution(this._providers[i].attribution);
@@ -215,15 +174,11 @@ L.BingLayer = L.TileLayer.extend({
 		//       https://docs.microsoft.com/en-us/bingmaps/getting-started/bing-maps-dev-center-help/understanding-bing-maps-transactions#rest-services
 		//       That's why it's important to defer it till BingLayer is actually added to map
 		this.loadMetadata();
-
-		if (this.options.applyMaxNativeZoom) {
-			this.applyMaxNativeZoom(map.getCenter());
-		}
 		L.GridLayer.prototype.onAdd.call(this, map);
 	},
 
 	onRemove: function (map) {
-		this._update_attribution(true);
+		if (this._providers) { this._update_attribution(true); }
 		L.GridLayer.prototype.onRemove.call(this, map);
 	}
 });

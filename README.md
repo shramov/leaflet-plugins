@@ -15,12 +15,13 @@ Currently it consists of:
 
  - Providers implemented with respect to terms of use (`layer/tile`):
    * [Yandex][Yandex.md] - using Yandex Maps API v2;
-   * Bing - with proper attribution.
+   * [Bing][Bing.md] - with proper attribution.
 
  - Control (`control/`):
    * Permalink - OpenLayers compatible permanent link with support for storing location data in hash part (#lat=...);
 
 [Yandex.md]: https://github.com/shramov/leaflet-plugins/blob/master/layer/tile/Yandex.md
+[Bing.md]: https://github.com/shramov/leaflet-plugins/blob/master/layer/tile/Bing.md
 
 
 Compatibility
