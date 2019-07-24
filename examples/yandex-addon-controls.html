@@ -1,10 +1,11 @@
 <html>
 <head>
-	<title>L.Yandex example</title>
+	<title>L.Yandex controls (addon) example</title>
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
 	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
 	<script src="https://api-maps.yandex.ru/2.1/?lang=en_RU&amp;apikey=<your API-key>" type="text/javascript"></script>
 	<script src="../layer/tile/Yandex.js"></script>
+	<script src="../layer/tile/Yandex.addon.Controls.js"></script>
 	<style>
 		.leaflet-bottom { bottom: 20px }
 		.leaflet-control-attribution { margin-bottom: -10px !important }
@@ -15,47 +16,45 @@
 <div style="width:100%; height:100%" id="map"></div>
 
 <script>
+</script>
+
+<script>
 	var center = [67.6755, 33.936];
 
 	var map = L.map('map', {
 		center: center,
-		zoom: 10,
-		zoomAnimation: true
+		zoom: 10
 	});
 
 	map.attributionControl
 		.setPosition('bottomleft')
 		.setPrefix('');
 
-	function traffic () {
-		// https://tech.yandex.ru/maps/jsbox/2.1/traffic_provider
-		var actualProvider = new ymaps.traffic.provider.Actual({}, { infoLayerShown: true });
-		actualProvider.setMap(this._yandex);
-	}
-
 	var baseLayers = {
-		'Yandex map': L.yandex() // 'map' is default
-			.addTo(map),
-		'Yandex map + Traffic': L.yandex('map')
-			.on('load', traffic),
-		'Yandex satellite':  L.yandex({ type: 'satellite' }), // type can be set in options
-		'Yandex hybrid':     L.yandex('hybrid'),
+		'Yandex map + Traffic': L.yandex('map', {
+			trafficControl: { options: { visible: false }, state: { trafficShown: true } }
+		}),
+		'Yandex + Controls': L.yandex({
+			type: 'map',
+			trafficControl: { options: { size: 'medium' } },
+			typeSelector: true,
+			routeEditor: true
+		}).addTo(map),
 		'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 		})
 	};
 
 	var overlays = {
-		'Traffic': L.yandex('overlay')
-			.on('load', traffic)
+		'Overlays': L.yandex({
+			type: 'overlay',
+			routeEditor: true,
+			trafficControl: { state: { trafficShown: true } }
+		})
         };
 
 	L.control.layers(baseLayers,overlays).addTo(map);
-	var marker = L.marker(center, { draggable: true }).addTo(map);
-	map.locate({ setView: true, maxZoom: 14 })
-		.on('locationfound',function (e) {
-			marker.setLatLng(e.latlng);
-		});
+	map.locate({ setView: true, maxZoom: 14 });
 </script>
  
 </body>

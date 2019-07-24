@@ -1,0 +1,44 @@
+<html>
+<head>
+	<title>L.Yandex fullscreen (addon) example</title>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
+	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+	<script src="https://api-maps.yandex.ru/2.1/?lang=en_RU&amp;apikey=<your API-key>" type="text/javascript"></script>
+	<script src="../layer/tile/Yandex.js"></script>
+	<script src="../layer/tile/Yandex.addon.Fullscreen.js"></script>
+</head>
+<body>
+
+<div style="width:80%; height:80%" id="map"></div>
+
+<p>Rightclick to popup fullscreen view of full-featured Yandex map.</p>
+<p>Note that no leaflet controls/overlays are visible in that state.</p>
+
+<script>
+	var center = [67.6755, 33.936];
+
+	var map = L.map('map', {
+		center: center,
+		zoom: 10,
+		attributionControl: false
+	});
+
+	L.yandex({ controlsContainerStyle: false })
+		.on('load',function () {
+			var container = this._yandex.container;
+			container.events.add('contextmenu',function () { // right click or long tap
+				if (!container.isFullscreen()) {
+					container.enterFullscreen();
+				}
+			});
+		})
+		.addTo(map);
+	var marker = L.marker(center, { draggable: true }).addTo(map);
+	map.locate({ setView: true, maxZoom: 14 })
+		.on('locationfound',function (e) {
+			marker.setLatLng(e.latlng);
+		});
+</script>
+ 
+</body>
+</html>
