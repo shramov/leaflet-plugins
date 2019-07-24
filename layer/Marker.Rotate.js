@@ -1,10 +1,21 @@
-/*
- * Based on comments by @runanet and @coomsie 
- * https://github.com/CloudMade/Leaflet/issues/386
- *
- * Wrapping function is needed to preserve L.Marker.update function
- */
-(function () {
+(function (factory, window) {
+    // define an AMD module that relies on 'leaflet'
+    if (typeof define === 'function' && define.amd) {
+        define(['leaflet'], factory);
+    // define a Common JS module that relies on 'leaflet'
+    } else if (typeof exports === 'object') {
+        module.exports = factory(require('leaflet'));
+    }
+    // attach your plugin to the global 'L' variable
+    if (typeof window !== 'undefined' && window.L) {
+        window.L.YourPlugin = factory(L);
+    }
+}(function (L) {
+	/*
+	 * Based on comments by @runanet and @coomsie 
+	 * https://github.com/CloudMade/Leaflet/issues/386
+	 *
+	 */
 	var _old__setPos = L.Marker.prototype._setPos;
 	L.Marker.include({
 		_updateImg: function (i, a, s) {
@@ -59,4 +70,4 @@
 			}
 		}
 	});
-}());
+}, window));
