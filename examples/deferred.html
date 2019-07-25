@@ -3,28 +3,28 @@
 	<title>Leaflet</title>
 	<meta charset="utf-8" />
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
-	<script src="http://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
-	<!--<script src="http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU" type="text/javascript"></script>-->
+	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+	<!--<script src="https://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU" type="text/javascript"></script>-->
 	<script src="../layer/Layer.Deferred.js"></script>
 	<!--<script src="../layer/tile/Yandex.js"></script>-->
 </head>
 <body>
 	<div style="width:100%; height:100%" id="map"></div>
 <script type='text/javascript'>
-var map = new L.Map('map', {center: new L.LatLng(67.6755, 33.936), zoom: 10, zoomAnimation: false });
-var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+var map = L.map('map', {center: L.latLng(67.6755, 33.936), zoom: 10, zoomAnimation: false });
+var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
 var layerdefs = {
-	mapnik: { name: "Mapnik", js: [],
-		init: function() {return new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');}},
-	ysat: { name: "Yandex", js: ["../layer/tile/Yandex.js", "http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU"],
-		init: function() {return new L.Yandex("satellite"); }},
-	nyak: { name: "НЯК", js: ["../layer/tile/Yandex.js", "http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU"],
-		init: function() {return new L.Yandex("publicMap"); }},
-	traffic: { name: "Пробки", js: ["../layer/tile/Yandex.js", "http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU"],
-		init: function() {return new L.Yandex("null", {traffic: true, opacity: 0.8, overlay: true}); }, overlay: true},
-	mso: { name: "Mapsurfer", js: [], overlay: true,
-		init: function() {return new L.TileLayer('http://korona.geog.uni-heidelberg.de/tiles/hybrid/x={x}&y={y}&z={z}');}}
+	mapnik: { name: 'Mapnik', js: [],
+		init: function() {return L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');}},
+	ysat: { name: 'Yandex', js: ['../layer/tile/Yandex.js', 'https://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU'],
+		init: function() {return new L.Yandex('satellite'); }},
+	nyak: { name: 'НЯК', js: ['../layer/tile/Yandex.js', 'https://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU'],
+		init: function() {return new L.Yandex('publicMap'); }},
+	traffic: { name: 'Пробки', js: ['../layer/tile/Yandex.js', 'https://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU'],
+		init: function() {return new L.Yandex('null', {traffic: true, opacity: 0.8, overlay: true}); }, overlay: true},
+	mso: { name: 'Mapsurfer', js: [], overlay: true,
+		init: function() {return L.tileLayer('https://korona.geog.uni-heidelberg.de/tiles/hybrid/x={x}&y={y}&z={z}');}}
 };
 
 var yndx = new L.DeferredLayer(layerdefs.ysat);
@@ -34,10 +34,10 @@ var mso = new L.DeferredLayer(layerdefs.mso);
 L.control.layers(
 	{
 		'OSM':osm,
-		"Yandex":yndx
+		'Yandex':yndx
 	},{
-		"Пробки":ytraffic,
-		"OpenMapSurfer":mso
+		'Пробки':ytraffic,
+		'OpenMapSurfer':mso
 	}
 ).addTo(map);
 </script>
