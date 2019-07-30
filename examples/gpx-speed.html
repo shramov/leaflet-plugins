@@ -2,26 +2,27 @@
 <head>
 	<title>Leaflet</title>
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
-	<script src="http://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
 	<script src="../layer/vector/GPX.js"></script>
 	<script src="../layer/vector/GPX.Speed.js"></script>
 </head>
 <body>
-	<div style="width:100%; height:100%" id="map"></div>
-	<script type='text/javascript'>
-		var map = new L.Map('map', {center: new L.LatLng(58.4, 43.0), zoom: 11});
-		var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-		var track = new L.GPX("speed.gpx", {
-			async: true
-		}).on("loaded", function(e) {
-			map.fitBounds(e.target.getBounds());
-		}).speedSplitEnable({
-			maxSpeed: 100,
-			chunks: 1000
-		});
-		map.addLayer(track);
-		map.addLayer(osm);
-		map.addControl(new L.Control.Layers({}, {'GPX':track}));
-	</script>
+
+<div style="width:100%; height:100%" id="map"></div>
+
+<script type='text/javascript'>
+	var map = L.map('map', {center: L.latLng(58.4, 43.0), zoom: 11});
+	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+	var track = new L.GPX('speed.gpx', {
+		async: true
+	}).on('loaded', function (e) {
+		map.fitBounds(e.target.getBounds());
+	}).speedSplitEnable({
+		maxSpeed: 100,
+		chunks: 1000
+	}).addTo(map);
+	L.control.layers({}, {'GPX':track}).addTo(map);
+</script>
+
 </body>
 </html>

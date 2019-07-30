@@ -9,23 +9,26 @@
 			transition: transform 1.0s linear;
 		}
 	</style>
-	<script src="http://unpkg.com/leaflet@1.3.1/dist/leaflet-src.js"></script>
+	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet-src.js"></script>
 	<script src="../layer/Marker.Rotate.js"></script>
 </head>
 <body>
-	<div style="width:100%; height:100%" id="map"></div>
-	<script type='text/javascript'>
-	var map = new L.Map('map', {center: new L.LatLng(67.6755, 33.936), zoom: 10});
-	map.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'));
-	var marker = new L.Marker(map.getCenter(), {iconAngle: 90});
-	map.addLayer(marker);
+
+<div style="width:100%; height:100%" id="map"></div>
+
+<script type='text/javascript'>
+	var center = [67.6755, 33.936];
+	var map = L.map('map', {center: center, zoom: 10});
+	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+	var marker = L.marker(center, {iconAngle: 90}).addTo(map);
 	var angle = 0;
-	function _rotate() {
+	function _rotate () {
 		marker.setIconAngle(angle);
 		angle = (angle + 10) % 360;
 		setTimeout(_rotate, 1000);
 	}
 	_rotate();
-	</script>
+</script>
+
 </body>
 </html>

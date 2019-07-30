@@ -1,45 +1,62 @@
 <html>
 <head>
 	<title>Leaflet</title>
-	<meta charset="utf-8" />
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
-	<script src="http://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
-	<!--<script src="http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU" type="text/javascript"></script>-->
+	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+	<!--script src="https://api-maps.yandex.ru/2.1/?lang=en_RU&amp;apikey=<your API-key>" type="text/javascript"></script-->
 	<script src="../layer/Layer.Deferred.js"></script>
 	<!--<script src="../layer/tile/Yandex.js"></script>-->
 </head>
 <body>
-	<div style="width:100%; height:100%" id="map"></div>
-<script type='text/javascript'>
-var map = new L.Map('map', {center: new L.LatLng(67.6755, 33.936), zoom: 10, zoomAnimation: false });
-var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-var layerdefs = {
-	mapnik: { name: "Mapnik", js: [],
-		init: function() {return new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');}},
-	ysat: { name: "Yandex", js: ["../layer/tile/Yandex.js", "http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU"],
-		init: function() {return new L.Yandex("satellite"); }},
-	nyak: { name: "НЯК", js: ["../layer/tile/Yandex.js", "http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU"],
-		init: function() {return new L.Yandex("publicMap"); }},
-	traffic: { name: "Пробки", js: ["../layer/tile/Yandex.js", "http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU"],
-		init: function() {return new L.Yandex("null", {traffic: true, opacity: 0.8, overlay: true}); }, overlay: true},
-	mso: { name: "Mapsurfer", js: [], overlay: true,
-		init: function() {return new L.TileLayer('http://korona.geog.uni-heidelberg.de/tiles/hybrid/x={x}&y={y}&z={z}');}}
-};
+<div style="width:100%; height:100%" id="map"></div>
+<script>
+	var map = L.map('map', {center: [67.6755, 33.936], zoom: 10});
 
-var yndx = new L.DeferredLayer(layerdefs.ysat);
-var ytraffic = new L.DeferredLayer(layerdefs.traffic);
-var mso = new L.DeferredLayer(layerdefs.mso);
+	map.attributionControl
+		.setPosition('bottomleft')
+		.setPrefix('');
 
-L.control.layers(
-	{
-		'OSM':osm,
-		"Yandex":yndx
-	},{
-		"Пробки":ytraffic,
-		"OpenMapSurfer":mso
+	function traffic () {
+		// https://tech.yandex.ru/maps/jsbox/2.1/traffic_provider
+		var actualProvider = new ymaps.traffic.provider.Actual({}, { infoLayerShown: true });
+		actualProvider.setMap(this._yandex);
 	}
-).addTo(map);
+	var ymapsAPI = 'https://api-maps.yandex.ru/2.1/?lang=en_RU&apikey=<your API-key>';
+	var mapsurferUrl = 'https://maps.heigit.org/openmapsurfer/tiles/hybrid/webmercator/{z}/{x}/{y}.png';
+
+	var layerdefs = {
+		ysat: {
+			name: 'Yandex',
+			js: ['../layer/tile/Yandex.js', ymapsAPI],
+			init: function () { return L.yandex('satellite'); }
+		},
+		traffic: {
+			name: 'Traffic',
+			js: ['../layer/tile/Yandex.js', ymapsAPI],
+			init: function () { return L.yandex('overlay').on('load',traffic); }
+		},
+		mso: {
+			name: 'Mapsurfer',
+			js: [], overlay: true,
+			init: function() { return L.tileLayer(mapsurferUrl, {pane:'overlayPane'}); }
+		}
+	};
+
+	var baseLayers = {
+		'OSM': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+			.addTo(map),
+		'Yandex': new L.DeferredLayer(layerdefs.ysat)
+	};
+
+	var overlays = {
+		'Traffic': new L.DeferredLayer(layerdefs.traffic),
+		'OpenMapSurfer': new L.DeferredLayer(layerdefs.mso)
+	};
+
+	L.control.layers(baseLayers,overlays).addTo(map);
+
+	map.locate({ setView: true, maxZoom: 14 });
 </script>
 
 </body>
