@@ -25,6 +25,7 @@ L.Yandex = L.Layer.extend({
 		if (type) { options.type = type; }
 		this._isOverlay = options.type.indexOf('overlay') !== -1 ||
 		                  options.type.indexOf('skeleton') !== -1;
+		this._animatedElements = [];
 	},
 
 	_setStyle: function (el, style) {
@@ -83,6 +84,7 @@ L.Yandex = L.Layer.extend({
 		};
 		if (this._zoomAnimated) {
 			events.zoomanim = this._animateZoom;
+			events.zoomend = this._animateZoomEnd;
 		}
 		map.on(events, this);
 		this.once('remove', function () {
@@ -111,13 +113,22 @@ L.Yandex = L.Layer.extend({
 		var topLeft = map.project(e.center, e.zoom)._subtract(viewHalf)._round();
                 var offset = map.project(map.getBounds().getNorthWest(), e.zoom)._subtract(topLeft);
 		var scale = map.getZoomScale(e.zoom);
+		this._animatedElements.length = 0;
 		this._yandex.panes._array.forEach(function (el) {
 			if (el.pane instanceof ymaps.pane.MovablePane) {
 				var element = el.pane.getElement();
 				L.DomUtil.addClass(element, 'leaflet-zoom-animated');
 				L.DomUtil.setTransform(element, offset, scale);
+				this._animatedElements.push(element);
 			}
+		},this);
+	},
+
+	_animateZoomEnd: function () {
+		this._animatedElements.forEach(function (el) {
+			L.DomUtil.setTransform(el, 0, 1);
 		});
+		this._animatedElements.length = 0;
 	},
 
 	_initApi: function () { // to be extended in addons
