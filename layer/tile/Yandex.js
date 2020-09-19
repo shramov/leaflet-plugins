@@ -41,7 +41,7 @@ L.Yandex = L.Layer.extend({
 		if (opacity) {
 			L.DomUtil.setOpacity(_container, opacity);
 		}
-		var auto = { width: '100%', height: '100%' };
+		var auto = {width: '100%', height: '100%'};
 		this._setStyle(parentEl, auto);   // need to set this explicitly,
 		this._setStyle(_container, auto); // otherwise ymaps fails to follow container size changes
 		return _container;
@@ -104,7 +104,7 @@ L.Yandex = L.Layer.extend({
 	_resyncView: function () { // for use in addons
 		if (!this._map) { return; }
 		var ymap = this._yandex;
-		this._map.setView(ymap.getCenter(), ymap.getZoom(), { animate: false });
+		this._map.setView(ymap.getCenter(), ymap.getZoom(), {animate: false});
 	},
 
 	_animateZoom: function (e) {

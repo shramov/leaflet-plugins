@@ -56,7 +56,7 @@ L.Yandex.include({
 	// Some default values to facilitate Yandex controls seamless integration
 	_controlOptionsDefault: {
 		size: 'small', float: 'right',
-		typeSelector: { panoramasItemMode: 'off' }
+		typeSelector: {panoramasItemMode: 'off'}
 	}
 });
 

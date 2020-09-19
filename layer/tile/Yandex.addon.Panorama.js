@@ -11,7 +11,7 @@ L.Yandex.addInitHook(function () {
 	var defaults = this._controlOptionsDefault;
 	if (!this.options.panorama || !defaults) { return; }
 	this._controlOptionsDefault = L.extend({}, defaults, {
-		typeSelector: L.extend({}, defaults.typeSelector, { panoramasItemMode: 'on' })
+		typeSelector: L.extend({}, defaults.typeSelector, {panoramasItemMode: 'on'})
 	});
 });
 

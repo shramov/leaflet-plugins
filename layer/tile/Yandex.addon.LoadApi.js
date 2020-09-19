@@ -87,12 +87,12 @@ L.Yandex.include({
 			def = this._apiDefaults;
 		if (!url && !params) { return false; }
 		if (params) {
-			if (typeof params === 'string') { params = { apikey: params }; }
+			if (typeof params === 'string') { params = {apikey: params}; }
 			params = L.extend({}, def.params, params);
 			url = (url || def.url) +
 				L.Util.getParamString(params,url);
 		}
-		return L.Util.template(url, { version: options.apiVersion || def.version });
+		return L.Util.template(url, {version: options.apiVersion || def.version});
 	},
 
 	_loadScript: function (url) {
