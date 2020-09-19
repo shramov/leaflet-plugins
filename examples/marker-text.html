@@ -13,8 +13,8 @@
 	var center = [67.6755, 33.936];
 	var map = L.map('map', {center: center, zoom: 10});
 	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-	new L.Marker.Text(center, 'Sweet!').addTo(map);
-	L.marker(center, {opacity: 0.5}).addTo(map);
+	var marker = new L.Marker.Text(map.getCenter(), 'Sweet and nowrap!');
+	map.addLayer(marker);
 </script>
 
 </body>
