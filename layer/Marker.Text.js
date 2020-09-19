@@ -41,7 +41,7 @@ L.Marker.Text = L.Marker.extend({
 		i.parentNode.removeChild(i);
 		this._icon.appendChild(i);
 
-		var w = this._icon.clientWidth, h = this._icon.clientHeight;
+		var w = this._icon.clientWidth;
 		this._icon.style.marginLeft = -w / 2 + 'px';
 		var off = new L.Point(w/2, 0);
 		L.DomUtil.setPosition(i, off);
