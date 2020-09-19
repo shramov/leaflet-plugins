@@ -9,6 +9,7 @@ L.Icon.Text = L.Icon.extend({
 		el.appendChild(document.createTextNode(this._text));
 		this._setIconStyles(el, 'icon');
 		el.style.textShadow = '2px 2px 2px #fff';
+		el.style.whiteSpace = 'nowrap';
 		return el;
 	},
 
