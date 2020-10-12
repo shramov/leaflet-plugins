@@ -80,7 +80,10 @@ L.Yandex = L.Layer.extend({
 
 	_setEvents: function (map) {
 		var events = {
-			move: this._update
+			move: this._update,
+			resize: function () {
+				this._yandex.container.fitToViewport();
+			}
 		};
 		if (this._zoomAnimated) {
 			events.zoomanim = this._animateZoom;
