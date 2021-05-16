@@ -47,7 +47,7 @@
 	}));
 
 	baseLayers['RoadOnDemand'].addTo(map);
-	L.control.layers(baseLayers).addTo(map);
+	L.control.layers(baseLayers, {}, {collapsed: false}).addTo(map);
 	map.locate({ setView: true, maxZoom: 14 });
  </script>
 

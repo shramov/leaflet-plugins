@@ -15,7 +15,7 @@
 	var layer = new L.OSM('test.osm').on('loaded', function (e) {
 		map.fitBounds(e.target.getBounds());
 	}).addTo(map);
-	L.control.layers({}, {'OSM':layer}).addTo(map);
+	L.control.layers({}, {'OSM': layer}, {collapsed: false}).addTo(map);
 </script>
 
 </body>

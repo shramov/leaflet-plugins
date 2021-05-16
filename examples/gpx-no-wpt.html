@@ -18,7 +18,7 @@
 	}).on('loaded', function (e) { 
 		map.fitBounds(e.target.getBounds());
 	}).addTo(map);
-	L.control.layers({}, {'GPX':track}).addTo(map);
+	L.control.layers({}, {'GPX': track}, {collapsed: false}).addTo(map);
 </script>
 
 </body>
