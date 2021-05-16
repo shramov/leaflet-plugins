@@ -50,7 +50,7 @@
 			.on('load', traffic)
         };
 
-	L.control.layers(baseLayers,overlays).addTo(map);
+	L.control.layers(baseLayers, overlays, {collapsed: false}).addTo(map);
 	var marker = L.marker(center, { draggable: true }).addTo(map);
 	map.locate({ setView: true, maxZoom: 14 })
 		.on('locationfound',function (e) {

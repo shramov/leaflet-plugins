@@ -24,7 +24,7 @@
 	var hydda = L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
 		attribution: 'Tiles courtesy of <a href="https://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 	});
-	var layers = L.control.layers({'OSM':osm, 'Hydda':hydda},{'Pressure':pressure});
+	var layers = L.control.layers({'OSM': osm, 'Hydda': hydda}, {'Pressure': pressure}, {collapsed: false});
 	map.addLayer(osm);
 	map.addControl(layers);
 	map.addControl(new L.Control.Permalink({text: 'Permalink', layers: layers}));

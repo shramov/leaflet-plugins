@@ -17,7 +17,7 @@
 			map.fitBounds(e.target.getBounds());
 		})
 		.addTo(map);
-	L.control.layers({}, {'Track':track}).addTo(map);
+	L.control.layers({}, {'Track': track}, {collapsed: false}).addTo(map);
 </script>
 
 </body>
