@@ -17,11 +17,12 @@
 		attributionControl: false
 	});
 
+	var options = {
+		apiParams: '<your API-key>'
+	};
 	L.control.layers({
-		'(deferred) Yandex': L.yandex({
-			apiParams: '<your API-key>'
-		}),
-		'(deferred) Yandex Hybrid': L.yandex('hybrid')
+		'(deferred) Yandex': L.yandex(options),
+		'(deferred) Yandex Hybrid': L.yandex('hybrid', options)
 	}, {}, {collapsed: false}).addTo(map);
 </script>
  
