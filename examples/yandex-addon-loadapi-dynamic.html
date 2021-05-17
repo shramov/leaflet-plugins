@@ -17,9 +17,9 @@
 		attributionControl: false
 	});
 
+	L.Yandex.loadApi({ apiParams: '<your API-key>' });
 	L.control.layers({
 		'Yandex': L.yandex()
-			.loadApi({ apiParams: '<your API-key>' })
 			.addTo(map),
 		'Yandex Hybrid': L.yandex('hybrid')
 	}).addTo(map);
