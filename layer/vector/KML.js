@@ -1,15 +1,23 @@
 L.KML = L.FeatureGroup.extend({
 	options: {
-		async: true
+		async: true,
+		popup: true,
+		displayName: false,
+		displayName_suffix: '_display_name',
+		name_on_props : false,
+		name_prop : 'kml_name',
+		descr_on_props : false,
+		descr_prop : 'kml_description',
+		onEachFeature: null
 	},
 
-	initialize: function (kml, options) {
-		L.Util.setOptions(this, options);
+	initialize: function(kml, options) {
+		this.options = L.Util.setOptions(this, options);
 		this._kml = kml;
 		this._layers = {};
 
 		if (kml) {
-			this.addKML(kml, options, this.options.async);
+			this.addKML(kml, this.options, this.options.async);
 		}
 	},
 
@@ -54,8 +62,8 @@ L.KML = L.FeatureGroup.extend({
 		this.loadXML(url, cb, options, async);
 	},
 
-	_addKML: function (xml) {
-		var layers = L.KML.parseKML(xml);
+	_addKML: function(xml, options) {
+		var layers = L.KML.parseKML(xml, options);
 		if (!layers || !layers.length) return;
 		for (var i = 0; i < layers.length; i++) {
 			this.fire('addlayer', {
@@ -71,8 +79,10 @@ L.KML = L.FeatureGroup.extend({
 });
 
 L.Util.extend(L.KML, {
+	parseKML: function (xml, options) {
+		if(options !== undefined)
+			this.options = options;
 
-	parseKML: function (xml) {
 		var style = this.parseStyles(xml);
 		this.parseStyleMap(xml, style);
 		var el = xml.getElementsByTagName('Folder');
@@ -274,23 +284,68 @@ L.Util.extend(L.KML, {
 			layer = new L.FeatureGroup(layers);
 		}
 
-		var name, descr = '';
-		el = place.getElementsByTagName('name');
+		this.parseData(place, layer)
+
+		return layer;
+	},
+
+	parseData: function(xml, layer) {
+		var name,
+			descr = '',
+			props = {},
+			eld, eldn, el, i, j, prop
+		;
+
+		el = xml.getElementsByTagName('ExtendedData')
+		for (i = 0; i < el.length; i++) {
+			for (j = 0; j < el[i].childNodes.length; j++) {
+				eld = el[i].childNodes[j];
+
+				if(eld.tagName === 'Data') {
+					prop = eld.getAttribute('name');
+					props[prop] = null
+
+					eldn = eld.getElementsByTagName('value')
+					if(eldn.length)
+						props[prop] = eldn[0].firstChild.nodeValue;
+
+					if(this.options.displayName) {
+						eldn = eld.getElementsByTagName('displayName')
+						if(eldn.length)
+							props[prop + this.options.displayName_suffix] = eldn[0].firstChild.nodeValue;
+					}
+				}
+			}
+		}
+
+		el = xml.getElementsByTagName('name');
 		if (el.length && el[0].childNodes.length) {
 			name = el[0].childNodes[0].nodeValue;
 		}
-		el = place.getElementsByTagName('description');
+
+		el = xml.getElementsByTagName('description');
 		for (i = 0; i < el.length; i++) {
 			for (j = 0; j < el[i].childNodes.length; j++) {
 				descr = descr + el[i].childNodes[j].nodeValue;
 			}
 		}
 
-		if (name) {
-			layer.on('add', function () {
-				layer.bindPopup('<h2>' + name + '</h2>' + descr);
-			});
-		}
+		layer.name = name;
+		if(this.options.name_on_props)
+			props[this.options.name_prop] = name;
+
+		layer.description = descr;
+		if(this.options.descr_on_props)
+			props[this.options.descr_prop] = descr;
+
+		layer.feature = layer.toGeoJSON();
+		layer.feature.properties = props;
+
+		if(this.options.popup && ( name || descr ))
+			layer.bindPopup('<h2>' + name + '</h2>' + descr);
+
+		if(typeof(this.options.onEachFeature) === 'function')
+			this.options.onEachFeature(layer.feature, layer);
 
 		return layer;
 	},
