@@ -65,21 +65,17 @@ L.BingLayer = L.TileLayer.extend({
 
 	callRestService: function (request, callback, context) {
 		context = context || this;
-		var uniqueName = '_bing_metadata_' + L.Util.stamp(this);
-		while (window[uniqueName]) { uniqueName += '_'; }
-		request += '&jsonp=' + uniqueName;
-		var script = document.createElement('script');
-		script.setAttribute('type', 'text/javascript');
-		script.setAttribute('src', request);
-		window[uniqueName] = function (response) {
-			delete window[uniqueName];
-			script.remove();
-			if (response.errorDetails) {
-				throw new Error(response.errorDetails);
+		
+		fetch(request)
+		.then(function(x) { return x.json(); })
+		.then(function(x) {
+
+			if (x.errorDetails) {
+				throw new Error(x.errorDetails);
 			}
-			callback.call(context, response);
-		};
-		document.body.appendChild(script);
+
+			callback.call(context, x);
+		});
 	},
 
 	_makeApiUrl: function (restApi, resourcePath, query) {
