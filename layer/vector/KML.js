@@ -10,7 +10,13 @@ L.KML = L.FeatureGroup.extend({
 		this._kmlOptions = kmlOptions;
 
 		if (kml) {
-			this.addKML(kml, kmlOptions);
+			fetch(kml)
+				.then(res => res.text())
+				.then(kmltext => {
+					var parser = new DOMParser();
+					var kml = parser.parseFromString(kmltext, 'text/xml');
+					this.addKML(kml, kmlOptions);
+				});
 		}
 	},
 
