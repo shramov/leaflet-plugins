@@ -1,5 +1,5 @@
 /*!
-	Copyright (c) 2011-2015, Pavel Shramov, Bruno Bergot - MIT licence
+	Copyright (c) 2011-2026, Pavel Shramov, Bruno Bergot, windy.com - MIT licence
 */
 
 L.KML = L.FeatureGroup.extend({
