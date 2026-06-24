@@ -12,7 +12,7 @@
 <script type='text/javascript'>
 	var map = L.map('map', {center: L.latLng(58.4, 43.0), zoom: 11});
 	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-	var track = new L.KML('KML_Samples.kml', {async: true})
+	var track = new L.KML('KML_Samples.kml')
 		.on('loaded', function (e) {
 			map.fitBounds(e.target.getBounds());
 		})
